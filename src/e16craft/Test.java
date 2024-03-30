@@ -1,10 +1,14 @@
 package e16craft;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
+
+import core.InputManager;
 import core.MainWindow;
 import core.MeshLoader;
 import core.RenderManager;
 import core.interfaces.IGameLogic;
-import entity.Mesh;
+import core.entity.Mesh;
 
 /**
  *
@@ -26,11 +30,15 @@ public class Test implements IGameLogic {
 
     @Override
     public void input() {
+        if (window.isKeyPressed(GLFW_KEY_SPACE)) {
+            window.close();
+        }
 
     }
 
     @Override
     public void update() {
+        renderer.update();
     }
 
     @Override

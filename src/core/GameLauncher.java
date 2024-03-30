@@ -17,11 +17,12 @@ import e16craft.E16craft;
  * @author ASUS
  */
 public class GameLauncher {
-    public static long NANOSECOND = 1000000000;
-    public static float FRAMERATE = 1000;
+    public static final long NANOSECOND = 1000000000;
+    public static final float FRAMERATE = 1000;
 
-    private static int fps;
-    private static float frametime = 1.0f / FRAMERATE;
+    private int fps;
+    private static long deltaTime;
+    private float frametime = 1.0f / FRAMERATE;
 
     private boolean isRunning;
     private MainWindow window;
@@ -29,6 +30,7 @@ public class GameLauncher {
     private GLFWErrorCallback errorCallback;
 
     private void init() throws Exception {
+        deltaTime = 0;
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
         window = E16craft.getMainWindow();
         gameLogic = E16craft.getGame();
@@ -54,7 +56,7 @@ public class GameLauncher {
         while (isRunning) {
             boolean render = false;
             long currentTime = System.nanoTime();
-            long deltaTime = currentTime - lastTime;
+            deltaTime = currentTime - lastTime;
             lastTime = currentTime;
 
             unprocessTime += deltaTime / (double) NANOSECOND;
@@ -82,6 +84,10 @@ public class GameLauncher {
             }
         }
         cleanup();
+    }
+
+    public static double getDeltaTime() {
+        return deltaTime / (double) NANOSECOND;
     }
 
     public void input() {

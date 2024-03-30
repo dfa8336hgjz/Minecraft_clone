@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package core;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -17,14 +13,10 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
-/**
- *
- * @author ASUS
- */
+import core.utils.Consts;
+
 public class MainWindow {
-    public static final float FOV = (float) Math.toRadians(60);
-    public static final float Z_NEAR = .01f;
-    public static final float Z_FAR = 1000f;
+    public float FOV = (float) Math.toRadians(60);
 
     private final String title;
 
@@ -32,7 +24,6 @@ public class MainWindow {
     private long window;
 
     private boolean resize, vsync;
-
     private final Matrix4f projection;
 
     public MainWindow(String title, int width, int height, boolean vsync) {
@@ -105,7 +96,7 @@ public class MainWindow {
         glEnable(GL_STENCIL_TEST);
 
         glViewport(0, 0, width, height);
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 
     }
 
@@ -136,6 +127,14 @@ public class MainWindow {
         glfwSetWindowTitle(window, title);
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
     public boolean isResized() {
         return resize;
     }
@@ -148,21 +147,33 @@ public class MainWindow {
         this.resize = resize;
     }
 
+    public void setFOV(float radian) {
+        FOV = radian;
+    }
+
     public Matrix4f getProjection() {
         return projection;
     }
 
     public Matrix4f updateProjection() {
         float aspectRatio = (float) width / height;
-        return projection.setPerspective(FOV, aspectRatio, Z_NEAR, Z_FAR);
+        return projection.setPerspective(FOV, aspectRatio, Consts.Z_NEAR, Consts.Z_FAR);
     }
 
-    public Matrix4f updateProjection(Matrix4f matrix, int width, int height) {
+    public Matrix4f updateProjection(Matrix4f matrix) {
         float aspectRatio = (float) width / height;
-        return matrix.setPerspective(FOV, aspectRatio, Z_NEAR, Z_FAR);
+        return matrix.setPerspective(FOV, aspectRatio, Consts.Z_NEAR, Consts.Z_FAR);
     }
 
     public void swapBuffer() {
         glfwSwapBuffers(window); // swap the color buffers
+    }
+
+    public void close() {
+        glfwSetWindowShouldClose(window, true);
+    }
+
+    public long getWindowHandle() {
+        return window;
     }
 }

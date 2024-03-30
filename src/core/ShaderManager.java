@@ -1,17 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package core;
-
-/**
- *
- * @author ASUS
- */
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,14 +6,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import utils.Consts;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.lwjgl.system.MemoryStack;
+
+import core.entity.lights.DirectionalLight;
+import core.entity.lights.PointLight;
+import core.entity.lights.SpotLight;
+import core.utils.Consts;
 
 import static org.lwjgl.opengl.GL20.*;
 
-/**
- *
- * @author ASUS
- */
 public class ShaderManager {
     public final int programID;
     private int vsID, fsID;
@@ -101,7 +91,7 @@ public class ShaderManager {
             glDeleteProgram(programID);
     }
 
-    public void setU1i(String variable, int value) {
+    public void set1i(String variable, int value) {
         glUniform1i(getUniformLocation(variable), value);
     }
 
@@ -111,6 +101,38 @@ public class ShaderManager {
 
     public void set3f(String variable, float a, float b, float c) {
         glUniform3f(getUniformLocation(variable), a, b, c);
+    }
+
+    public void set3f(String variable, Vector3f vec) {
+        glUniform3f(getUniformLocation(variable), vec.x, vec.y, vec.z);
+    }
+
+    public void setMat4f(String variable, Matrix4f matrix) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            glUniformMatrix4fv(getUniformLocation(variable), false, matrix.get(stack.mallocFloat(16)));
+        }
+    }
+
+    // Set uniform light variable
+    public void setLight(String variable, DirectionalLight light) {
+        set3f(variable + ".direction", light.getDirection());
+        set3f(variable + ".color", light.getColor());
+        set1f(variable + ".intensity", light.getIntensity());
+    }
+
+    public void setLight(String variable, PointLight light) {
+        set3f(variable + ".color", light.getColor());
+        set3f(variable + ".position", light.getPosition());
+        set1f(variable + ".intensity", light.getIntensity());
+        set1f(variable + ".constant", light.getConstant());
+        set1f(variable + ".linear", light.getLinear());
+        set1f(variable + ".exponent", light.getExponent());
+    }
+
+    public void setLight(String variable, SpotLight light) {
+        set3f(variable + ".coneDir", light.getConeDir());
+        set1f(variable + ".cutoff", light.getCutOff());
+        setLight(variable + ".pl", light.getPointLight());
     }
 
     private int getUniformLocation(String variable) {

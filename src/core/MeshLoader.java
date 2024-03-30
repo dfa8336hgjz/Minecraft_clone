@@ -17,8 +17,8 @@ import java.util.*;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
-import entity.Mesh;
-import utils.Utils;
+import core.entity.Mesh;
+import core.utils.Utils;
 
 /**
  *
@@ -30,11 +30,12 @@ public class MeshLoader {
     private List<Integer> ibos = new ArrayList<>();
     private List<Integer> textures = new ArrayList<>();
 
-    public Mesh loadMesh(float[] vertices, int[] indices, float[] textureCoords) {
+    public Mesh loadMesh(float[] vertices, int[] indices, float[] textureCoords, float[] normals) {
         int id = createVAO();
         storeIndicesBuffer(indices);
         storeDataInAttribList(0, 3, vertices);
         storeDataInAttribList(1, 2, textureCoords);
+        storeDataInAttribList(2, 3, normals);
         unbind();
         return new Mesh(id, vertices.length / 3, indices.length);
     }
