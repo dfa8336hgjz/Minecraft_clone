@@ -10,4 +10,9 @@ public class Consts {
     public static final float Z_FAR = 1000f;
 
     public static Vector4f DEFAULT_COLOR = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+    // Chunk data
+    public static final int CHUNK_WIDTH = 1;
+    public static final int CHUNK_HEIGHT = 2;
+    public static final int CHUNK_DEPTH = 1;
 }

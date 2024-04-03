@@ -12,12 +12,9 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/University/Minecraft_clone/src/core/entity/Material.java</file>
-            <file>file:/E:/University/Minecraft_clone/src/core/entity/lights/PointLight.java</file>
-            <file>file:/E:/University/Minecraft_clone/src/core/entity/lights/SpotLight.java</file>
-            <file>file:/E:/University/Minecraft_clone/src/core/entity/lights/DirectionalLight.java</file>
-            <file>file:/E:/University/Minecraft_clone/src/core/entity/Cube.java</file>
-            <file>file:/E:/University/Minecraft_clone/src/core/Camera.java</file>
+            <file>file:/E:/University/Minecraft_clone/src/core/ChunkGenerator.java</file>
+            <file>file:/E:/University/Minecraft_clone/src/core/entity/ChunkData.java</file>
+            <file>file:/E:/University/Minecraft_clone/src/core/entity/Block.java</file>
         </group>
     </open-files>
 </project-private>

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package core;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -20,10 +16,6 @@ import org.lwjgl.system.MemoryStack;
 import core.entity.Mesh;
 import core.utils.Utils;
 
-/**
- *
- * @author ASUS
- */
 public class MeshLoader {
     private List<Integer> vaos = new ArrayList<>();
     private List<Integer> vbos = new ArrayList<>();
@@ -35,7 +27,7 @@ public class MeshLoader {
         storeIndicesBuffer(indices);
         storeDataInAttribList(0, 3, vertices);
         storeDataInAttribList(1, 2, textureCoords);
-        storeDataInAttribList(2, 3, normals);
+        // storeDataInAttribList(2, 3, normals);
         unbind();
         return new Mesh(id, vertices.length / 3, indices.length);
     }

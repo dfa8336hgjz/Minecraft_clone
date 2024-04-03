@@ -81,6 +81,14 @@ public class InputManager {
         if (window.isKeyPressed(GLFW_KEY_D) || window.isKeyPressed(GLFW_KEY_RIGHT)) {
             xMove = 1;
         }
+
+        if (window.isKeyPressed(GLFW_KEY_SPACE)) {
+            yMove = 1;
+        }
+
+        if (window.isKeyPressed(GLFW_KEY_BACKSPACE)) {
+            yMove = -1;
+        }
         if (window.isKeyPressed(GLFW_KEY_ESCAPE)) {
             window.close();
         }
