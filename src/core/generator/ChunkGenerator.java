@@ -1,4 +1,4 @@
-package core;
+package core.generator;
 
 import java.util.Vector;
 
@@ -54,15 +54,21 @@ public class ChunkGenerator {
                         data.uvs[uvOffset + i * 2 + 1] = uvs[i].y;
                     }
 
-                    // bot and top indices
-                    for (int i = 0; i < 2; i++) {
-                        data.indices[indexOffset + i * 6] = 0 + i * 4 + blockId * 8;
-                        data.indices[indexOffset + i * 6 + 1] = 1 + i * 4 + blockId * 8;
-                        data.indices[indexOffset + i * 6 + 2] = 2 + i * 4 + blockId * 8;
-                        data.indices[indexOffset + i * 6 + 3] = 0 + i * 4 + blockId * 8;
-                        data.indices[indexOffset + i * 6 + 4] = 2 + i * 4 + blockId * 8;
-                        data.indices[indexOffset + i * 6 + 5] = 3 + i * 4 + blockId * 8;
-                    }
+                    // top
+                    data.indices[indexOffset + 0] = 0 + blockId * 8;
+                    data.indices[indexOffset + 1] = 1 + blockId * 8;
+                    data.indices[indexOffset + 2] = 2 + blockId * 8;
+                    data.indices[indexOffset + 3] = 2 + blockId * 8;
+                    data.indices[indexOffset + 4] = 3 + blockId * 8;
+                    data.indices[indexOffset + 5] = 0 + blockId * 8;
+
+                    // bot
+                    data.indices[indexOffset + 6] = 4 + blockId * 8;
+                    data.indices[indexOffset + 7] = 7 + blockId * 8;
+                    data.indices[indexOffset + 8] = 6 + blockId * 8;
+                    data.indices[indexOffset + 9] = 6 + blockId * 8;
+                    data.indices[indexOffset + 10] = 5 + blockId * 8;
+                    data.indices[indexOffset + 11] = 4 + blockId * 8;
 
                     // front
                     data.indices[indexOffset + 12] = 4 + blockId * 8;
@@ -73,28 +79,28 @@ public class ChunkGenerator {
                     data.indices[indexOffset + 17] = 4 + blockId * 8;
 
                     // back
-                    data.indices[indexOffset + 18] = 3 + blockId * 8;
-                    data.indices[indexOffset + 19] = 7 + blockId * 8;
-                    data.indices[indexOffset + 20] = 6 + blockId * 8;
-                    data.indices[indexOffset + 21] = 6 + blockId * 8;
-                    data.indices[indexOffset + 22] = 2 + blockId * 8;
-                    data.indices[indexOffset + 23] = 3 + blockId * 8;
+                    data.indices[indexOffset + 18] = 7 + blockId * 8;
+                    data.indices[indexOffset + 19] = 3 + blockId * 8;
+                    data.indices[indexOffset + 20] = 2 + blockId * 8;
+                    data.indices[indexOffset + 21] = 2 + blockId * 8;
+                    data.indices[indexOffset + 22] = 6 + blockId * 8;
+                    data.indices[indexOffset + 23] = 7 + blockId * 8;
 
                     // left
-                    data.indices[indexOffset + 24] = 0 + blockId * 8;
-                    data.indices[indexOffset + 25] = 3 + blockId * 8;
-                    data.indices[indexOffset + 26] = 4 + blockId * 8;
-                    data.indices[indexOffset + 27] = 4 + blockId * 8;
-                    data.indices[indexOffset + 28] = 3 + blockId * 8;
-                    data.indices[indexOffset + 29] = 7 + blockId * 8;
+                    data.indices[indexOffset + 24] = 6 + blockId * 8;
+                    data.indices[indexOffset + 25] = 2 + blockId * 8;
+                    data.indices[indexOffset + 26] = 1 + blockId * 8;
+                    data.indices[indexOffset + 27] = 1 + blockId * 8;
+                    data.indices[indexOffset + 28] = 5 + blockId * 8;
+                    data.indices[indexOffset + 29] = 6 + blockId * 8;
 
                     // right
-                    data.indices[indexOffset + 30] = 2 + blockId * 8;
-                    data.indices[indexOffset + 31] = 1 + blockId * 8;
-                    data.indices[indexOffset + 32] = 6 + blockId * 8;
-                    data.indices[indexOffset + 33] = 6 + blockId * 8;
-                    data.indices[indexOffset + 34] = 1 + blockId * 8;
-                    data.indices[indexOffset + 35] = 5 + blockId * 8;
+                    data.indices[indexOffset + 30] = 7 + blockId * 8;
+                    data.indices[indexOffset + 31] = 4 + blockId * 8;
+                    data.indices[indexOffset + 32] = 0 + blockId * 8;
+                    data.indices[indexOffset + 33] = 0 + blockId * 8;
+                    data.indices[indexOffset + 34] = 3 + blockId * 8;
+                    data.indices[indexOffset + 35] = 7 + blockId * 8;
 
                 }
             }

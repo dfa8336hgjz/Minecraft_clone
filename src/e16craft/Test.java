@@ -2,8 +2,8 @@ package e16craft;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 
-import core.MainWindow;
-import core.RenderManager;
+import core.manager.MainWindow;
+import core.manager.RenderManager;
 import core.interfaces.IGameLogic;
 
 public class Test implements IGameLogic {

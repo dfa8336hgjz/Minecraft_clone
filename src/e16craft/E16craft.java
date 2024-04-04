@@ -4,8 +4,8 @@
  */
 package e16craft;
 
-import core.GameLauncher;
-import core.MainWindow;
+import core.manager.GameLauncher;
+import core.manager.MainWindow;
 
 /**
  *

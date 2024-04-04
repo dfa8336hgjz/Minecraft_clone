@@ -1,4 +1,4 @@
-package core;
+package core.entity;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

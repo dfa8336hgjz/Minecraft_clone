@@ -1,4 +1,4 @@
-package core;
+package core.generator;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;

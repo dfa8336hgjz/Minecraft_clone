@@ -1,5 +1,6 @@
-package core;
+package core.manager;
 
+import core.entity.Camera;
 import static org.lwjgl.glfw.GLFW.*;
 
 import org.joml.Vector2d;

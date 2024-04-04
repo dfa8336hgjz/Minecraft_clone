@@ -1,5 +1,8 @@
-package core;
+package core.manager;
 
+import core.generator.MeshLoader;
+import core.generator.ChunkGenerator;
+import core.entity.Camera;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;

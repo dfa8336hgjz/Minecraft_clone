@@ -1,4 +1,4 @@
-package core;
+package core.manager;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -94,6 +94,8 @@ public class MainWindow {
         GL.createCapabilities();
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
 
         glViewport(0, 0, width, height);
         glClearColor(0.3f, 0.0f, 0.0f, 1.0f);
