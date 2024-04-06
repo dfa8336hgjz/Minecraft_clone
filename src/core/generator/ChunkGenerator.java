@@ -1,7 +1,5 @@
 package core.generator;
 
-import java.util.Vector;
-
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -55,12 +53,12 @@ public class ChunkGenerator {
                     }
 
                     // top
-                    data.indices[indexOffset + 0] = 0 + blockId * 8;
-                    data.indices[indexOffset + 1] = 1 + blockId * 8;
-                    data.indices[indexOffset + 2] = 2 + blockId * 8;
-                    data.indices[indexOffset + 3] = 2 + blockId * 8;
-                    data.indices[indexOffset + 4] = 3 + blockId * 8;
-                    data.indices[indexOffset + 5] = 0 + blockId * 8;
+                    data.indices[indexOffset + 0] = 2 + blockId * 8;
+                    data.indices[indexOffset + 1] = 3 + blockId * 8;
+                    data.indices[indexOffset + 2] = 0 + blockId * 8;
+                    data.indices[indexOffset + 3] = 0 + blockId * 8;
+                    data.indices[indexOffset + 4] = 1 + blockId * 8;
+                    data.indices[indexOffset + 5] = 2 + blockId * 8;
 
                     // bot
                     data.indices[indexOffset + 6] = 4 + blockId * 8;

@@ -12,8 +12,11 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/University/Minecraft_clone/src/core/generator/TexturePackGenerator.java</file>
-            <file>file:/E:/University/Minecraft_clone/src/core/utils/Consts.java</file>
+            <file>file:/E:/University/Minecraft_clone/src/core/entity/Block.java</file>
+            <file>file:/E:/University/Minecraft_clone/src/core/entity/TextureJsonFormat.java</file>
+            <file>file:/E:/University/Minecraft_clone/src/e16craft/Test.java</file>
+            <file>file:/E:/University/Minecraft_clone/src/core/entity/BlockInfo.java</file>
+            <file>file:/E:/University/Minecraft_clone/src/core/entity/BlockMap.java</file>
         </group>
     </open-files>
 </project-private>

@@ -4,14 +4,11 @@ import core.entity.Camera;
 import static org.lwjgl.glfw.GLFW.*;
 
 import org.joml.Vector2d;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
 
 import e16craft.E16craft;
 
 public class InputManager {
     private Vector2d currentMousePos;
-    private Vector2f displVec;
     private double xScrollOffset, yScrollOffset, deltaX, deltaY;
 
     private boolean insideWindow = false;
@@ -24,7 +21,6 @@ public class InputManager {
 
     public InputManager(float speed, float mouseSentivity) {
         currentMousePos = new Vector2d(0, 0);
-        displVec = new Vector2f();
         this.movingSpeed = speed;
         this.mouseSentivity = mouseSentivity;
         window = E16craft.getMainWindow();
