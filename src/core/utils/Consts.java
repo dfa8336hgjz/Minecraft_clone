@@ -13,6 +13,6 @@ public class Consts {
 
     // Chunk data
     public static final int CHUNK_WIDTH = 3;
-    public static final int CHUNK_HEIGHT = 1;
-    public static final int CHUNK_DEPTH = 1;
+    public static final int CHUNK_HEIGHT = 3;
+    public static final int CHUNK_DEPTH = 3;
 }

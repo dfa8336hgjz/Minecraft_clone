@@ -5,12 +5,7 @@ import core.generator.TextureMapLoader;
 import core.utils.Paths;
 import core.generator.ChunkGenerator;
 import core.entity.Camera;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
@@ -53,6 +48,7 @@ public class RenderManager {
         mesh = meshLoader.loadMesh(chunk.positions, chunk.indices, chunk.uvs, null);
         int txt = meshLoader.loadTexture(Paths.blockTexture);
         mesh.setTexture(new Texture(txt));
+
         cube = new Cube(mesh, new Vector3f(0.0f, 0.0f, -5.0f), new Vector3f(0.0f), 1.0f);
         camera.movePosition(0.0f, 0.0f, 0.0f);
         input.init();

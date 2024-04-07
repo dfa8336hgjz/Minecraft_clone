@@ -61,7 +61,6 @@ public class BlockData {
         JSONObject result = (JSONObject) array.get(index);
         Number x = (Number) result.get("x");
         Number y = (Number) result.get("y");
-        System.out.println(index + ": " + x + " " + y);
         return new float[] { x.floatValue(), y.floatValue() };
     }
 

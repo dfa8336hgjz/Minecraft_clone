@@ -40,7 +40,6 @@ public class TextureMapGenerator {
                         imgMap.setRGB(currentX + x, currentY + y, color);
                     }
                 }
-                int i = 0;
 
                 JSONArray coordArray = new JSONArray();
                 for (int x = 0; x < 2; x++) {
@@ -50,7 +49,6 @@ public class TextureMapGenerator {
                         coords.put("x", (float) (currentX + w * x) / 752);
                         coords.put("y", (float) (currentY + h * y) / 512);
                         coordArray.add(coords);
-                        i++;
                     }
                 }
                 uvObject.put("name", file.getName().substring(0, file.getName().lastIndexOf('.')));

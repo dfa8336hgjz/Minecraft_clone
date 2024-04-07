@@ -2,8 +2,6 @@ package core.generator;
 
 import static org.lwjgl.opengl.GL11.GL_2D;
 
-import org.joml.Vector2f;
-import org.joml.Vector3f;
 import org.json.simple.JSONArray;
 
 import core.entity.BlockData;
@@ -22,11 +20,13 @@ public class ChunkGenerator {
             for (int y = 0; y < Consts.CHUNK_HEIGHT; y++) {
                 for (int z = 0; z < Consts.CHUNK_DEPTH; z++) {
                     int blockId = x + y * Consts.CHUNK_WIDTH + z * Consts.CHUNK_WIDTH * Consts.CHUNK_HEIGHT;
-                    data.blockTypeID[blockId] = 0;
+                    if (y < 1)
+                        data.blockTypeID[blockId] = 1;
+                    else
+                        data.blockTypeID[blockId] = 0;
                 }
             }
         }
-        data.blockTypeID[2] = 1;
 
         int indexIncrement = 0;
         for (int x = 0; x < Consts.CHUNK_WIDTH; x++) {
@@ -111,20 +111,6 @@ public class ChunkGenerator {
         data.positionSizeByte = Consts.CHUNK_DEPTH * Consts.CHUNK_HEIGHT * Consts.CHUNK_WIDTH * 24 * 4;
         data.uvSizeByte = Consts.CHUNK_DEPTH * Consts.CHUNK_HEIGHT * Consts.CHUNK_WIDTH * 12 * 4;
         data.indicesSizeByte = Consts.CHUNK_DEPTH * Consts.CHUNK_HEIGHT * Consts.CHUNK_WIDTH * 36 * 4;
-        // int i = 0;
-        // for (float pos : data.positions) {
-        // System.out.print(pos + " ");
-        // }
-        // System.out.println();
-        // for (int pos : data.indices) {
-        // System.out.print(pos + " ");
-        // i++;
-        // }
-        // System.out.println();
-        for (float pos : data.uvs) {
-            System.out.print(pos + " ");
-        }
-        System.out.println();
 
         return data;
     }
