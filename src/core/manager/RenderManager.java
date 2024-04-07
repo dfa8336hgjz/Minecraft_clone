@@ -1,6 +1,8 @@
 package core.manager;
 
 import core.generator.MeshLoader;
+import core.generator.TextureMapLoader;
+import core.utils.Paths;
 import core.generator.ChunkGenerator;
 import core.entity.Camera;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
@@ -35,6 +37,7 @@ public class RenderManager {
 
     public RenderManager() {
         window = E16craft.getMainWindow();
+        TextureMapLoader mapLoader = new TextureMapLoader();
         meshLoader = new MeshLoader();
         camera = new Camera();
         input = new InputManager(6.0f, 0.03f);
@@ -48,7 +51,7 @@ public class RenderManager {
         shader.init();
 
         mesh = meshLoader.loadMesh(chunk.positions, chunk.indices, chunk.uvs, null);
-        int txt = meshLoader.loadTexture("gmerry.jpg");
+        int txt = meshLoader.loadTexture(Paths.blockTexture);
         mesh.setTexture(new Texture(txt));
         cube = new Cube(mesh, new Vector3f(0.0f, 0.0f, -5.0f), new Vector3f(0.0f), 1.0f);
         camera.movePosition(0.0f, 0.0f, 0.0f);

@@ -21,7 +21,7 @@ public class TextureMapGenerator {
             File folder = new File(Paths.imageFolder);
             File[] fileList = folder.listFiles();
             JSONArray uvList = new JSONArray();
-            BufferedImage imgMap = new BufferedImage(640, 512, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage imgMap = new BufferedImage(752, 512, BufferedImage.TYPE_INT_ARGB);
             int currentX = 0, currentY = 0;
 
             for (File file : fileList) {
@@ -29,35 +29,34 @@ public class TextureMapGenerator {
                 int w = image.getWidth();
                 int h = image.getHeight();
                 JSONObject uvObject = new JSONObject();
-
-                if (currentY + h <= 512) {
-                    for (int x = 0; x < w; x++) {
-                        for (int y = 0; y < h; y++) {
-                            int color = image.getRGB(x, y);
-                            imgMap.setRGB(currentX + x, currentY + y, color);
-                        }
-                    }
-                    int i = 0;
-
-                    JSONArray coordArray = new JSONArray();
-                    for (int x = 0; x < 2; x++) {
-                        for (int y = 0; y < 2; y++) {
-                            JSONObject coordObject = new JSONObject();
-                            JSONObject coords = new JSONObject();
-                            coords.put("x", (float) (currentX + w * x) / 640);
-                            coords.put("y", (float) (currentY + h * y) / 640);
-                            coordObject.put(i, coords);
-                            coordArray.add(coordObject);
-                            i++;
-                        }
-                    }
-                    uvObject.put(file.getName().substring(0, file.getName().lastIndexOf('.')), coordArray);
-
-                    currentY += image.getHeight();
-                } else {
+                if (currentY + h > 512) {
                     currentX += 16;
                     currentY = 0;
                 }
+
+                for (int x = 0; x < w; x++) {
+                    for (int y = 0; y < h; y++) {
+                        int color = image.getRGB(x, y);
+                        imgMap.setRGB(currentX + x, currentY + y, color);
+                    }
+                }
+                int i = 0;
+
+                JSONArray coordArray = new JSONArray();
+                for (int x = 0; x < 2; x++) {
+                    for (int y = 0; y < 2; y++) {
+                        JSONObject coordObject = new JSONObject();
+                        JSONObject coords = new JSONObject();
+                        coords.put("x", (float) (currentX + w * x) / 752);
+                        coords.put("y", (float) (currentY + h * y) / 512);
+                        coordArray.add(coords);
+                        i++;
+                    }
+                }
+                uvObject.put("name", file.getName().substring(0, file.getName().lastIndexOf('.')));
+                uvObject.put("coords", coordArray);
+
+                currentY += image.getHeight();
 
                 uvList.add(uvObject);
             }

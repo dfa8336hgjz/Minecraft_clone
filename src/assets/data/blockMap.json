@@ -1,0 +1,20 @@
+[
+    {
+        "name": "dirt",
+        "top": "grass_block_top",
+        "bottom": "grass_block_top",
+        "front": "grass_block_side",
+        "back": "grass_block_side",
+        "left": "grass_block_side",
+        "right": "grass_block_side"
+    },
+    {
+        "name": "sand",
+        "top": "sand",
+        "bottom": "sand",
+        "front": "sand",
+        "back": "sand",
+        "left": "sand",
+        "right": "sand"
+    }
+]
