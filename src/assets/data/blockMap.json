@@ -16,5 +16,23 @@
         "back": "sand",
         "left": "sand",
         "right": "sand"
+    },
+    {
+        "name": "planks",
+        "top": "oak_planks",
+        "bottom": "oak_planks",
+        "front": "oak_planks",
+        "back": "oak_planks",
+        "left": "oak_planks",
+        "right": "oak_planks"
+    },
+    {
+        "name": "cobblestone",
+        "top": "cobblestone",
+        "bottom": "cobblestone",
+        "front": "cobblestone",
+        "back": "cobblestone",
+        "left": "cobblestone",
+        "right": "cobblestone"
     }
 ]

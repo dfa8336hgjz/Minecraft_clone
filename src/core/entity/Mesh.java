@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package core.entity;
 
 public class Mesh {
@@ -17,14 +13,14 @@ public class Mesh {
         this.material = new Material();
     }
 
-    public Mesh(int id, int vertexCount, int indexCount, Texture texture) {
+    public Mesh(int id, int vertexCount, int indexCount, int texture) {
         this.id = id;
         this.vertexCount = vertexCount;
         this.indexCount = indexCount;
         this.material = new Material(texture);
     }
 
-    public Mesh(Mesh mesh, Texture texture) {
+    public Mesh(Mesh mesh, int texture) {
         this.id = mesh.id;
         this.vertexCount = mesh.vertexCount;
         this.indexCount = mesh.indexCount;
@@ -57,10 +53,10 @@ public class Mesh {
     }
 
     public int getTexture() {
-        return material.getTexture().getId();
+        return material.getTexture();
     }
 
-    public void setTexture(Texture texture) {
+    public void setTexture(int texture) {
         this.material.setTexture(texture);
     }
 
@@ -72,7 +68,7 @@ public class Mesh {
         this.material = material;
     }
 
-    public void setMaterial(Texture texture, float reflectance) {
+    public void setMaterial(int texture, float reflectance) {
         this.material.setTexture(texture);
         this.material.setReflectance(reflectance);
     }

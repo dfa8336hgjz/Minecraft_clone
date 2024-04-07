@@ -7,18 +7,18 @@ import core.utils.Consts;
 public class Material {
     private Vector4f ambientColor, diffuseColor, specularColor;
     private float reflectance;
-    private Texture texture;
+    private int texture;
 
     public Material() {
         this.ambientColor = Consts.DEFAULT_COLOR;
         this.diffuseColor = Consts.DEFAULT_COLOR;
         this.specularColor = Consts.DEFAULT_COLOR;
-        this.texture = null;
+        this.texture = -1;
         this.reflectance = 0;
     }
 
     public Material(Vector4f ambientColor, Vector4f diffuseColor, Vector4f specularColor, float reflectance,
-            Texture texture) {
+            int texture) {
         this.ambientColor = ambientColor;
         this.diffuseColor = diffuseColor;
         this.specularColor = specularColor;
@@ -27,10 +27,10 @@ public class Material {
     }
 
     public Material(Vector4f color, float reflectance) {
-        this(color, color, color, reflectance, null);
+        this(color, color, color, reflectance, -1);
     }
 
-    public Material(Texture texture) {
+    public Material(int texture) {
         this(Consts.DEFAULT_COLOR, Consts.DEFAULT_COLOR, Consts.DEFAULT_COLOR, 0, texture);
     }
 
@@ -42,11 +42,11 @@ public class Material {
         this.reflectance = reflectance;
     }
 
-    public Texture getTexture() {
+    public int getTexture() {
         return texture;
     }
 
-    public void setTexture(Texture texture) {
+    public void setTexture(int texture) {
         this.texture = texture;
     }
 
@@ -75,7 +75,7 @@ public class Material {
     }
 
     public boolean hasTexture() {
-        return texture != null;
+        return texture >= 0;
     }
 
 }

@@ -26,7 +26,7 @@ public class TextureMapLoader {
     public void loadTextureUV() throws IOException, ParseException {
         Reader reader = new FileReader("src/assets/data/textureUV.json");
         JSONArray jsonArray = (JSONArray) parser.parse(reader);
-        BlockData.setTextureUV(jsonArray);
+        BlockData.setTextureMap(jsonArray);
     }
 
     public void loadBlockMap() throws IOException, ParseException {

@@ -98,7 +98,7 @@ public class MainWindow {
         glCullFace(GL_FRONT);
 
         glViewport(0, 0, width, height);
-        glClearColor(0.3f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0.5f, 0.5f, 1.0f, 1.0f);
 
     }
 

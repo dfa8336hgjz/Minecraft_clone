@@ -1,6 +1,6 @@
 package e16craft;
 
-import core.generator.TextureMapGenerator;
+//import core.generator.TextureMapGenerator;
 import core.manager.GameLauncher;
 import core.manager.MainWindow;
 
@@ -10,7 +10,7 @@ public class E16craft {
 
     public static void main(String[] args) {
         window = new MainWindow("pmc", 960, 640, true);
-        TextureMapGenerator gen = new TextureMapGenerator();
+        // TextureMapGenerator gen = new TextureMapGenerator();
         game = new Test();
         GameLauncher launcher = new GameLauncher();
         try {

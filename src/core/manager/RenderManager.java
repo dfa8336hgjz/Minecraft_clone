@@ -16,7 +16,6 @@ import e16craft.E16craft;
 import core.entity.ChunkData;
 import core.entity.Cube;
 import core.entity.Mesh;
-import core.entity.Texture;
 //import core.entity.lights.DirectionalLight;
 
 public class RenderManager {
@@ -44,14 +43,15 @@ public class RenderManager {
     public void init() throws Exception {
         shader = new ShaderManager();
         shader.init();
+        input.init();
 
         mesh = meshLoader.loadMesh(chunk.positions, chunk.indices, chunk.uvs, null);
         int txt = meshLoader.loadTexture(Paths.blockTexture);
-        mesh.setTexture(new Texture(txt));
+        mesh.setTexture(txt);
 
         cube = new Cube(mesh, new Vector3f(0.0f, 0.0f, -5.0f), new Vector3f(0.0f), 1.0f);
+
         camera.movePosition(0.0f, 0.0f, 0.0f);
-        input.init();
     }
 
     public void render() {
