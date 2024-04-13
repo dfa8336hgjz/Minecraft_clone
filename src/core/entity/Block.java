@@ -1,46 +1,66 @@
 package core.entity;
 
-public class Block {
-    private String blockName;
-    private String[] textureName;
+import java.io.Serializable;
 
-    private boolean isTransparent;
+public class Block implements Serializable {
+    private int id;
+    private int lightLevel;
+    private int rotation;
+    private long padding;
+
+    public Block(int id, int lightLevel, int rotation, long padding) {
+        this.id = id;
+        this.lightLevel = lightLevel;
+        this.rotation = rotation;
+        this.padding = padding;
+    }
 
     public Block() {
-        textureName = new String[6];
-        blockName = "";
-        isTransparent = true;
+        this.id = -1;
+        this.lightLevel = 0;
+        this.rotation = 0;
+        this.padding = 0;
     }
 
-    public Block(String name, boolean isTransparent, String top, String bottom, String front, String back, String left,
-            String right) {
-        textureName = new String[] { top, bottom, front, back, left, right };
-        this.blockName = name;
-        this.isTransparent = isTransparent;
+    public boolean compare(Block otherBlock) {
+        return (this.id == otherBlock.id) && (this.lightLevel == otherBlock.lightLevel)
+                && (this.rotation == otherBlock.rotation) && (this.padding == otherBlock.padding);
     }
 
-    public String getBlockName() {
-        return blockName;
+    public boolean isNullBlock() {
+        return (this.id == -1) && (this.lightLevel == 0)
+                && (this.rotation == 0) && (this.padding == 0);
     }
 
-    public void setBlockName(String blockName) {
-        this.blockName = blockName;
+    public int getId() {
+        return id;
     }
 
-    public String getTextureAt(int index) {
-        return textureName[index];
+    public int getLightLevel() {
+        return lightLevel;
     }
 
-    public void setTextureName(String[] textureName) {
-        this.textureName = textureName;
+    public int getRotation() {
+        return rotation;
     }
 
-    public boolean isTransparent() {
-        return isTransparent;
+    public long getPadding() {
+        return padding;
     }
 
-    public void setTransparent(boolean isTransparent) {
-        this.isTransparent = isTransparent;
+    public void setId(int id) {
+        this.id = id;
     }
 
+    public void setPadding() {
+
+    }
+
+    public void setRotation() {
+
+    }
+
+    public void setLightLevel() {
+
+    }
 }

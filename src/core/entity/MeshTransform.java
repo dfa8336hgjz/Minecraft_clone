@@ -3,13 +3,13 @@ package core.entity;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-public class Cube {
+public class MeshTransform {
     private Mesh mesh;
     private Vector3f position, rotation;
     private Matrix4f model;
     private float scale;
 
-    public Cube(Mesh mesh, Vector3f position, Vector3f rotation, float scale) {
+    public MeshTransform(Mesh mesh, Vector3f position, Vector3f rotation, float scale) {
         this.mesh = mesh;
         this.position = position;
         this.rotation = rotation;

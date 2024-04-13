@@ -83,7 +83,7 @@ public class InputManager {
             yMove = 1;
         }
 
-        if (window.isKeyPressed(GLFW_KEY_BACKSPACE)) {
+        if (window.isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
             yMove = -1;
         }
         if (window.isKeyPressed(GLFW_KEY_ESCAPE)) {

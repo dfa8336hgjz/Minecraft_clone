@@ -3,6 +3,7 @@ package core.generator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import core.utils.Consts;
 import core.utils.Paths;
 
 import java.io.FileWriter;
@@ -21,7 +22,7 @@ public class TextureMapGenerator {
             File folder = new File(Paths.imageFolder);
             File[] fileList = folder.listFiles();
             JSONArray uvList = new JSONArray();
-            BufferedImage imgMap = new BufferedImage(752, 512, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage imgMap = new BufferedImage(Consts.MAP_WIDTH, Consts.MAP_HEIGHT, BufferedImage.TYPE_INT_ARGB);
             int currentX = 0, currentY = 0;
 
             for (File file : fileList) {
@@ -44,10 +45,9 @@ public class TextureMapGenerator {
                 JSONArray coordArray = new JSONArray();
                 for (int x = 0; x < 2; x++) {
                     for (int y = 0; y < 2; y++) {
-                        JSONObject coordObject = new JSONObject();
                         JSONObject coords = new JSONObject();
-                        coords.put("x", (float) (currentX + w * x) / 752);
-                        coords.put("y", (float) (currentY + h * y) / 512);
+                        coords.put("x", (float) (currentX + w * x) / Consts.MAP_WIDTH);
+                        coords.put("y", (float) (currentY + h * y) / Consts.MAP_HEIGHT);
                         coordArray.add(coords);
                     }
                 }
@@ -61,6 +61,7 @@ public class TextureMapGenerator {
 
             jsonFile.write(uvList.toJSONString());
             jsonFile.flush();
+            jsonFile.close();
 
             ImageIO.write(imgMap, "png", new File(Paths.blockTexture));
         } catch (IOException e) {

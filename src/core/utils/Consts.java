@@ -12,7 +12,13 @@ public class Consts {
     public static Vector4f DEFAULT_COLOR = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
 
     // Chunk data
-    public static final int CHUNK_WIDTH = 4;
-    public static final int CHUNK_HEIGHT = 4;
-    public static final int CHUNK_DEPTH = 4;
+    public static final int CHUNK_WIDTH = 16;
+    public static final int CHUNK_HEIGHT = 256;
+    public static final int CHUNK_DEPTH = 16;
+
+    public static final int NUM_OF_CHUNK = 4;
+
+    // Packaged image
+    public static final int MAP_WIDTH = 752;
+    public static final int MAP_HEIGHT = 512;
 }

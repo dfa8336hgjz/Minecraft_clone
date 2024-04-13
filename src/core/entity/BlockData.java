@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class BlockData {
     private static Map<String, Integer> textureId;
-    private static ArrayList<Block> blockMap;
+    private static ArrayList<BlockFormat> blockMap; // map to blockMap.json
     private static JSONArray textureMap;
     private static JSONArray currentTexture;
 
@@ -18,7 +18,7 @@ public class BlockData {
 
         for (Object object : map) {
             JSONObject jsonObj = (JSONObject) object;
-            Block block = new Block(jsonObj.get("name").toString(), false, jsonObj.get("top").toString(),
+            BlockFormat block = new BlockFormat(jsonObj.get("name").toString(), false, jsonObj.get("top").toString(),
                     jsonObj.get("bottom").toString(), jsonObj.get("front").toString(), jsonObj.get("back").toString(),
                     jsonObj.get("left").toString(), jsonObj.get("right").toString());
             blockMap.add(block);
@@ -48,7 +48,7 @@ public class BlockData {
         return new float[] { x.floatValue(), y.floatValue() };
     }
 
-    public static Block getBlock(int index) {
+    public static BlockFormat getBlock(int index) {
         return blockMap.get(index);
     }
 }

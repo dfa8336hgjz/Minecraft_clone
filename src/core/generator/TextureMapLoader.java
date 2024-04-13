@@ -27,11 +27,13 @@ public class TextureMapLoader {
         Reader reader = new FileReader("src/assets/data/textureUV.json");
         JSONArray jsonArray = (JSONArray) parser.parse(reader);
         BlockData.setTextureMap(jsonArray);
+        reader.close();
     }
 
     public void loadBlockMap() throws IOException, ParseException {
         Reader reader = new FileReader("src/assets/data/blockMap.json");
         JSONArray jsonArray = (JSONArray) parser.parse(reader);
         BlockData.setBlockMap(jsonArray);
+        reader.close();
     }
 }
