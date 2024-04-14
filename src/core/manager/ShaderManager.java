@@ -13,7 +13,7 @@ import org.lwjgl.system.MemoryStack;
 import core.entity.lights.DirectionalLight;
 import core.entity.lights.PointLight;
 import core.entity.lights.SpotLight;
-import core.utils.Consts;
+import core.utils.Paths;
 
 import static org.lwjgl.opengl.GL20.*;
 
@@ -27,8 +27,8 @@ public class ShaderManager {
         if (programID == 0)
             throw new Exception("Failed to create shader program");
 
-        vsID = compileShader(loadShadersFromFile(Consts.vsPath), GL_VERTEX_SHADER);
-        fsID = compileShader(loadShadersFromFile(Consts.fsPath), GL_FRAGMENT_SHADER);
+        vsID = compileShader(loadShadersFromFile(Paths.vsPath), GL_VERTEX_SHADER);
+        fsID = compileShader(loadShadersFromFile(Paths.fsPath), GL_FRAGMENT_SHADER);
 
     }
 

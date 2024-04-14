@@ -24,6 +24,7 @@ public class RenderManager {
 
     public RenderManager() {
         TextureMapLoader mapLoader = new TextureMapLoader();
+        mapLoader = null;
         model = new Matrix4f();
         model.identity();
 

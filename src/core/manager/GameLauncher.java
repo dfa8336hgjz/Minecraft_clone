@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package core.manager;
 
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
@@ -12,10 +8,6 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import core.interfaces.IGameLogic;
 import e16craft.E16craft;
 
-/**
- *
- * @author ASUS
- */
 public class GameLauncher {
     public static final long NANOSECOND = 1000000000;
     public static final float FRAMERATE = 1000;

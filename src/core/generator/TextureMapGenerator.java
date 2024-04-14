@@ -18,7 +18,7 @@ public class TextureMapGenerator {
     }
 
     private void generateMap() {
-        try (FileWriter jsonFile = new FileWriter(Paths.blockData)) {
+        try (FileWriter jsonFile = new FileWriter(Paths.textureData)) {
             File folder = new File(Paths.imageFolder);
             File[] fileList = folder.listFiles();
             JSONArray uvList = new JSONArray();

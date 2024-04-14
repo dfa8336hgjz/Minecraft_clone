@@ -9,8 +9,8 @@ public class E16craft {
     private static Test game;
 
     public static void main(String[] args) {
-        window = new MainWindow("pmc", 960, 640, true);
-        // TextureMapGenerator gen = new TextureMapGenerator();
+        window = new MainWindow("pmc", 1800, 960, true);
+        //TextureMapGenerator gen = new TextureMapGenerator();
         game = new Test();
         GameLauncher launcher = new GameLauncher();
         try {

@@ -25,7 +25,10 @@ public class World {
         int i = 0;
         for (int z = 0; z < bound; z++) {
             for (int x = 0; x < bound; x++) {
-                chunks[i] = ChunkGenerator.generate(x, z, worldSeed);
+                // chunks[i] = ChunkGenerator.generate(x, z, worldSeed);
+                // chunks[i].serialize();
+                chunks[i] = new Chunk(x, z);
+                chunks[i].deserialize();
                 i++;
             }
         }

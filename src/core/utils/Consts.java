@@ -3,8 +3,6 @@ package core.utils;
 import org.joml.Vector4f;
 
 public class Consts {
-    public static final String fsPath = "src\\assets\\shader\\fragment.shader";
-    public static final String vsPath = "src\\assets\\shader\\vertex.shader";
 
     public static final float Z_NEAR = 0.01f;
     public static final float Z_FAR = 1000f;
@@ -13,10 +11,12 @@ public class Consts {
 
     // Chunk data
     public static final int CHUNK_WIDTH = 16;
-    public static final int CHUNK_HEIGHT = 256;
+    public static final int CHUNK_HEIGHT = 50;
     public static final int CHUNK_DEPTH = 16;
 
-    public static final int NUM_OF_CHUNK = 4;
+    public static final int NUM_OF_CHUNK = 100;
+
+    public static final float increment = 100.0f;
 
     // Packaged image
     public static final int MAP_WIDTH = 752;

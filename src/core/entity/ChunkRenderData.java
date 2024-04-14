@@ -1,6 +1,8 @@
 package core.entity;
 
-public class ChunkRenderData {
+import java.io.Serializable;
+
+public class ChunkRenderData implements Serializable{
     public float positions[];
     public float uvs[];
     public int indices[];

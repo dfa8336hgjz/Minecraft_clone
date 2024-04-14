@@ -12,21 +12,19 @@ public class ChunkGenerator {
     private static Block NULLBLOCK = new Block(-1, 0, 0, 0);
 
     public static Chunk generate(int chunkX, int chunkZ, int seed) {
-        Chunk chunk = new Chunk();
-
+        Chunk chunk = new Chunk(chunkX, chunkZ);
         ChunkRenderData data = new ChunkRenderData();
         data.positions = new float[Consts.CHUNK_DEPTH * Consts.CHUNK_HEIGHT * Consts.CHUNK_WIDTH * 72];
         data.uvs = new float[Consts.CHUNK_DEPTH * Consts.CHUNK_HEIGHT * Consts.CHUNK_WIDTH * 48];
         data.indices = new int[Consts.CHUNK_DEPTH * Consts.CHUNK_HEIGHT * Consts.CHUNK_WIDTH * 36];
-        int pmc = 0;
         for (int z = 0; z < Consts.CHUNK_DEPTH; z++) {
             for (int y = 0; y < Consts.CHUNK_HEIGHT; y++) {
                 for (int x = 0; x < Consts.CHUNK_WIDTH; x++) {
                     int blockId = getflattenedID(x, y, z);
                     chunk.blocks[blockId] = new Block();
                     float height = convertRange(
-                            (float) SimplexNoise.noise(((double) x + chunkX * Consts.CHUNK_WIDTH) / 400.0f,
-                                    ((double) z + chunkZ * Consts.CHUNK_DEPTH) / 400.0f))
+                            (float) SimplexNoise.noise(((double) x + chunkX * Consts.CHUNK_WIDTH + seed) / Consts.increment,
+                                    ((double) z + chunkZ * Consts.CHUNK_DEPTH + seed) / Consts.increment))
                             * Consts.CHUNK_HEIGHT;
 
                     if (height > y) {
@@ -131,7 +129,7 @@ public class ChunkGenerator {
             }
         }
 
-        chunk.generate(chunkX, chunkZ, data);
+        chunk.generate(data);
         return chunk;
     }
 
