@@ -2,8 +2,9 @@ package core.generator;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL31.GL_TEXTURE_BUFFER;
+import static org.lwjgl.opengl.GL31.glTexBuffer;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -14,22 +15,23 @@ import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
 import core.entity.Mesh;
+import core.manager.RenderManager;
+import core.utils.Paths;
 import core.utils.Utils;
 
 public class MeshLoader {
+
     private List<Integer> vaos = new ArrayList<>();
     private List<Integer> vbos = new ArrayList<>();
-    private List<Integer> ibos = new ArrayList<>();
-    private List<Integer> textures = new ArrayList<>();
+    private int textureId;
+    private int textureCoordBufferId;
+    private int textureObjectId;
 
-    public Mesh loadMesh(float[] vertices, int[] indices, float[] textureCoords, float[] normals) {
+    public Mesh loadMesh(int[] data) {
         int id = createVAO();
-        storeIndicesBuffer(indices);
-        storeDataInAttribList(0, 3, vertices);
-        storeDataInAttribList(1, 2, textureCoords);
-        // storeDataInAttribList(2, 3, normals);
+        storeDataInAttribList(0, 1, data);
         unbind();
-        return new Mesh(id, vertices.length / 3, indices.length);
+        return new Mesh(id, data.length);
     }
 
     private int createVAO() {
@@ -39,25 +41,18 @@ public class MeshLoader {
         return id;
     }
 
-    private void storeIndicesBuffer(int[] indices) {
-        int ibo = glGenBuffers();
-        ibos.add(ibo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-        IntBuffer buffer = Utils.storeDataInIntBuffer(indices);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-    }
-
-    private void storeDataInAttribList(int attribNo, int vertexCount, float[] data) {
+    private void storeDataInAttribList(int attribNo, int vertexCount, int[] data) {
         int vbo = glGenBuffers();
         vbos.add(vbo);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        FloatBuffer buffer = Utils.storeDataInFloatBuffer(data);
+        IntBuffer buffer = Utils.storeDataInIntBuffer(data);
         glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(attribNo, vertexCount, GL_FLOAT, false, 0, 0);
+        glVertexAttribIPointer(attribNo, vertexCount, GL_UNSIGNED_INT, 0, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    public int loadTexture(String filename) throws Exception {
+    public void loadTexture(String filename) throws Exception {  
+        glActiveTexture(GL_TEXTURE1);
         int width, height;
         ByteBuffer buffer;
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -74,9 +69,8 @@ public class MeshLoader {
             height = h.get();
         }
 
-        int id = glGenTextures();
-        textures.add(id);
-        glBindTexture(GL_TEXTURE_2D, id);
+        textureObjectId = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, textureObjectId);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -85,7 +79,38 @@ public class MeshLoader {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
         glGenerateMipmap(GL_TEXTURE_2D);
         STBImage.stbi_image_free(buffer);
-        return id;
+    }
+
+    public void storeTexCoordsInBuffer(){
+        textureCoordBufferId = glGenBuffers();
+        float[] texCoord = TextureMapLoader.getTexCoordList();
+
+        FloatBuffer uvBuffer = Utils.storeDataInFloatBuffer(texCoord);
+        glBindBuffer(GL_TEXTURE_BUFFER, textureCoordBufferId);
+        glBufferData(GL_TEXTURE_BUFFER, uvBuffer, GL_STATIC_DRAW);
+
+        textureId = glGenTextures();
+        glBindTexture(GL_TEXTURE_BUFFER, textureId);
+        glTexBuffer(GL_TEXTURE_BUFFER, GL_R32F, textureCoordBufferId);
+
+        glBindBuffer(GL_TEXTURE_BUFFER, 0);
+        glBindTexture(GL_TEXTURE_BUFFER, 0);
+    }
+
+    public void generateTextureObject() throws Exception{
+        loadTexture(Paths.blockTexture);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureObjectId);
+        RenderManager.getShader().set1i("txt", 0);
+        RenderManager.getShader().bind();
+    }
+
+    public void generateTextureCoordBuffer(){
+        storeTexCoordsInBuffer();
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_BUFFER, textureId);
+        RenderManager.getShader().set1i("texCoordBuffer", 1);
+        RenderManager.getShader().unbind();
     }
 
     private void unbind() {
@@ -99,8 +124,9 @@ public class MeshLoader {
         for (int vbo : vbos) {
             glDeleteBuffers(vbo);
         }
-        for (int texture : textures) {
-            glDeleteTextures(texture);
-        }
+        glDeleteBuffers(textureCoordBufferId);
+        glDeleteTextures(textureObjectId);
+        glDeleteTextures(textureId);
     }
+
 }

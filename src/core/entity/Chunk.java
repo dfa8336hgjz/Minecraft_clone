@@ -2,6 +2,7 @@ package core.entity;
 
 import core.manager.RenderManager;
 import core.utils.Consts;
+import core.utils.Paths;
 
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
@@ -29,46 +30,57 @@ public class Chunk {
         this.chunkZ = chunkZ;
     }
 
-    public void generate( ChunkRenderData newData) {
+    public void load(ChunkRenderData newData) {
         this.data = newData;
-        info = RenderManager.getLoader().loadMesh(newData.positions, newData.indices, newData.uvs, null);
+        info = RenderManager.getLoader().loadMesh(newData.vertdata);
     }
 
     public void render() {
         glBindVertexArray(info.getId());
         glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glDrawElements(GL_TRIANGLES, info.getIndexCount(), GL_UNSIGNED_INT, 0);
-        glDisableVertexAttribArray(1);
+        glDrawArrays(GL_TRIANGLES, 0, data.vertexCount);
         glDisableVertexAttribArray(0);
         glBindVertexArray(0);
     }
 
     public void serialize(){
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("src/assets/data/binary/chunk"+chunkX+"_"+chunkZ+".bin"));){
-            ArrayList<Object> serializeList = new ArrayList<>();
-            serializeList.add(blocks);
-            serializeList.add(data);
-
-            out.writeObject(serializeList);
-			out.close();
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(Paths.binaryFolder+"/chunk"+chunkX+"_"+chunkZ+".bin"));){
+            for (int vertData : data.vertdata) {
+                out.writeInt(vertData);
+            }
 		} catch (IOException i) {
 			i.printStackTrace();
 		}
     }
 
     public void deserialize(){
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("src/assets/data/binary/chunk"+chunkX+"_"+chunkZ+".bin")))
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(Paths.binaryFolder+"/chunk"+chunkX+"_"+chunkZ+".bin"));)
         {
-            ArrayList<Object> deserializeList = (ArrayList<Object>)in.readObject();
+            ArrayList<Integer> dataRead = new ArrayList<>();
+            for(int i=0; i < Consts.CHUNK_DEPTH * Consts.CHUNK_HEIGHT * Consts.CHUNK_WIDTH * 36; i++){
+                int newInt = in.readInt();
 
-            blocks = (Block[]) deserializeList.get(0);
-            data = (ChunkRenderData)deserializeList.get(1);
-            info = RenderManager.getLoader().loadMesh(data.positions, data.indices, data.uvs, null);
+                if(((newInt & Consts.TEXID_MASK) >> 17) > 0){
+                    dataRead.add(newInt);
+                }
+            }
 
-            in.close();
-        } catch (IOException | ClassNotFoundException e) { 
+            ChunkRenderData newRenderData = new ChunkRenderData();
+            int[] newData = dataRead.stream().mapToInt(i-> i).toArray();
+            newRenderData.vertdata = newData;
+            newRenderData.vertexCount = newData.length;
+            load(newRenderData);
+            info = RenderManager.getLoader().loadMesh(data.vertdata);
+        } catch (Exception e) { 
             e.printStackTrace(); 
-        } 
+        }
+    }
+
+    public int getChunkX(){
+        return chunkX;
+    }
+
+    public int getChunkZ(){
+        return chunkZ;
     }
 }

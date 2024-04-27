@@ -1,54 +1,46 @@
 package core.entity;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 public class BlockData {
-    private static Map<String, Integer> textureId;
-    private static ArrayList<BlockFormat> blockMap; // map to blockMap.json
-    private static JSONArray textureMap;
-    private static JSONArray currentTexture;
+    private String blockName;
+    private String[] textureName;
 
-    public static void setBlockMap(JSONArray map) {
-        blockMap = new ArrayList<>();
+    private boolean isTransparent;
 
-        for (Object object : map) {
-            JSONObject jsonObj = (JSONObject) object;
-            BlockFormat block = new BlockFormat(jsonObj.get("name").toString(), false, jsonObj.get("top").toString(),
-                    jsonObj.get("bottom").toString(), jsonObj.get("front").toString(), jsonObj.get("back").toString(),
-                    jsonObj.get("left").toString(), jsonObj.get("right").toString());
-            blockMap.add(block);
-        }
+    public BlockData() {
+        textureName = new String[6];
+        blockName = "";
+        isTransparent = true;
     }
 
-    public static void setTextureMap(JSONArray map) {
-        textureMap = map;
-        textureId = new HashMap<>();
-        int id = 0;
-        for (Object obj : map) {
-            JSONObject jsonObj = (JSONObject) obj;
-            textureId.put(jsonObj.get("name").toString(), id);
-            id++;
-        }
+    public BlockData(String name, boolean isTransparent, String top, String bottom, String front, String back, String left,
+            String right) {
+        textureName = new String[] { top, bottom, front, back, left, right };
+        this.blockName = name;
+        this.isTransparent = isTransparent;
     }
 
-    public static void setCurrentTexture(int blockId, int side) {
-        JSONObject texture = (JSONObject) textureMap.get(textureId.get(blockMap.get(blockId).getTextureAt(side)));
-        currentTexture = (JSONArray) texture.get("coords");
+    public String getBlockName() {
+        return blockName;
     }
 
-    public static float[] getCoordsAt(int index) {
-        JSONObject result = (JSONObject) currentTexture.get(index);
-        Number x = (Number) result.get("x");
-        Number y = (Number) result.get("y");
-        return new float[] { x.floatValue(), y.floatValue() };
+    public void setBlockName(String blockName) {
+        this.blockName = blockName;
     }
 
-    public static BlockFormat getBlock(int index) {
-        return blockMap.get(index);
+    public String getTextureNameAtSide(int side) {
+        return textureName[side];
     }
+
+    public void setTextureName(String[] textureName) {
+        this.textureName = textureName;
+    }
+
+    public boolean isTransparent() {
+        return isTransparent;
+    }
+
+    public void setTransparent(boolean isTransparent) {
+        this.isTransparent = isTransparent;
+    }
+
 }

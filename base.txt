@@ -1,0 +1,43 @@
+1 face:
+    2 face data:
+    uint 
+
+    data1: 4 bytes = int
+        00 000 0000000000 00000000000000000 --> 32 bits -> 4 bytes
+        
+        index 0 -> 16:
+            blockId -> x, y, z
+        index 17 -> 26:
+            texture_id: 10 bits (-> 925)
+        index 27 -> 29:
+            face/normal: 3 bit (0->6)
+        index 30 31: uv index
+
+    data2: 1 byte = byte
+        
+
+              2 +--------------+ 3
+                |              |
+     1 +--------------+ 0      |
+       |        |     |        |
+       |        |     |        |
+       |        |     |        |
+       |     6  +-----|--------+ 7
+       |              |  
+     5 +--------------+ 4
+
+6 faces 1 block
+    top: 0 1 2 2 3 0
+    bottom: 5 4 7 7 6 5
+    front: 1 0 4 4 5 1
+    back: 3 2 6 6 7 3
+    left: 2 1 5 5 6 2
+    right: 0 3 7 7 4 0
+
+byte: 1byte = 2 hexa digit (HH)
+short: 2byte = 4 hexa digit (HH HH)
+int: 4byte = 8 hexa digit (HH HH HH HH)
+
+SERIALIZE:
++ get only vertex id in chunk x, y, z -> compress into 1 integer -> up to GPU -> decompress into x, y, z -> + chunkPos * 16 = fragPos
++ 

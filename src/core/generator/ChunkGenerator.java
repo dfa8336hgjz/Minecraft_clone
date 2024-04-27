@@ -1,12 +1,29 @@
 package core.generator;
 
+import org.joml.Vector3i;
+
 import core.entity.Block;
-import core.entity.BlockData;
 import core.entity.Chunk;
 import core.entity.ChunkRenderData;
 import core.utils.Consts;
 
 import core.utils.SimplexNoise;
+
+enum FACE{
+    TOP,
+    BOTTOM,
+    FRONT,
+    BACK,
+    LEFT,
+    RIGHT
+};
+
+enum UV_INDEX{
+    _00,
+    _01,
+    _10,
+    _11
+}
 
 public class ChunkGenerator {
     private static Block NULLBLOCK = new Block(-1, 0, 0, 0);
@@ -14,9 +31,7 @@ public class ChunkGenerator {
     public static Chunk generate(int chunkX, int chunkZ, int seed) {
         Chunk chunk = new Chunk(chunkX, chunkZ);
         ChunkRenderData data = new ChunkRenderData();
-        data.positions = new float[Consts.CHUNK_DEPTH * Consts.CHUNK_HEIGHT * Consts.CHUNK_WIDTH * 72];
-        data.uvs = new float[Consts.CHUNK_DEPTH * Consts.CHUNK_HEIGHT * Consts.CHUNK_WIDTH * 48];
-        data.indices = new int[Consts.CHUNK_DEPTH * Consts.CHUNK_HEIGHT * Consts.CHUNK_WIDTH * 36];
+        data.vertdata = new int[Consts.CHUNK_DEPTH * Consts.CHUNK_HEIGHT * Consts.CHUNK_WIDTH * 36];
         for (int z = 0; z < Consts.CHUNK_DEPTH; z++) {
             for (int y = 0; y < Consts.CHUNK_HEIGHT; y++) {
                 for (int x = 0; x < Consts.CHUNK_WIDTH; x++) {
@@ -27,114 +42,91 @@ public class ChunkGenerator {
                                     ((double) z + chunkZ * Consts.CHUNK_DEPTH + seed) / Consts.increment))
                             * Consts.CHUNK_HEIGHT;
 
-                    if (height > y) {
+                    if (height - 4 > y) {
                         chunk.blocks[blockId].setId(0);
                     }
+                    else if(y < height)
+                        chunk.blocks[blockId].setId(3);
+
                 }
             }
         }
 
         int vertexCursor = 0;
-        int indexCursor = 0;
-        int indexOffset = 0;
-        int uvCursor = 0;
-        int posX = chunkX * Consts.CHUNK_WIDTH;
-        int posZ = chunkZ * Consts.CHUNK_DEPTH;
 
         for (int z = 0; z < Consts.CHUNK_DEPTH; z++) {
             for (int y = 0; y < Consts.CHUNK_HEIGHT; y++) {
                 for (int x = 0; x < Consts.CHUNK_WIDTH; x++) {
-
                     Block thisBlock = getBlock(chunk.blocks, x, y, z);
                     if (thisBlock.isNullBlock()) {
                         continue;
                     }
-                    float[][] positions = new float[8][3];
 
-                    positions[0] = new float[] { x + posX + 0.5f, y + 0.5f, z + posZ + 0.5f };
-                    positions[1] = new float[] { x + posX - 0.5f, y + 0.5f, z + posZ + 0.5f };
-                    positions[2] = new float[] { x + posX - 0.5f, y + 0.5f, z + posZ - 0.5f };
-                    positions[3] = new float[] { x + posX + 0.5f, y + 0.5f, z + posZ - 0.5f };
-                    positions[4] = new float[] { x + posX + 0.5f, y - 0.5f, z + posZ + 0.5f };
-                    positions[5] = new float[] { x + posX - 0.5f, y - 0.5f, z + posZ + 0.5f };
-                    positions[6] = new float[] { x + posX - 0.5f, y - 0.5f, z + posZ - 0.5f };
-                    positions[7] = new float[] { x + posX + 0.5f, y - 0.5f, z + posZ - 0.5f };
+                    Vector3i vert0 = new Vector3i(x + 1, y + 1, z + 1);
+                    Vector3i vert1 = new Vector3i(x, y + 1, z + 1);
+                    Vector3i vert2 = new Vector3i(x , y + 1, z);
+                    Vector3i vert3 = new Vector3i(x + 1, y + 1, z);
+                    Vector3i vert4 = new Vector3i(x + 1, y, z + 1);
+                    Vector3i vert5 = new Vector3i(x, y, z + 1);
+                    Vector3i vert6 = new Vector3i(x, y, z);
+                    Vector3i vert7 = new Vector3i(x + 1, y, z);
 
                     Block topNeighborBlock = getBlock(chunk.blocks, x, y + 1, z);
                     if (topNeighborBlock.isNullBlock()
-                            || BlockData.getBlock(topNeighborBlock.getId()).isTransparent()) {
-                        BlockData.setCurrentTexture(thisBlock.getId(), 0);
-                        loadFace(data, vertexCursor, uvCursor, indexCursor, indexOffset, positions, 0, 1, 2, 3);
-                        vertexCursor += 12;
-                        uvCursor += 8;
-                        indexCursor += 6;
-                        indexOffset += 4;
+                            || TextureMapLoader.getBlock(topNeighborBlock.getId()).isTransparent()) {
+                        loadBlock(data, vert0, vert1, vert2, vert3, thisBlock, FACE.TOP, vertexCursor);
+                        vertexCursor += 6;
                     }
 
                     Block bottomNeighborBlock = getBlock(chunk.blocks, x, y - 1, z);
                     if (bottomNeighborBlock.isNullBlock()
-                            || BlockData.getBlock(bottomNeighborBlock.getId()).isTransparent()) {
-                        BlockData.setCurrentTexture(thisBlock.getId(), 1);
-                        loadFace(data, vertexCursor, uvCursor, indexCursor, indexOffset, positions, 5, 4, 7, 6);
-                        vertexCursor += 12;
-                        uvCursor += 8;
-                        indexCursor += 6;
-                        indexOffset += 4;
+                            || TextureMapLoader.getBlock(bottomNeighborBlock.getId()).isTransparent()) {
+                        loadBlock(data, vert5, vert4, vert7, vert6, thisBlock, FACE.BOTTOM, vertexCursor);
+                        vertexCursor += 6;
                     }
 
                     Block frontNeighborBlock = getBlock(chunk.blocks, x, y, z + 1);
                     if (frontNeighborBlock.isNullBlock()
-                            || BlockData.getBlock(frontNeighborBlock.getId()).isTransparent()) {
-                        BlockData.setCurrentTexture(thisBlock.getId(), 2);
-                        loadFace(data, vertexCursor, uvCursor, indexCursor, indexOffset, positions, 1, 0, 4, 5);
-                        vertexCursor += 12;
-                        uvCursor += 8;
-                        indexCursor += 6;
-                        indexOffset += 4;
+                            || TextureMapLoader.getBlock(frontNeighborBlock.getId()).isTransparent()) {
+                        loadBlock(data, vert1, vert0, vert4, vert5, thisBlock, FACE.FRONT, vertexCursor);
+                        vertexCursor += 6;
                     }
 
                     Block backNeighborBlock = getBlock(chunk.blocks, x, y, z - 1);
                     if (backNeighborBlock.isNullBlock()
-                            || BlockData.getBlock(backNeighborBlock.getId()).isTransparent()) {
-                        BlockData.setCurrentTexture(thisBlock.getId(), 3);
-                        loadFace(data, vertexCursor, uvCursor, indexCursor, indexOffset, positions, 3, 2, 6, 7);
-                        vertexCursor += 12;
-                        uvCursor += 8;
-                        indexCursor += 6;
-                        indexOffset += 4;
+                            || TextureMapLoader.getBlock(backNeighborBlock.getId()).isTransparent()) {
+                        loadBlock(data, vert3, vert2, vert6, vert7, thisBlock, FACE.BACK, vertexCursor);
+                        vertexCursor += 6;
                     }
 
                     Block leftNeighborBlock = getBlock(chunk.blocks, x - 1, y, z);
                     if (leftNeighborBlock.isNullBlock()
-                            || BlockData.getBlock(leftNeighborBlock.getId()).isTransparent()) {
-                        BlockData.setCurrentTexture(thisBlock.getId(), 4);
-                        loadFace(data, vertexCursor, uvCursor, indexCursor, indexOffset, positions, 2, 1, 5, 6);
-                        vertexCursor += 12;
-                        uvCursor += 8;
-                        indexCursor += 6;
-                        indexOffset += 4;
+                            || TextureMapLoader.getBlock(leftNeighborBlock.getId()).isTransparent()) {
+                        loadBlock(data, vert2, vert1, vert5, vert6, thisBlock, FACE.LEFT, vertexCursor);
+                        vertexCursor += 6;
                     }
 
                     Block rightNeighborBlock = getBlock(chunk.blocks, x + 1, y, z);
                     if (rightNeighborBlock.isNullBlock()
-                            || BlockData.getBlock(rightNeighborBlock.getId()).isTransparent()) {
-                        BlockData.setCurrentTexture(thisBlock.getId(), 5);
-                        loadFace(data, vertexCursor, uvCursor, indexCursor, indexOffset, positions, 0, 3, 7, 4);
-                        vertexCursor += 12;
-                        uvCursor += 8;
-                        indexCursor += 6;
-                        indexOffset += 4;
+                            || TextureMapLoader.getBlock(rightNeighborBlock.getId()).isTransparent()) {
+                        loadBlock(data, vert0, vert3, vert7, vert4, thisBlock, FACE.RIGHT, vertexCursor);
+                        vertexCursor += 6;
                     }
                 }
             }
         }
 
-        chunk.generate(data);
+        data.vertexCount = vertexCursor;
+        chunk.load(data);
         return chunk;
     }
 
     private static int getflattenedID(int x, int y, int z) {
         return x + y * Consts.CHUNK_WIDTH + z * Consts.CHUNK_WIDTH * Consts.CHUNK_HEIGHT;
+    }
+
+    private static int getEncodedID(int x, int y, int z) {
+        return x + y * (Consts.CHUNK_WIDTH+1) + z * (Consts.CHUNK_WIDTH+1) * (Consts.CHUNK_HEIGHT+1);
     }
 
     private static Block getBlock(Block[] blockTypeMap, int x, int y, int z) {
@@ -144,32 +136,29 @@ public class ChunkGenerator {
                         : blockTypeMap[id];
     }
 
-    private static void loadFace(ChunkRenderData data, int vertexCursor, int uvCursor, int indexCursor, int indexOffset,
-            float[][] positions, int v0, int v1, int v2, int v3) {
-        for (int i = 0; i < 3; i++) {
-            data.positions[vertexCursor + i] = positions[v0][i];
-            data.positions[vertexCursor + i + 3] = positions[v1][i];
-            data.positions[vertexCursor + i + 6] = positions[v2][i];
-            data.positions[vertexCursor + i + 9] = positions[v3][i];
-        }
+    private static void loadBlock(ChunkRenderData data, Vector3i vert0, Vector3i vert1, Vector3i vert2, Vector3i vert3, 
+        Block block, FACE face, int vertexCursor) {
+            data.vertdata[vertexCursor] = loadFace(vert0, face, block, UV_INDEX._00);
+            data.vertdata[vertexCursor + 1] = loadFace(vert1, face, block, UV_INDEX._10);
+            data.vertdata[vertexCursor + 2] = loadFace(vert2, face, block, UV_INDEX._11);
+            data.vertdata[vertexCursor + 3] = loadFace(vert2, face, block, UV_INDEX._11);
+            data.vertdata[vertexCursor + 4] = loadFace(vert3, face, block, UV_INDEX._01);
+            data.vertdata[vertexCursor + 5] = loadFace(vert0, face, block, UV_INDEX._00);
+    }
 
-        for (int i = 0; i < 2; i++) {
-            data.uvs[uvCursor + i] = BlockData.getCoordsAt(0)[i];
-            data.uvs[uvCursor + i + 2] = BlockData.getCoordsAt(2)[i];
-            data.uvs[uvCursor + i + 4] = BlockData.getCoordsAt(3)[i];
-            data.uvs[uvCursor + i + 6] = BlockData.getCoordsAt(1)[i];
-        }
-
-        data.indices[indexCursor] = indexOffset;
-        data.indices[indexCursor + 1] = indexOffset + 1;
-        data.indices[indexCursor + 2] = indexOffset + 2;
-        data.indices[indexCursor + 3] = indexOffset + 2;
-        data.indices[indexCursor + 4] = indexOffset + 3;
-        data.indices[indexCursor + 5] = indexOffset;
+    private static int loadFace(Vector3i pos, FACE face, Block block, UV_INDEX uvId){
+        int newData = 0;
+        int posId = getEncodedID(pos.x, pos.y, pos.z);
+        int texId = TextureMapLoader.getFaceTextureId(block.getId(), face);
+        newData |= ((posId << 0) & Consts.POSITION_MASK);
+        newData |= ((texId << 17) & Consts.TEXID_MASK);
+        newData |= ((face.ordinal() << 27) & Consts.NORMAL_MASK);
+        newData |= ((uvId.ordinal() << 30) & Consts.UV_MASK);
+        
+        return newData;
     }
 
     private static float convertRange(float val) {
         return (val + 1) / 2;
     }
-
 }

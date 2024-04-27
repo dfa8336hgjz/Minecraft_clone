@@ -3,6 +3,7 @@ package core.manager;
 import core.generator.MeshLoader;
 import core.generator.TextureMapLoader;
 import core.utils.Consts;
+import core.utils.Paths;
 import core.World;
 import core.entity.Camera;
 import static org.lwjgl.opengl.GL11.*;
@@ -13,7 +14,7 @@ import e16craft.E16craft;
 //import core.entity.lights.DirectionalLight;
 
 public class RenderManager {
-    private ShaderManager shader;
+    private static ShaderManager shader;
     private static MeshLoader meshLoader;
 
     private World world;
@@ -23,18 +24,16 @@ public class RenderManager {
     private Matrix4f model;
 
     public RenderManager() {
+        window = E16craft.getMainWindow();
         TextureMapLoader mapLoader = new TextureMapLoader();
-        mapLoader = null;
+
         model = new Matrix4f();
         model.identity();
 
         world = new World();
-        window = E16craft.getMainWindow();
         meshLoader = new MeshLoader();
         camera = new Camera();
         input = new InputManager(15.0f, 0.03f);
-        // light = new DirectionalLight(new Vector3f(1.0f), new Vector3f(1.0f, 0.0f,
-        // 0.0f), 2);
     }
 
     public void init() throws Exception {
@@ -42,8 +41,10 @@ public class RenderManager {
         shader.init();
         input.init();
         world.init();
+        meshLoader.generateTextureObject();
+        meshLoader.generateTextureCoordBuffer();
 
-        camera.movePosition(0.0f, Consts.CHUNK_HEIGHT, 0.0f);
+        camera.movePosition(0.0f, Consts.CHUNK_HEIGHT + 1, 0.0f);
     }
 
     public void render() {
@@ -52,9 +53,6 @@ public class RenderManager {
         shader.setMat4f("model", model);
         shader.setMat4f("view", camera.getViewMatrix());
         shader.setMat4f("projection", window.updateProjection(camera.getViewMatrix()));
-        // shader.setLight("directionalLight", light);
-        // shader.set1f("specularPower", 10.0f);
-        // shader.set1i("material.hasTexture", 1);
         world.render();
         shader.unbind();
     }
@@ -69,6 +67,7 @@ public class RenderManager {
 
     public void cleanup() {
         meshLoader.cleanup();
+        world.cleanup();
     }
 
     public Camera getCamera() {
@@ -77,5 +76,9 @@ public class RenderManager {
 
     public static MeshLoader getLoader() {
         return meshLoader;
+    }
+
+    public static ShaderManager getShader(){
+        return shader;
     }
 }

@@ -1,9 +1,8 @@
 package core.entity;
-
 import java.io.Serializable;
 
-public class Block implements Serializable {
-    private int id;
+public class Block {
+    private int id; // id of block in blockMap.json
     private int lightLevel;
     private int rotation;
     private long padding;
@@ -63,4 +62,5 @@ public class Block implements Serializable {
     public void setLightLevel() {
 
     }
+
 }

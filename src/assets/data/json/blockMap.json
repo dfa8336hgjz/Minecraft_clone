@@ -34,5 +34,14 @@
         "back": "cobblestone",
         "left": "cobblestone",
         "right": "cobblestone"
+    },
+    {
+        "name": "test",
+        "top": "yellow_wool",
+        "bottom": "yellow_wool",
+        "front": "yellow_wool",
+        "back": "yellow_wool",
+        "left": "yellow_wool",
+        "right": "yellow_wool"
     }
 ]

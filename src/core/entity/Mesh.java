@@ -2,28 +2,24 @@ package core.entity;
 
 public class Mesh {
     private int id;
-    private int vertexCount;
-    private int indexCount;
+    private int dataCount;
     private Material material;
 
-    public Mesh(int id, int vertexCount, int indexCount) {
+    public Mesh(int id, int dataCount) {
         this.id = id;
-        this.vertexCount = vertexCount;
-        this.indexCount = indexCount;
+        this.dataCount = dataCount;
         this.material = new Material();
     }
 
-    public Mesh(int id, int vertexCount, int indexCount, int texture) {
+    public Mesh(int id, int dataCount, int data2Count, int texture) {
         this.id = id;
-        this.vertexCount = vertexCount;
-        this.indexCount = indexCount;
+        this.dataCount = dataCount;
         this.material = new Material(texture);
     }
 
     public Mesh(Mesh mesh, int texture) {
         this.id = mesh.id;
-        this.vertexCount = mesh.vertexCount;
-        this.indexCount = mesh.indexCount;
+        this.dataCount = mesh.dataCount;
         this.material = mesh.getMaterial();
         this.material.setTexture(texture);
     }
@@ -36,20 +32,12 @@ public class Mesh {
         this.id = id;
     }
 
-    public int getVertexCount() {
-        return vertexCount;
+    public int getDataCount() {
+        return dataCount;
     }
 
-    public void setVertexCount(int vertexCount) {
-        this.vertexCount = vertexCount;
-    }
-
-    public int getIndexCount() {
-        return indexCount;
-    }
-
-    public void setIndexCount(int indexCount) {
-        this.indexCount = indexCount;
+    public void setDataCount(int dataCount) {
+        this.dataCount = dataCount;
     }
 
     public int getTexture() {

@@ -66,11 +66,6 @@ public class ShaderManager {
             throw new Exception("Cannot link shader program");
         }
 
-        glValidateProgram(programID);
-        if (glGetProgrami(programID, GL_VALIDATE_STATUS) <= 0) {
-            throw new Exception("Cannot validate shader program");
-        }
-
         glDeleteShader(vsID);
         glDeleteShader(fsID);
 
@@ -97,6 +92,10 @@ public class ShaderManager {
 
     public void set1f(String variable, float value) {
         glUniform1f(getUniformLocation(variable), value);
+    }
+
+    public void set2i(String variable, int x, int y) {
+        glUniform2i(getUniformLocation(variable), x, y);
     }
 
     public void set3f(String variable, float a, float b, float c) {
