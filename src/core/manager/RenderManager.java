@@ -67,7 +67,7 @@ public class RenderManager {
 
     public void cleanup() {
         meshLoader.cleanup();
-        world.cleanup();
+        //world.cleanup();
     }
 
     public Camera getCamera() {

@@ -16,7 +16,7 @@ uniform ivec2 chunkPos;
 #define FACE_ID_BITMASK uint(0x38000000)
 #define UV_ID_BITMASK uint(0xC0000000)
 #define BASE_WIDTH uint(17)
-#define BASE_HEIGHT uint(51)
+#define BASE_HEIGHT uint(101)
 #define BASE_DEPTH uint(17)
 
 void extractPosition(in uint vertdata, out vec3 pos){

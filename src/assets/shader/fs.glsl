@@ -33,7 +33,7 @@ void faceToNormal(in uint face, out vec3 normal){
 
 void main()
 {
-    vec3 sunPosition = vec3(1, 70, 2);
+    vec3 sunPosition = vec3(1, 200, 2);
     vec3 lightColor = vec3(1, 1, 1);
 
     vec3 fragNormal;

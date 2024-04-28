@@ -40,13 +40,17 @@ public class ChunkGenerator {
                     float height = convertRange(
                             (float) SimplexNoise.noise(((double) x + chunkX * Consts.CHUNK_WIDTH + seed) / Consts.increment,
                                     ((double) z + chunkZ * Consts.CHUNK_DEPTH + seed) / Consts.increment))
-                            * Consts.CHUNK_HEIGHT;
+                            * 50 + 50;
+                    float ground = convertRange(
+                            (float) SimplexNoise.noise(((double) x + chunkX * Consts.CHUNK_WIDTH + seed) / 150.0f,
+                                    ((double) z + chunkZ * Consts.CHUNK_DEPTH + seed) / 150.0f))
+                            * 10 + 70;
 
-                    if (height - 4 > y) {
-                        chunk.blocks[blockId].setId(0);
-                    }
-                    else if(y < height)
+                    if (y < height) {
                         chunk.blocks[blockId].setId(3);
+                    }
+                    if(y < ground)
+                        chunk.blocks[blockId].setId(0);
 
                 }
             }

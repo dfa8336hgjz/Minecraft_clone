@@ -12,7 +12,7 @@ public class Consts {
 
     // Chunk data
     public static final int CHUNK_WIDTH = 16;
-    public static final int CHUNK_HEIGHT = 50;
+    public static final int CHUNK_HEIGHT = 100;
     public static final int CHUNK_DEPTH = 16;
 
     public static final int NUM_OF_CHUNK = 256;
