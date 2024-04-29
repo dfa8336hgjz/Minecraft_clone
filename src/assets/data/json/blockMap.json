@@ -1,6 +1,7 @@
 [
     {
-        "name": "dirt",
+        "id": 0,
+        "name": "Dirt",
         "top": "grass_block_top",
         "bottom": "grass_block_top",
         "front": "grass_block_side",
@@ -9,7 +10,8 @@
         "right": "grass_block_side"
     },
     {
-        "name": "sand",
+        "id": 1,
+        "name": "Sand",
         "top": "sand",
         "bottom": "sand",
         "front": "sand",
@@ -18,7 +20,8 @@
         "right": "sand"
     },
     {
-        "name": "planks",
+        "id": 2,
+        "name": "Plank",
         "top": "oak_planks",
         "bottom": "oak_planks",
         "front": "oak_planks",
@@ -27,7 +30,8 @@
         "right": "oak_planks"
     },
     {
-        "name": "cobblestone",
+        "id": 3,
+        "name": "Cobblestone",
         "top": "cobblestone",
         "bottom": "cobblestone",
         "front": "cobblestone",
@@ -36,12 +40,53 @@
         "right": "cobblestone"
     },
     {
-        "name": "test",
-        "top": "yellow_wool",
-        "bottom": "yellow_wool",
-        "front": "yellow_wool",
-        "back": "yellow_wool",
-        "left": "yellow_wool",
-        "right": "yellow_wool"
+        "id": 4,
+        "name": "Diamond block",
+        "top": "diamond_block",
+        "bottom": "diamond_block",
+        "front": "diamond_block",
+        "back": "diamond_block",
+        "left": "diamond_block",
+        "right": "diamond_block"
+    },
+    {
+        "id": 5,
+        "name": "Quartz brick",
+        "top": "quartz_bricks",
+        "bottom": "quartz_bricks",
+        "front": "quartz_bricks",
+        "back": "quartz_bricks",
+        "left": "quartz_bricks",
+        "right": "quartz_bricks"
+    },
+    {
+        "id": 6,
+        "name": "Quartz block",
+        "top": "quartz_block_top",
+        "bottom": "quartz_block_bottom",
+        "front": "quartz_block_side",
+        "back": "quartz_block_side",
+        "left": "quartz_block_side",
+        "right": "quartz_block_side"
+    },
+    {
+        "id": 7,
+        "name": "Chiseled Quartz",
+        "top": "chiseled_quartz_block_top",
+        "bottom": "chiseled_quartz_block_top",
+        "front": "chiseled_quartz_block",
+        "back": "chiseled_quartz_block",
+        "left": "chiseled_quartz_block",
+        "right": "chiseled_quartz_block"
+    },
+    {
+        "id": 8,
+        "name": "Lime concrete",
+        "top": "lime_concrete",
+        "bottom": "lime_concrete",
+        "front": "lime_concrete",
+        "back": "lime_concrete",
+        "left": "lime_concrete",
+        "right": "lime_concrete"
     }
 ]

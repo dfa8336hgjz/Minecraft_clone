@@ -1,5 +1,6 @@
-package core.generator;
+package core.system;
 
+import core.system.texturePackage.TextureMapLoader;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -9,46 +10,49 @@ import static org.lwjgl.opengl.GL31.glTexBuffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.*;
 
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
-import core.entity.Mesh;
+import core.component.ChunkMesh;
 import core.manager.RenderManager;
 import core.utils.Paths;
 import core.utils.Utils;
 
 public class MeshLoader {
-
-    private List<Integer> vaos = new ArrayList<>();
-    private List<Integer> vbos = new ArrayList<>();
     private int textureId;
     private int textureCoordBufferId;
     private int textureObjectId;
 
-    public Mesh loadMesh(int[] data) {
-        int id = createVAO();
-        storeDataInAttribList(0, 1, data);
+    public ChunkMesh loadMesh(int[] data) {
+        int vao = createVAO();
+        int vbo = createVBO(0, 1, data);
         unbind();
-        return new Mesh(id, data.length);
+        return new ChunkMesh(vao, vbo, data.length);
+    }
+
+    public void reloadMesh(int[] data, ChunkMesh mesh) {
+        int vao = createVAO();
+        int vbo = createVBO(0, 1, data);
+        unbind();
+
+        mesh.setBuffer(vao, vbo);
     }
 
     private int createVAO() {
         int id = glGenVertexArrays();
-        vaos.add(id);
         glBindVertexArray(id);
         return id;
     }
 
-    private void storeDataInAttribList(int attribNo, int vertexCount, int[] data) {
+    private int createVBO(int attribNo, int vertexCount, int[] data) {
         int vbo = glGenBuffers();
-        vbos.add(vbo);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         IntBuffer buffer = Utils.storeDataInIntBuffer(data);
         glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
         glVertexAttribIPointer(attribNo, vertexCount, GL_UNSIGNED_INT, 0, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        
+        return vbo;
     }
 
     public void loadTexture(String filename) throws Exception {  
@@ -118,12 +122,6 @@ public class MeshLoader {
     }
 
     public void cleanup() {
-        for (int vao : vaos) {
-            glDeleteVertexArrays(vao);
-        }
-        for (int vbo : vbos) {
-            glDeleteBuffers(vbo);
-        }
         glDeleteBuffers(textureCoordBufferId);
         glDeleteTextures(textureObjectId);
         glDeleteTextures(textureId);

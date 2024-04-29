@@ -9,10 +9,6 @@ import java.util.Scanner;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
-
-import core.entity.lights.DirectionalLight;
-import core.entity.lights.PointLight;
-import core.entity.lights.SpotLight;
 import core.utils.Paths;
 
 import static org.lwjgl.opengl.GL20.*;
@@ -110,28 +106,6 @@ public class ShaderManager {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             glUniformMatrix4fv(getUniformLocation(variable), false, matrix.get(stack.mallocFloat(16)));
         }
-    }
-
-    // Set uniform light variable
-    public void setLight(String variable, DirectionalLight light) {
-        set3f(variable + ".direction", light.getDirection());
-        set3f(variable + ".color", light.getColor());
-        set1f(variable + ".intensity", light.getIntensity());
-    }
-
-    public void setLight(String variable, PointLight light) {
-        set3f(variable + ".color", light.getColor());
-        set3f(variable + ".position", light.getPosition());
-        set1f(variable + ".intensity", light.getIntensity());
-        set1f(variable + ".constant", light.getConstant());
-        set1f(variable + ".linear", light.getLinear());
-        set1f(variable + ".exponent", light.getExponent());
-    }
-
-    public void setLight(String variable, SpotLight light) {
-        set3f(variable + ".coneDir", light.getConeDir());
-        set1f(variable + ".cutoff", light.getCutOff());
-        setLight(variable + ".pl", light.getPointLight());
     }
 
     private int getUniformLocation(String variable) {

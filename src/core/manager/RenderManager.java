@@ -1,25 +1,20 @@
 package core.manager;
 
-import core.generator.MeshLoader;
-import core.generator.TextureMapLoader;
+import core.system.MeshLoader;
+import core.system.texturePackage.TextureMapLoader;
 import core.utils.Consts;
-import core.utils.Paths;
-import core.World;
-import core.entity.Camera;
+import core.entity.Player;
+import core.entity.World;
 import static org.lwjgl.opengl.GL11.*;
-
 import org.joml.Matrix4f;
-
 import e16craft.E16craft;
-//import core.entity.lights.DirectionalLight;
 
 public class RenderManager {
     private static ShaderManager shader;
     private static MeshLoader meshLoader;
+    private Player player;
 
     private World world;
-    private Camera camera;
-    private InputManager input;
     private MainWindow window;
     private Matrix4f model;
 
@@ -29,36 +24,33 @@ public class RenderManager {
 
         model = new Matrix4f();
         model.identity();
+        player = new Player(0.0f, Consts.CHUNK_HEIGHT + 1, 0.0f);
 
         world = new World();
         meshLoader = new MeshLoader();
-        camera = new Camera();
-        input = new InputManager(15.0f, 0.03f);
     }
 
     public void init() throws Exception {
         shader = new ShaderManager();
         shader.init();
-        input.init();
         world.init();
+        player.init();
         meshLoader.generateTextureObject();
         meshLoader.generateTextureCoordBuffer();
-
-        camera.movePosition(0.0f, Consts.CHUNK_HEIGHT + 1, 0.0f);
     }
 
     public void render() {
         clear();
         shader.bind();
         shader.setMat4f("model", model);
-        shader.setMat4f("view", camera.getViewMatrix());
-        shader.setMat4f("projection", window.updateProjection(camera.getViewMatrix()));
-        world.render();
+        shader.setMat4f("view", player.getView());
+        shader.setMat4f("projection", window.updateProjection(player.getView()));
+        world.render(shader);
         shader.unbind();
     }
 
     public void update() {
-        input.input(camera);
+        player.update();
     }
 
     public void clear() {
@@ -68,10 +60,6 @@ public class RenderManager {
     public void cleanup() {
         meshLoader.cleanup();
         world.cleanup();
-    }
-
-    public Camera getCamera() {
-        return camera;
     }
 
     public static MeshLoader getLoader() {

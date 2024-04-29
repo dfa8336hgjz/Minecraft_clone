@@ -1,4 +1,4 @@
-package core.entity;
+package core.component;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -61,6 +61,10 @@ public class Camera {
         this.rotation.x = x;
         this.rotation.y = y;
         this.rotation.z = z;
+    }
+
+    public Vector3f getPosition(){
+        return position;
     }
 
     public Matrix4f getViewMatrix() {

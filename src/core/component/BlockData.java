@@ -1,4 +1,4 @@
-package core.entity;
+package core.component;
 
 public class BlockData {
     private String blockName;

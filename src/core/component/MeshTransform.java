@@ -1,19 +1,24 @@
-package core.entity;
+package core.component;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class MeshTransform {
-    private Mesh mesh;
     private Vector3f position, rotation;
     private Matrix4f model;
     private float scale;
 
-    public MeshTransform(Mesh mesh, Vector3f position, Vector3f rotation, float scale) {
-        this.mesh = mesh;
+    public MeshTransform(Vector3f position, Vector3f rotation, float scale) {
         this.position = position;
         this.rotation = rotation;
         this.scale = scale;
+        this.model = new Matrix4f();
+    }
+
+    public MeshTransform() {
+        this.position = new Vector3f(0.0f, 0.0f, 0.0f);
+        this.rotation = new Vector3f(0.0f, 0.0f, 0.0f);
+        this.scale = 1.0f;
         this.model = new Matrix4f();
     }
 
@@ -56,10 +61,6 @@ public class MeshTransform {
                 .scale(this.scale);
 
         return model;
-    }
-
-    public Mesh getMesh() {
-        return mesh;
     }
 
     public float getScale() {

@@ -1,4 +1,4 @@
-package core.entity;
+package core.component;
 
 import org.joml.Vector4f;
 

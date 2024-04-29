@@ -1,5 +1,4 @@
-package core.entity;
-import java.io.Serializable;
+package core.component;
 
 public class Block {
     private int id; // id of block in blockMap.json

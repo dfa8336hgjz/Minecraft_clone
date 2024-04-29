@@ -5,8 +5,8 @@ import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 
-import core.interfaces.IGameLogic;
 import e16craft.E16craft;
+import e16craft.Gameplay;
 
 public class GameLauncher {
     public static final long NANOSECOND = 1000000000;
@@ -18,8 +18,16 @@ public class GameLauncher {
 
     private boolean isRunning;
     private MainWindow window;
-    private IGameLogic gameLogic;
+    private Gameplay gameLogic;
     private GLFWErrorCallback errorCallback;
+
+    public void start() throws Exception {
+        init();
+        if (isRunning)
+            return;
+
+        run();
+    }
 
     private void init() throws Exception {
         deltaTime = 0;
@@ -28,14 +36,6 @@ public class GameLauncher {
         gameLogic = E16craft.getGame();
         window.init();
         gameLogic.init();
-    }
-
-    public void start() throws Exception {
-        init();
-        if (isRunning)
-            return;
-
-        run();
     }
 
     public void run() {

@@ -1,4 +1,4 @@
-package core.generator;
+package core.system.texturePackage;
 
 import org.joml.Vector2f;
 import org.json.simple.JSONArray;
@@ -6,8 +6,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import core.entity.BlockData;
-import core.entity.TextureData;
+import core.component.BlockData;
+import core.component.TextureData;
 import core.utils.Consts;
 import core.utils.Paths;
 
@@ -96,9 +96,9 @@ public class TextureMapLoader {
         return blockDataMap.get(blockId);
     }
 
-    public static int getFaceTextureId(int blockId, FACE face){
+    public static int getFaceTextureId(int blockId, int face){
         BlockData block = blockDataMap.get(blockId);
-        return textureMap.get(block.getTextureNameAtSide(face.ordinal()));
+        return textureMap.get(block.getTextureNameAtSide(face));
     }
 
     public static String getTextureName(int id){

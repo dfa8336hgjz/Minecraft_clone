@@ -1,4 +1,4 @@
-package core.generator;
+package core.system.texturePackage;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

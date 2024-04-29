@@ -6,12 +6,12 @@ import core.manager.MainWindow;
 
 public class E16craft {
     private static MainWindow window;
-    private static Test game;
+    private static Gameplay game;
 
     public static void main(String[] args) {
         window = new MainWindow("pmc", 1800, 960, true);
         //TextureMapGenerator gen = new TextureMapGenerator();
-        game = new Test();
+        game = new Gameplay();
         GameLauncher launcher = new GameLauncher();
         try {
             launcher.start();
@@ -24,7 +24,7 @@ public class E16craft {
         return window;
     }
 
-    public static Test getGame() {
+    public static Gameplay getGame() {
         return game;
     }
 }
