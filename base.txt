@@ -1,0 +1,30 @@
+mỗi frame đều phải render lại 1 lượt --> không cần xóa ở world
+
+1 chunk có 2 trạng thái: ready to in/out;
+in      out     action
+T       T       0
+T       F       load to gpu
+F       T       free gpu
+F       F       render
+
+World: 
+    check pos khác nhau:
+        đúng: gửi tín hiệu update
+    render:
+        !in + !out: render
+        !in + out: free gpu
+        in + !out: load gpu
+Updater: 
+- load sẵn chunk <= 9
+
+
+- shouldUpdate (Khi người chơi di chuyển sang tọa độ chunk mới) -> gửi tín hiệu để bắt đầu load các chunk trong vòng bán kính
+- (phải check xem đã cập nhật xong chưa) Đợi đến khi cập nhật xong list chunk mới -> cập nhật danh sách chunk ở World
+
+Thread phụ: nhận tín hiệu update -> kiểm tra vùng bán kính -> gen chunk (se/de) -> thêm vào map -> đánh dấu trạng thái từng chunk -> gửi tín hiệu đồng bộ
+Thread chính:
+- Nếu thay đổi vị trí hoặc vừa vào game -> gửi tín hiệu update
+- Nếu nhận được tín hiệu đồng bộ -> cập nhật chunk map (gửi các chunk cần vào lên gpu, xóa các chunk cần xóa)
+- Luôn render chunk map (chỉ render các chunk có đánh dấu !in + !out)
+
+generate chậm --> k kịp tạo mesh để render

@@ -48,6 +48,8 @@ public class Chunk {
     private int chunkX, chunkZ;
     private ChunkRenderData data;
     private boolean readyToOut;
+    private boolean readyToIn;
+    private boolean isChanged;
 
     public Block[] blocks;
 
@@ -56,6 +58,8 @@ public class Chunk {
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
         readyToOut = false;
+        readyToIn = false;
+        isChanged = false;
     }
 
     public void upToGPU(){
@@ -72,53 +76,6 @@ public class Chunk {
         glDisableVertexAttribArray(0);
         glBindVertexArray(0);
     }
-
-    public void serialize(){
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(Paths.binaryFolder+"/chunk"+chunkX+"_"+chunkZ+".bin"));){
-            for (int vertData : data.vertdata) {
-                out.writeInt(vertData);
-            }
-		} catch (IOException i) {
-			i.printStackTrace();
-		}
-    }
-
-    public void deserialize(){
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(Paths.binaryFolder+"/chunk"+chunkX+"_"+chunkZ+".bin"));)
-        {
-            ArrayList<Integer> dataRead = new ArrayList<>();
-            while(true){
-                try {
-                    int newInt = in.readInt();
-    
-                    if(((newInt & Consts.TEXID_MASK) >> 17) > 0){
-                        dataRead.add(newInt);
-                    }
-                } catch (Exception e) {
-                    break;
-                }
-            }
-
-            ChunkRenderData newRenderData = new ChunkRenderData();
-            int[] newData = dataRead.stream().mapToInt(i-> i).toArray();
-            newRenderData.vertdata = newData;
-            newRenderData.vertexCount = newData.length;
-            
-            data = newRenderData;
-            RenderManager.getLoader().loadMesh(data.vertdata);
-        } catch (Exception e) { 
-            e.printStackTrace(); 
-        }
-    }
-
-    public int getChunkX(){
-        return chunkX;
-    }
-
-    public int getChunkZ(){
-        return chunkZ;
-    }
-
 
     public void generateBlockType(int seed) {
         data = new ChunkRenderData();
@@ -262,7 +219,6 @@ public class Chunk {
                 }
             }
         }
-
     }
 
     private int getflattenedID(int x, int y, int z) {
@@ -302,13 +258,67 @@ public class Chunk {
         
         return newData;
     }
+ 
+    public void serialize(){
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(Paths.binaryFolder+"/chunk"+chunkX+"_"+chunkZ+".bin"));){
+            for (int vertData : data.vertdata) {
+                out.writeInt(vertData);
+            }
+		} catch (IOException i) {
+			i.printStackTrace();
+		}
+    }
+
+    public void deserialize(){
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(Paths.binaryFolder+"/chunk"+chunkX+"_"+chunkZ+".bin"));)
+        {
+            ArrayList<Integer> dataRead = new ArrayList<>();
+            while(true){
+                try {
+                    int newInt = in.readInt();
+    
+                    if(((newInt & Consts.TEXID_MASK) >> 17) > 0){
+                        dataRead.add(newInt);
+                    }
+                } catch (Exception e) {
+                    break;
+                }
+            }
+
+            ChunkRenderData newRenderData = new ChunkRenderData();
+            int[] newData = dataRead.stream().mapToInt(i-> i).toArray();
+            newRenderData.vertdata = newData;
+            newRenderData.vertexCount = newData.length;
+            
+            data = newRenderData;
+        } catch (Exception e) { 
+            e.printStackTrace(); 
+        }
+    }
 
     private static float convertRange(float val) {
         return (val + 1) / 2;
     }
 
-    public void unload(){
-        readyToOut = true;
+
+    public int getChunkX(){
+        return chunkX;
+    }
+
+    public int getChunkZ(){
+        return chunkZ;
+    }
+
+    public void setReadyToIn(boolean ready){
+        readyToIn = ready;
+    }
+
+    public void setReadyToOut(boolean ready){
+        readyToOut = ready;
+    }
+
+    public boolean isReadyToIn(){
+        return readyToIn;
     }
 
     public boolean isReadyToOut(){
@@ -316,8 +326,13 @@ public class Chunk {
     }
 
     public void cleanup(){
-        mesh.cleanup();
+        if(isChanged) serialize();
+        if(mesh != null) mesh.cleanup();
         data = null;
         blocks = null;
+    }
+
+    public ChunkMesh getmesh(){
+        return mesh;
     }
 }

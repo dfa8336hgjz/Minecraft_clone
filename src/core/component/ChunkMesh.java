@@ -15,6 +15,18 @@ public class ChunkMesh {
     private Matrix4f model;
     private float scale;
 
+    public ChunkMesh() {
+        this.vao = 0;
+        this.vbo = 0;
+        this.dataCount = 0;
+        this.material = null;
+
+        this.position = new Vector3f(0.0f);
+        this.rotation = new Vector3f(0.0f);
+        this.scale = 0;
+        this.model = new Matrix4f().identity();
+    }
+
     public ChunkMesh(int vao, int vbo, int dataCount) {
         this.vao = vao;
         this.vbo = vbo;

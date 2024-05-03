@@ -4,104 +4,88 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.joml.Random;
 import org.joml.Vector2i;
 
+import core.manager.ChunkUpdateManager;
 import core.manager.ShaderManager;
-import core.utils.Consts;
 import core.utils.Paths;
 
 public class World {
-    private Map<Vector2i, Chunk> loadingChunks;
-    private int worldSeed;
+    private Map<Vector2i, Chunk> renderingChunks;
+    private ChunkUpdateManager updater;
 
+    private int worldSeed;
     private Vector2i playerLastPos;
+
+    private boolean onUpdate;
 
     public World() {
         Random rng = new Random();
         worldSeed = rng.nextInt(1000);
+        onUpdate = true;
+        updater = new ChunkUpdateManager(worldSeed);
     }
 
     public void init() throws Exception {
-        loadingChunks = new HashMap<Vector2i,Chunk>();
+        renderingChunks = new HashMap<Vector2i,Chunk>();
         playerLastPos = Player.getCamPositionInChunkCoord();
-        update();
+        updater.start();
+        updater.beginUpdateNewChunk();
     }
 
     public boolean shouldUpdate(){
         return !playerLastPos.equals(Player.getCamPositionInChunkCoord());
     }
 
-    public void update() {
-        int upboundX = playerLastPos.x + Consts.CHUNK_RADIUS;
-        int lowboundX = playerLastPos.x - Consts.CHUNK_RADIUS;
-        int upboundZ = playerLastPos.y + Consts.CHUNK_RADIUS;
-        int lowboundZ = playerLastPos.y - Consts.CHUNK_RADIUS;
-
-        for (int i = lowboundX; i < upboundX; i++) {
-            for (int j = lowboundZ; j < upboundZ; j++) {
-                if(!loadingChunks.containsKey(new Vector2i(i, j)) && inPlayerZone(i, j)){
-                    Chunk chunk = new Chunk(i, j);
-                    if(!hasBeenSerialized(i, j)){
-                        chunk.generateBlockType(worldSeed);
-                        chunk.generateNewChunkData();
-                        chunk.serialize();
-                    }
-                    else{
-                        chunk.deserialize();
-                    }
-    
-                    chunk.upToGPU();
-    
-                    Vector2i currentChunkPos = new Vector2i(i, j);
-                    loadingChunks.put(currentChunkPos, chunk);
-                }   
-            }
-        }
-
-        unload();
-    }
-
-    public void unload(){
-        ArrayList<Vector2i> loadedChunkPos = new ArrayList<>(loadingChunks.keySet());
-        for (Vector2i pos : loadedChunkPos) {
-            if(!inPlayerZone(pos.x, pos.y)){
-                loadingChunks.remove(pos);
-            }
-        }
-        
-        loadedChunkPos.clear();
-        loadedChunkPos = null;
-    }
-
     public void render(ShaderManager shader){
+        checkUpdate();
+        synchronizeChunkMap();
+
+        ArrayList<Vector2i> keys = new ArrayList<>(renderingChunks.keySet());
+        for (Vector2i pos : keys) {
+            Chunk chunk = renderingChunks.get(pos);
+            if(!chunk.isReadyToIn() && !chunk.isReadyToOut())
+                chunk.render(shader);
+        }
+        keys = null;
+    }
+
+    private void checkUpdate(){
         if(shouldUpdate()){
             playerLastPos = Player.getCamPositionInChunkCoord();
-            update();
+            updater.beginUpdateNewChunk();
+            onUpdate = true;
         }
+    }
 
-        for (Chunk chunk : loadingChunks.values()) {
-            chunk.render(shader);
+    private void synchronizeChunkMap(){
+        if(onUpdate && updater.checkUpdateDone()){
+            onUpdate = false;
+            renderingChunks = new HashMap<Vector2i,Chunk>(updater.getNewChunk());
+
+            ArrayList<Vector2i> keys = new ArrayList<>(renderingChunks.keySet());
+            for (Vector2i pos : keys) {
+                Chunk chunk = renderingChunks.get(pos);
+                if(chunk.isReadyToIn() && !chunk.isReadyToOut()){
+                    chunk.setReadyToIn(false);
+                    chunk.upToGPU();
+                }
+                else if(chunk.isReadyToOut() && !chunk.isReadyToIn()){
+                    chunk.cleanup();
+                    renderingChunks.remove(pos);
+                }
+            }
+            keys = null;
+
         }
     }
 
     public void cleanup(){
+        updater.cleanup();
         File folder = new File(Paths.binaryFolder);
         for (File file : folder.listFiles()) {
             file.delete();
         }
-    }
-
-
-    public boolean hasBeenSerialized(int x, int z){
-        File file = new File(Paths.binaryFolder+"/chunk"+x+"_"+z+".bin");
-        return file.exists();
-    }
-
-    public boolean inPlayerZone(int x, int z){
-        return (x - playerLastPos.x) * (x - playerLastPos.x) 
-            + (z - playerLastPos.y) * (z - playerLastPos.y)
-        < Consts.CHUNK_RADIUS * Consts.CHUNK_RADIUS;
     }
 }

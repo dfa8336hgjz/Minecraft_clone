@@ -1,12 +1,8 @@
 package core.manager;
 
-import core.component.Camera;
 import core.entity.Player;
-
 import static org.lwjgl.glfw.GLFW.*;
-
 import org.joml.Vector2d;
-
 import e16craft.E16craft;
 
 public class PlayerInputManager {
