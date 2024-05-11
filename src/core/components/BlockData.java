@@ -1,4 +1,4 @@
-package core.component;
+package core.components;
 
 public class BlockData {
     private String blockName;

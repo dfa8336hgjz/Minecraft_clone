@@ -6,8 +6,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import core.component.BlockData;
-import core.component.TextureData;
+import core.components.BlockData;
+import core.components.TextureData;
 import core.utils.Consts;
 import core.utils.Paths;
 

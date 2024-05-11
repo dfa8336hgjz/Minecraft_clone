@@ -1,14 +1,22 @@
-package core.manager;
+package core.launcher;
 
+import org.lwjgl.glfw.GLFWErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
-import org.lwjgl.glfw.GLFWErrorCallback;
+import core.components.Player;
+import core.scene.CraftScene;
+import core.system.GPULoader;
+import core.system.InputManager;
+import core.system.OpenGlWindow;
 
-import e16craft.E16craft;
-import e16craft.Gameplay;
+public class Launcher {
+    private static OpenGlWindow window;
+    private static InputManager inputManager;
+    private static Scene currentScene;
+    private static GPULoader gpuLoader;
+    private Player player;
 
-public class GameLauncher {
     public static final long NANOSECOND = 1000000000;
     public static final float FRAMERATE = 1000;
 
@@ -17,8 +25,6 @@ public class GameLauncher {
     private float frametime = 1.0f / FRAMERATE;
 
     private boolean isRunning;
-    private MainWindow window;
-    private Gameplay gameLogic;
     private GLFWErrorCallback errorCallback;
 
     public void start() throws Exception {
@@ -32,10 +38,17 @@ public class GameLauncher {
     private void init() throws Exception {
         deltaTime = 0;
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
-        window = E16craft.getMainWindow();
-        gameLogic = E16craft.getGame();
+        
+        window = new OpenGlWindow("pmc", 1800, 960, true);
         window.init();
-        gameLogic.init();
+
+        gpuLoader = new GPULoader();
+
+        inputManager = new InputManager();
+        inputManager.init();
+
+        player = new Player();
+        changeScene(0);
     }
 
     public void run() {
@@ -53,6 +66,7 @@ public class GameLauncher {
 
             unprocessTime += deltaTime / (double) NANOSECOND;
             frameCounter += deltaTime;
+            input();
 
             while (unprocessTime > frametime) {
                 unprocessTime -= frametime;
@@ -83,31 +97,57 @@ public class GameLauncher {
     }
 
     public void input() {
-        gameLogic.input();
+        inputManager.input();
     }
 
     public void stop() {
         isRunning = false;
     }
 
-    public void render() {
-        gameLogic.render();
-        window.swapBuffer();
-    }
-
     public void update() {
         window.update();
-        gameLogic.update();
+        currentScene.update();
+    }
+
+    public void render(){
+        currentScene.render();
+        window.swapBuffer();
     }
 
     public void cleanup() {
         window.cleanup();
-        gameLogic.cleanup();
+        gpuLoader.cleanup();
+        currentScene.cleanup();
         errorCallback.free();
         glfwTerminate();
     }
 
     public void setFps(int fps) {
         this.fps = fps;
+    }
+
+    public static void changeScene(int sceneId){
+        if(currentScene != null) currentScene.cleanup();
+        switch (sceneId) {
+            case 0:
+                currentScene = new CraftScene();
+                currentScene.init();
+                break;
+        
+            default:
+                break;
+        }
+    }
+
+    public static OpenGlWindow getWindow(){
+        return window;
+    }
+
+    public static InputManager getInputManager(){
+        return inputManager;
+    }
+
+    public static GPULoader getGpuLoader(){
+        return gpuLoader;
     }
 }

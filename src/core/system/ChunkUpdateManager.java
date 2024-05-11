@@ -1,4 +1,4 @@
-package core.manager;
+package core.system;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,8 +8,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.joml.Vector2i;
 
-import core.entity.Chunk;
-import core.entity.Player;
+import core.components.Chunk;
+import core.components.Player;
 import core.utils.Consts;
 import core.utils.Utils;
 
@@ -33,7 +33,7 @@ public class ChunkUpdateManager extends Thread{
             if(update && running){
                 executor = Executors.newFixedThreadPool(5);
                 readyToLoadChunks.clear();
-                Vector2i playerPos = Player.getCamPositionInChunkCoord();
+                Vector2i playerPos = Player.instance.getPositionInChunkCoord();
                 int upboundX = playerPos.x + Consts.CHUNK_RADIUS;
                 int lowboundX = playerPos.x - Consts.CHUNK_RADIUS;
                 int upboundZ = playerPos.y + Consts.CHUNK_RADIUS;

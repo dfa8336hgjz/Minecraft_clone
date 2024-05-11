@@ -1,10 +1,9 @@
-package core.entity;
+package core.components;
 
-import core.component.Block;
-import core.component.ChunkRenderData;
-import core.component.ChunkMesh;
-import core.manager.RenderManager;
-import core.manager.ShaderManager;
+
+import core.components.ChunkRenderData;
+import core.launcher.Launcher;
+import core.system.ShaderManager;
 import core.system.texturePackage.TextureMapLoader;
 import core.utils.Consts;
 import core.utils.Paths;
@@ -44,7 +43,7 @@ enum UV_INDEX{
 
 
 public class Chunk {
-    private ChunkMesh mesh;
+    private Mesh mesh;
     private int chunkX, chunkZ;
     private ChunkRenderData data;
     private boolean readyToOut;
@@ -54,6 +53,7 @@ public class Chunk {
     public Block[] blocks;
 
     public Chunk(int chunkX, int chunkZ) {
+        
         blocks = new Block[Consts.CHUNK_WIDTH * Consts.CHUNK_HEIGHT * Consts.CHUNK_DEPTH];
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
@@ -64,11 +64,10 @@ public class Chunk {
 
     public void upToGPU(){
         if(mesh == null)
-            mesh = RenderManager.getLoader().loadMesh(data.vertdata);
+            mesh = Launcher.getGpuLoader().loadMesh(data.vertdata);
     }
 
     public void render(ShaderManager shader) {
-        shader.setMat4f("model", mesh.getModelMatrix());
         shader.set2i("chunkPos", chunkX, chunkZ);
         glBindVertexArray(mesh.getVAO());
         glEnableVertexAttribArray(0);
@@ -332,7 +331,7 @@ public class Chunk {
         blocks = null;
     }
 
-    public ChunkMesh getmesh(){
+    public Mesh getmesh(){
         return mesh;
     }
 }

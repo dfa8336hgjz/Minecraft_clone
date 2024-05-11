@@ -1,5 +1,4 @@
-package core.manager;
-
+package core.system;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;

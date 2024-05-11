@@ -1,4 +1,4 @@
-package core.manager;
+package core.system;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -15,7 +15,7 @@ import org.lwjgl.system.MemoryStack;
 
 import core.utils.Consts;
 
-public class MainWindow {
+public class OpenGlWindow {
     public float FOV = (float) Math.toRadians(60);
 
     private final String title;
@@ -26,7 +26,7 @@ public class MainWindow {
     private boolean resize, vsync;
     private final Matrix4f projection;
 
-    public MainWindow(String title, int width, int height, boolean vsync) {
+    public OpenGlWindow(String title, int width, int height, boolean vsync) {
         this.width = width;
         this.height = height;
         this.vsync = vsync;
@@ -98,10 +98,8 @@ public class MainWindow {
     }
 
     public void update() {
-        // Poll for window events. The key callback above will only be
-        // invoked during this call.
         glfwPollEvents();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     public void cleanup() {
@@ -110,10 +108,6 @@ public class MainWindow {
 
     public void setClearColor(float r, float g, float b, float a) {
         glClearColor(r, g, b, a);
-    }
-
-    public boolean isKeyPressed(int keycode) {
-        return glfwGetKey(window, keycode) == GLFW_PRESS;
     }
 
     public boolean shouldClose() {

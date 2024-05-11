@@ -1,4 +1,4 @@
-package core.component;
+package core.components;
 
 public class Block {
     private int id; // id of block in blockMap.json

@@ -6,6 +6,7 @@ flat in uint fragFace;
 
 out vec4 fragColor;
 uniform sampler2D txt;
+uniform vec3 playerPos;
 
 void faceToNormal(in uint face, out vec3 normal){
     switch(face)
@@ -50,5 +51,10 @@ void main()
 	vec3 objectColor = texture(txt, fragTexCoord).rgb;
 	vec3 result = (diffuse + ambient) * objectColor;
 
-    fragColor = vec4(result, 0.0);
+	float distanceToPlayer = length(fragPos - playerPos);
+	float d = (distanceToPlayer / 96.0) - 0.5;
+	d = clamp(d, 0, 1);
+	vec4 fogColor = vec4(153.0 / 255.0, 204.0 / 255.0, 1.0, 1.0);
+
+    fragColor = vec4(result, 0.0) * (1-d) + fogColor * d;
 }

@@ -1,6 +1,5 @@
 package core.system;
 
-import core.system.texturePackage.TextureMapLoader;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -13,25 +12,24 @@ import java.nio.IntBuffer;
 
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
-
-import core.component.ChunkMesh;
-import core.manager.RenderManager;
+import core.components.Mesh;
+import core.system.texturePackage.TextureMapLoader;
 import core.utils.Paths;
 import core.utils.Utils;
 
-public class MeshLoader {
+public class GPULoader {
     private int textureId;
     private int textureCoordBufferId;
     private int textureObjectId;
 
-    public ChunkMesh loadMesh(int[] data) {
+    public Mesh loadMesh(int[] data) {
         int vao = createVAO();
         int vbo = createVBO(0, 1, data);
         unbind();
-        return new ChunkMesh(vao, vbo, data.length);
+        return new Mesh(vao, vbo, data.length);
     }
 
-    public void reloadMesh(int[] data, ChunkMesh mesh) {
+    public void reloadMesh(int[] data, Mesh mesh) {
         int vao = createVAO();
         int vbo = createVBO(0, 1, data);
         unbind();
@@ -101,20 +99,20 @@ public class MeshLoader {
         glBindTexture(GL_TEXTURE_BUFFER, 0);
     }
 
-    public void generateTextureObject() throws Exception{
+    public void generateTextureObject(ShaderManager shader) throws Exception{
         loadTexture(Paths.blockTexture);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureObjectId);
-        RenderManager.getShader().set1i("txt", 0);
-        RenderManager.getShader().bind();
+        shader.set1i("txt", 0);
+        shader.bind();
     }
 
-    public void generateTextureCoordBuffer(){
+    public void generateTextureCoordBuffer(ShaderManager shader){
         storeTexCoordsInBuffer();
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_BUFFER, textureId);
-        RenderManager.getShader().set1i("texCoordBuffer", 1);
-        RenderManager.getShader().unbind();
+        shader.set1i("texCoordBuffer", 1);
+        shader.unbind();
     }
 
     private void unbind() {

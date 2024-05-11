@@ -5,6 +5,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 
 public class Utils {
@@ -30,4 +31,5 @@ public class Utils {
         File file = new File(Paths.binaryFolder+"/chunk"+x+"_"+z+".bin");
         return file.exists();
     }
+
 }

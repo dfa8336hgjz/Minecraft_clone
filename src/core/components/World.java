@@ -1,4 +1,4 @@
-package core.entity;
+package core.components;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -7,8 +7,8 @@ import java.util.Map;
 import org.joml.Random;
 import org.joml.Vector2i;
 
-import core.manager.ChunkUpdateManager;
-import core.manager.ShaderManager;
+import core.system.ChunkUpdateManager;
+import core.system.ShaderManager;
 import core.utils.Paths;
 
 public class World {
@@ -29,13 +29,13 @@ public class World {
 
     public void init() throws Exception {
         renderingChunks = new HashMap<Vector2i,Chunk>();
-        playerLastPos = Player.getCamPositionInChunkCoord();
+        playerLastPos = Player.instance.getPositionInChunkCoord();
         updater.start();
         updater.beginUpdateNewChunk();
     }
 
     public boolean shouldUpdate(){
-        return !playerLastPos.equals(Player.getCamPositionInChunkCoord());
+        return !playerLastPos.equals(Player.instance.getPositionInChunkCoord());
     }
 
     public void render(ShaderManager shader){
@@ -53,7 +53,7 @@ public class World {
 
     private void checkUpdate(){
         if(shouldUpdate()){
-            playerLastPos = Player.getCamPositionInChunkCoord();
+            playerLastPos = Player.instance.getPositionInChunkCoord();
             updater.beginUpdateNewChunk();
             onUpdate = true;
         }
