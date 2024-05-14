@@ -6,7 +6,7 @@ import org.joml.Vector2d;
 import core.components.Player;
 import core.launcher.Launcher;
 import core.system.InputManager;
-import core.system.OpenGlWindow;
+import renderer.OpenGlWindow;
 
 public class PlayerInput extends InputController{
     private Player player;

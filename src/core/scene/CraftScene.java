@@ -6,7 +6,7 @@ import core.components.World;
 import core.launcher.Launcher;
 import core.launcher.Scene;
 import core.system.input.PlayerInput;
-import core.system.ShaderManager;
+import renderer.ShaderManager;
 import core.system.texturePackage.TextureMapLoader;
 import core.utils.Consts;
 
@@ -26,8 +26,8 @@ public class CraftScene extends Scene {
     public void init() {
         try {
             TextureMapLoader mapLoader = new TextureMapLoader();
-            playerView = new Camera(0.0f, Consts.CHUNK_HEIGHT + 1, 0.0f);
-            playerInput = new PlayerInput(15.0f, 0.03f);
+            playerView = new Camera(36.0f, Consts.CHUNK_HEIGHT + 10, 5.0f);
+            playerInput = new PlayerInput(10.0f, 0.03f);
             Player.instance.setPlayerView(playerView);
             Launcher.getInputManager().setCurrentInputControl(playerInput);
 
@@ -50,6 +50,7 @@ public class CraftScene extends Scene {
 
     @Override
     public void render(){
+        Player.instance.update();
         shader.bind();
         shader.setMat4f("model", model);
         shader.setMat4f("view", playerView.getViewMatrix());

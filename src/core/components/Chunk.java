@@ -1,9 +1,7 @@
 package core.components;
 
-
-import core.components.ChunkRenderData;
 import core.launcher.Launcher;
-import core.system.ShaderManager;
+import renderer.ShaderManager;
 import core.system.texturePackage.TextureMapLoader;
 import core.utils.Consts;
 import core.utils.Paths;
@@ -53,8 +51,8 @@ public class Chunk {
     public Block[] blocks;
 
     public Chunk(int chunkX, int chunkZ) {
-        
         blocks = new Block[Consts.CHUNK_WIDTH * Consts.CHUNK_HEIGHT * Consts.CHUNK_DEPTH];
+        data = new ChunkRenderData();
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
         readyToOut = false;
@@ -77,7 +75,6 @@ public class Chunk {
     }
 
     public void generateBlockType(int seed) {
-        data = new ChunkRenderData();
         for (int z = 0; z < Consts.CHUNK_DEPTH; z++) {
             for (int y = 0; y < Consts.CHUNK_HEIGHT; y++) {
                 for (int x = 0; x < Consts.CHUNK_WIDTH; x++) {
@@ -93,57 +90,68 @@ public class Chunk {
                             * 10 + 70;
 
                     if (y < MountainHeight) {
-                        this.blocks[blockId].setId(3);
+                        this.blocks[blockId].setId(5);
                     }
                     if(y < GroundHeight){
-                        this.blocks[blockId].setId(8);
+                        this.blocks[blockId].setId(1);
                     }
+                    // if(chunkX % 2 == 0){
+                    //     if(chunkZ % 2 ==0) this.blocks[blockId].setId(1);
+                    //     else this.blocks[blockId].setId(3);
+                    // }
+                    // else 
+                    // {
+                    //     if(chunkZ % 2 !=0) this.blocks[blockId].setId(2);
+                    //     else this.blocks[blockId].setId(4);
+                    // }
+
+                    
                 }
             }
         }
 
 
-        for (int z = 0; z < Consts.CHUNK_DEPTH; z++) {
-            for (int y = 0; y < Consts.CHUNK_HEIGHT; y++) {
-                for (int x = 0; x < Consts.CHUNK_WIDTH; x++) {
-                    Block thisBlock = getBlock(this.blocks, x, y, z);
+        for (int y = 0; y < Consts.CHUNK_HEIGHT; y++) {
+            for (int x = 0; x < Consts.CHUNK_DEPTH; x++) {
+                for (int z = 0; z < Consts.CHUNK_WIDTH; z++) {
+                    Block thisBlock = getBlock(x, y, z);
                     if (thisBlock.isNullBlock()) {
                         continue;
                     }
 
-                    Block topNeighborBlock = getBlock(this.blocks, x, y + 1, z);
+                    Block topNeighborBlock = getBlock(x, y + 1, z);
                     if (topNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(topNeighborBlock.getId()).isTransparent()) {
+                            || TextureMapLoader.getBlock(topNeighborBlock.getId()).isSolid()) {
                         data.vertexCount += 6;
                     }
 
-                    Block bottomNeighborBlock = getBlock(this.blocks, x, y - 1, z);
+                    Block bottomNeighborBlock = getBlock(x, y - 1, z);
                     if (bottomNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(bottomNeighborBlock.getId()).isTransparent()) {
+                            || TextureMapLoader.getBlock(bottomNeighborBlock.getId()).isSolid()) {
                         data.vertexCount += 6;
                     }
 
-                    Block frontNeighborBlock = getBlock(this.blocks, x, y, z + 1);
+                    Block frontNeighborBlock = getBlock(x, y, z + 1);
                     if (frontNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(frontNeighborBlock.getId()).isTransparent()) {
+                            || TextureMapLoader.getBlock(frontNeighborBlock.getId()).isSolid()) {
                         data.vertexCount += 6;
                     }
 
-                    Block backNeighborBlock = getBlock(this.blocks, x, y, z - 1);
+                    Block backNeighborBlock = getBlock(x, y, z - 1);
                     if (backNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(backNeighborBlock.getId()).isTransparent()) {
+                            || TextureMapLoader.getBlock(backNeighborBlock.getId()).isSolid()) {
                         data.vertexCount += 6;
                     }
 
-                    Block leftNeighborBlock = getBlock(this.blocks, x - 1, y, z);
+                    Block leftNeighborBlock = getBlock(x - 1, y, z);
                     if (leftNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(leftNeighborBlock.getId()).isTransparent()) {
+                            || TextureMapLoader.getBlock(leftNeighborBlock.getId()).isSolid()) {
                         data.vertexCount += 6;
                     }
 
-                    Block rightNeighborBlock = getBlock(this.blocks, x + 1, y, z);
+                    Block rightNeighborBlock = getBlock(x + 1, y, z);
                     if (rightNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(rightNeighborBlock.getId()).isTransparent()) {
+                            || TextureMapLoader.getBlock(rightNeighborBlock.getId()).isSolid()) {
                         data.vertexCount += 6;
                     }
                 }
@@ -160,7 +168,7 @@ public class Chunk {
         for (int z = 0; z < Consts.CHUNK_DEPTH; z++) {
             for (int y = 0; y < Consts.CHUNK_HEIGHT; y++) {
                 for (int x = 0; x < Consts.CHUNK_WIDTH; x++) {
-                    Block thisBlock = getBlock(this.blocks, x, y, z);
+                    Block thisBlock = getBlock(x, y, z);
                     if (thisBlock.isNullBlock()) {
                         continue;
                     }
@@ -174,44 +182,44 @@ public class Chunk {
                     Vector3i vert6 = new Vector3i(x, y, z);
                     Vector3i vert7 = new Vector3i(x + 1, y, z);
 
-                    Block topNeighborBlock = getBlock(this.blocks, x, y + 1, z);
+                    Block topNeighborBlock = getBlock(x, y + 1, z);
                     if (topNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(topNeighborBlock.getId()).isTransparent()) {
+                            || TextureMapLoader.getBlock(topNeighborBlock.getId()).isSolid()) {
                         loadBlock(vert0, vert1, vert2, vert3, thisBlock, FACE.TOP, vertexCursor);
                         vertexCursor += 6;
                     }
 
-                    Block bottomNeighborBlock = getBlock(this.blocks, x, y - 1, z);
+                    Block bottomNeighborBlock = getBlock(x, y - 1, z);
                     if (bottomNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(bottomNeighborBlock.getId()).isTransparent()) {
+                            || TextureMapLoader.getBlock(bottomNeighborBlock.getId()).isSolid()) {
                         loadBlock(vert5, vert4, vert7, vert6, thisBlock, FACE.BOTTOM, vertexCursor);
                         vertexCursor += 6;
                     }
 
-                    Block frontNeighborBlock = getBlock(this.blocks, x, y, z + 1);
+                    Block frontNeighborBlock = getBlock(x, y, z + 1);
                     if (frontNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(frontNeighborBlock.getId()).isTransparent()) {
+                            || TextureMapLoader.getBlock(frontNeighborBlock.getId()).isSolid()) {
                         loadBlock(vert1, vert0, vert4, vert5, thisBlock, FACE.FRONT, vertexCursor);
                         vertexCursor += 6;
                     }
 
-                    Block backNeighborBlock = getBlock(this.blocks, x, y, z - 1);
+                    Block backNeighborBlock = getBlock(x, y, z - 1);
                     if (backNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(backNeighborBlock.getId()).isTransparent()) {
+                            || TextureMapLoader.getBlock(backNeighborBlock.getId()).isSolid()) {
                         loadBlock(vert3, vert2, vert6, vert7, thisBlock, FACE.BACK, vertexCursor);
                         vertexCursor += 6;
                     }
 
-                    Block leftNeighborBlock = getBlock(this.blocks, x - 1, y, z);
+                    Block leftNeighborBlock = getBlock(x - 1, y, z);
                     if (leftNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(leftNeighborBlock.getId()).isTransparent()) {
+                            || TextureMapLoader.getBlock(leftNeighborBlock.getId()).isSolid()) {
                         loadBlock(vert2, vert1, vert5, vert6, thisBlock, FACE.LEFT, vertexCursor);
                         vertexCursor += 6;
                     }
 
-                    Block rightNeighborBlock = getBlock(this.blocks, x + 1, y, z);
+                    Block rightNeighborBlock = getBlock(x + 1, y, z);
                     if (rightNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(rightNeighborBlock.getId()).isTransparent()) {
+                            || TextureMapLoader.getBlock(rightNeighborBlock.getId()).isSolid()) {
                         loadBlock(vert0, vert3, vert7, vert4, thisBlock, FACE.RIGHT, vertexCursor);
                         vertexCursor += 6;
                     }
@@ -228,12 +236,19 @@ public class Chunk {
         return x + y * (Consts.CHUNK_WIDTH+1) + z * (Consts.CHUNK_WIDTH+1) * (Consts.CHUNK_HEIGHT+1);
     }
 
-    private Block getBlock(Block[] blockTypeMap, int x, int y, int z) {
+    public Block getBlock(int x, int y, int z) {
         int id = getflattenedID(x, y, z);
-        Block NULLBLOCK = new Block(-1, 0, 0, 0);
+        Block NULLBLOCK = new Block(0, false);
         return (x >= Consts.CHUNK_WIDTH || x < 0 || z >= Consts.CHUNK_DEPTH || z < 0 || y >= Consts.CHUNK_HEIGHT
                 || y < 0) ? NULLBLOCK
-                        : blockTypeMap[id];
+                        : blocks[id];
+    }
+
+    public Block getLocalBlock(int x, int y, int z) {
+        int id = getflattenedID(x, y, z);
+        Block NULLBLOCK = new Block(0, false);
+        System.out.println(blocks.length);
+        return (id < 65536)? blocks[id] : NULLBLOCK;
     }
 
     private void loadBlock(Vector3i vert0, Vector3i vert1, Vector3i vert2, Vector3i vert3, 
@@ -260,6 +275,9 @@ public class Chunk {
  
     public void serialize(){
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(Paths.binaryFolder+"/chunk"+chunkX+"_"+chunkZ+".bin"));){
+            for (Block block : blocks) {
+                out.writeByte(block.wrapData());
+            }
             for (int vertData : data.vertdata) {
                 out.writeInt(vertData);
             }
@@ -271,6 +289,11 @@ public class Chunk {
     public void deserialize(){
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(Paths.binaryFolder+"/chunk"+chunkX+"_"+chunkZ+".bin"));)
         {
+            for (int j = 0; j < Consts.CHUNK_DEPTH * Consts.CHUNK_HEIGHT * Consts.CHUNK_WIDTH; j++) {
+                blocks[j] = new Block();
+                blocks[j].unwrapData(in.readByte());
+            }
+
             ArrayList<Integer> dataRead = new ArrayList<>();
             while(true){
                 try {
@@ -284,12 +307,10 @@ public class Chunk {
                 }
             }
 
-            ChunkRenderData newRenderData = new ChunkRenderData();
             int[] newData = dataRead.stream().mapToInt(i-> i).toArray();
-            newRenderData.vertdata = newData;
-            newRenderData.vertexCount = newData.length;
+            data.vertdata = newData;
+            data.vertexCount = newData.length;
             
-            data = newRenderData;
         } catch (Exception e) { 
             e.printStackTrace(); 
         }

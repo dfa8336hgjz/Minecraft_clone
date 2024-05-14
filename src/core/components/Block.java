@@ -1,65 +1,51 @@
 package core.components;
 
+import core.utils.Consts;
+
 public class Block {
     private int id; // id of block in blockMap.json
-    private int lightLevel;
-    private int rotation;
-    private long padding;
+    private boolean isSolid;
 
-    public Block(int id, int lightLevel, int rotation, long padding) {
+    public Block(int id, boolean isSolid) {
         this.id = id;
-        this.lightLevel = lightLevel;
-        this.rotation = rotation;
-        this.padding = padding;
+        this.isSolid = isSolid;
     }
 
     public Block() {
-        this.id = -1;
-        this.lightLevel = 0;
-        this.rotation = 0;
-        this.padding = 0;
+        this.id = 0;
     }
 
     public boolean compare(Block otherBlock) {
-        return (this.id == otherBlock.id) && (this.lightLevel == otherBlock.lightLevel)
-                && (this.rotation == otherBlock.rotation) && (this.padding == otherBlock.padding);
+        return (this.id == otherBlock.id);
     }
 
     public boolean isNullBlock() {
-        return (this.id == -1) && (this.lightLevel == 0)
-                && (this.rotation == 0) && (this.padding == 0);
+        return (this.id == 0);
     }
 
     public int getId() {
         return id;
     }
 
-    public int getLightLevel() {
-        return lightLevel;
-    }
-
-    public int getRotation() {
-        return rotation;
-    }
-
-    public long getPadding() {
-        return padding;
-    }
-
     public void setId(int id) {
         this.id = id;
+        this.isSolid = true;
     }
 
-    public void setPadding() {
-
+    public boolean isSolid(){
+        return isSolid;
     }
 
-    public void setRotation() {
-
+    public byte wrapData(){
+        byte newData = 0;
+        newData |= isSolid ? 1: 0;
+        newData |= ((id << 1) & Consts.BLOCKID_MASK);
+        return newData;
     }
 
-    public void setLightLevel() {
-
+    public void unwrapData(byte data){
+        isSolid = ((data & 1) == 0);
+        id = (int)((data & Consts.BLOCKID_MASK) >> 1);
     }
 
 }

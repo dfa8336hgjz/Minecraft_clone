@@ -32,4 +32,11 @@ public class Utils {
         return file.exists();
     }
 
+    public static Vector3f clampVelocity(Vector3f vector){
+        return new Vector3f(
+            Math.max(-Consts.VELOCITY_BOUND.x, Math.min(Consts.VELOCITY_BOUND.x, vector.x)),
+            Math.max(-Consts.VELOCITY_BOUND.y, Math.min(Consts.VELOCITY_BOUND.y, vector.y)),
+            Math.max(-Consts.VELOCITY_BOUND.z, Math.min(Consts.VELOCITY_BOUND.z, vector.z))
+        );
+    }
 }

@@ -1,4 +1,4 @@
-package core.system;
+package renderer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;

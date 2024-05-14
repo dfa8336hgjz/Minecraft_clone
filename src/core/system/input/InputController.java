@@ -2,7 +2,7 @@ package core.system.input;
 
 import org.joml.Vector2d;
 
-import core.system.OpenGlWindow;
+import renderer.OpenGlWindow;
 
 public abstract class InputController {
     public void KeyboardInput(OpenGlWindow window){};

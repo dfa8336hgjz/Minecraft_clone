@@ -1,5 +1,6 @@
 package core.system;
 
+import renderer.OpenGlWindow;
 import static org.lwjgl.glfw.GLFW.*;
 import org.joml.Vector2d;
 

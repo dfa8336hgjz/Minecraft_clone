@@ -1,6 +1,16 @@
 [
     {
         "id": 0,
+        "name": "null",
+        "top": "",
+        "bottom": "",
+        "front": "",
+        "back": "",
+        "left": "",
+        "right": ""
+    },
+    {
+        "id": 1,
         "name": "Dirt",
         "top": "grass_block_top",
         "bottom": "grass_block_top",
@@ -10,7 +20,7 @@
         "right": "grass_block_side"
     },
     {
-        "id": 1,
+        "id": 2,
         "name": "Sand",
         "top": "sand",
         "bottom": "sand",
@@ -20,7 +30,7 @@
         "right": "sand"
     },
     {
-        "id": 2,
+        "id": 3,
         "name": "Plank",
         "top": "oak_planks",
         "bottom": "oak_planks",
@@ -30,7 +40,7 @@
         "right": "oak_planks"
     },
     {
-        "id": 3,
+        "id": 4,
         "name": "Cobblestone",
         "top": "cobblestone",
         "bottom": "cobblestone",
@@ -40,7 +50,7 @@
         "right": "cobblestone"
     },
     {
-        "id": 4,
+        "id": 5,
         "name": "Diamond block",
         "top": "diamond_block",
         "bottom": "diamond_block",
@@ -50,7 +60,7 @@
         "right": "diamond_block"
     },
     {
-        "id": 5,
+        "id": 6,
         "name": "Quartz brick",
         "top": "quartz_bricks",
         "bottom": "quartz_bricks",
@@ -60,7 +70,7 @@
         "right": "quartz_bricks"
     },
     {
-        "id": 6,
+        "id": 7,
         "name": "Quartz block",
         "top": "quartz_block_top",
         "bottom": "quartz_block_bottom",
@@ -70,7 +80,7 @@
         "right": "quartz_block_side"
     },
     {
-        "id": 7,
+        "id": 8,
         "name": "Chiseled Quartz",
         "top": "chiseled_quartz_block_top",
         "bottom": "chiseled_quartz_block_top",
@@ -80,7 +90,7 @@
         "right": "chiseled_quartz_block"
     },
     {
-        "id": 8,
+        "id": 9,
         "name": "Lime concrete",
         "top": "lime_concrete",
         "bottom": "lime_concrete",

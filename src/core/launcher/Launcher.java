@@ -6,9 +6,9 @@ import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
 import core.components.Player;
 import core.scene.CraftScene;
-import core.system.GPULoader;
+import renderer.GPULoader;
 import core.system.InputManager;
-import core.system.OpenGlWindow;
+import renderer.OpenGlWindow;
 
 public class Launcher {
     private static OpenGlWindow window;

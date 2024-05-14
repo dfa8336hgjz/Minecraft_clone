@@ -5,6 +5,7 @@ import org.joml.Vector3f;
 
 public class Transform {
     public Vector3f position, rotation;
+    public Vector3f up, right, forward;
     public float scale;
     public Matrix4f modelMatrix;
 

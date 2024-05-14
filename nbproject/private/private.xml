@@ -12,18 +12,7 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Project/java/Minecraft_clone/src/core/components/BlockData.java</file>
-            <file>file:/D:/Project/java/Minecraft_clone/src/core/system/ChunkUpdateManager.java</file>
-            <file>file:/D:/Project/java/Minecraft_clone/src/core/components/RigidBody.java</file>
-            <file>file:/D:/Project/java/Minecraft_clone/src/core/components/Transform.java</file>
-            <file>file:/D:/Project/java/Minecraft_clone/src/core/system/input/InputController.java</file>
-            <file>file:/D:/Project/java/Minecraft_clone/src/core/components/Chunk.java</file>
-            <file>file:/D:/Project/java/Minecraft_clone/src/core/components/ChunkRenderData.java</file>
-            <file>file:/D:/Project/java/Minecraft_clone/src/core/components/Mesh.java</file>
-            <file>file:/D:/Project/java/Minecraft_clone/src/core/components/BoxCollider.java</file>
-            <file>file:/D:/Project/java/Minecraft_clone/src/core/components/World.java</file>
-            <file>file:/D:/Project/java/Minecraft_clone/src/core/launcher/Launcher.java</file>
-            <file>file:/D:/Project/java/Minecraft_clone/src/core/scene/CraftScene.java</file>
+            <file>file:/D:/Project/java/Minecraft_clone/src/renderer/Framebuffer.java</file>
         </group>
     </open-files>
 </project-private>

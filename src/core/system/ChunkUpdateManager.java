@@ -10,6 +10,7 @@ import org.joml.Vector2i;
 
 import core.components.Chunk;
 import core.components.Player;
+import core.components.World;
 import core.utils.Consts;
 import core.utils.Utils;
 
@@ -58,8 +59,7 @@ public class ChunkUpdateManager extends Thread{
                     break;
                 }
 
-                update = false;  
-                
+                update = false;
             }
 
             if(!running) {
