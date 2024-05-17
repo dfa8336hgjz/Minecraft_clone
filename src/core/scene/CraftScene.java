@@ -5,8 +5,8 @@ import core.components.Player;
 import core.components.World;
 import core.launcher.Launcher;
 import core.launcher.Scene;
+import core.renderer.ShaderManager;
 import core.system.input.PlayerInput;
-import renderer.ShaderManager;
 import core.system.texturePackage.TextureMapLoader;
 import core.utils.Consts;
 
@@ -27,11 +27,11 @@ public class CraftScene extends Scene {
         try {
             TextureMapLoader mapLoader = new TextureMapLoader();
             playerView = new Camera(36.0f, Consts.CHUNK_HEIGHT + 10, 5.0f);
-            playerInput = new PlayerInput(10.0f, 0.03f);
+            playerInput = new PlayerInput(5.0f, 0.01f);
             Player.instance.setPlayerView(playerView);
             Launcher.getInputManager().setCurrentInputControl(playerInput);
 
-            shader = new ShaderManager();
+            shader = new ShaderManager("src\\assets\\shader\\vs.glsl","src\\assets\\shader\\fs.glsl");
             shader.init();
 
             world = new World();

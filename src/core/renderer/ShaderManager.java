@@ -1,4 +1,4 @@
-package renderer;
+package core.renderer;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -8,7 +8,6 @@ import java.util.Scanner;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
-import core.utils.Paths;
 
 import static org.lwjgl.opengl.GL20.*;
 
@@ -17,13 +16,13 @@ public class ShaderManager {
     private int vsID, fsID;
     private Map<String, Integer> locationMap;
 
-    public ShaderManager() throws Exception {
+    public ShaderManager(String vsFilePath, String fsFilePath) throws Exception {
         programID = glCreateProgram();
         if (programID == 0)
             throw new Exception("Failed to create shader program");
 
-        vsID = compileShader(loadShadersFromFile(Paths.vsPath), GL_VERTEX_SHADER);
-        fsID = compileShader(loadShadersFromFile(Paths.fsPath), GL_FRAGMENT_SHADER);
+        vsID = compileShader(loadShadersFromFile(vsFilePath), GL_VERTEX_SHADER);
+        fsID = compileShader(loadShadersFromFile(fsFilePath), GL_FRAGMENT_SHADER);
 
     }
 

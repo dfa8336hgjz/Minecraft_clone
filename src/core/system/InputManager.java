@@ -1,10 +1,10 @@
 package core.system;
 
-import renderer.OpenGlWindow;
 import static org.lwjgl.glfw.GLFW.*;
 import org.joml.Vector2d;
 
 import core.launcher.Launcher;
+import core.renderer.OpenGlWindow;
 import core.system.input.InputController;
 
 public class InputManager {

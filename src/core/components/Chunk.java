@@ -1,7 +1,7 @@
 package core.components;
 
 import core.launcher.Launcher;
-import renderer.ShaderManager;
+import core.renderer.ShaderManager;
 import core.system.texturePackage.TextureMapLoader;
 import core.utils.Consts;
 import core.utils.Paths;

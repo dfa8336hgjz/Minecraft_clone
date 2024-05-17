@@ -5,10 +5,11 @@ import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
 import core.components.Player;
+import core.renderer.GPULoader;
+import core.renderer.OpenGlWindow;
 import core.scene.CraftScene;
-import renderer.GPULoader;
+import core.scene.StartScene;
 import core.system.InputManager;
-import renderer.OpenGlWindow;
 
 public class Launcher {
     private static OpenGlWindow window;
@@ -48,7 +49,7 @@ public class Launcher {
         inputManager.init();
 
         player = new Player();
-        changeScene(0);
+        changeScene(1);
     }
 
     public void run() {
@@ -130,6 +131,10 @@ public class Launcher {
         if(currentScene != null) currentScene.cleanup();
         switch (sceneId) {
             case 0:
+                currentScene = new StartScene();
+                currentScene.init();
+                break;
+            case 1:
                 currentScene = new CraftScene();
                 currentScene.init();
                 break;

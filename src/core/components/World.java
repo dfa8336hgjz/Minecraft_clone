@@ -7,8 +7,8 @@ import java.util.Map;
 import org.joml.Random;
 import org.joml.Vector2i;
 
+import core.renderer.ShaderManager;
 import core.system.ChunkUpdateManager;
-import renderer.ShaderManager;
 import core.utils.Paths;
 
 public class World {
