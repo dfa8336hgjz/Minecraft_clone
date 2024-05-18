@@ -5,6 +5,20 @@ import org.lwjgl.opengl.GL15;
 
 import core.renderer.ShaderManager;
 
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL15C.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15C.glGenBuffers;
@@ -14,7 +28,7 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import static org.lwjgl.opengl.GL31.GL_TEXTURE_BUFFER;
 
-public class Batch {
+public class FontBatch {
     private int[] indices = {
             0, 1, 3,
             1, 2, 3
@@ -72,12 +86,13 @@ public class Batch {
     }
 
     public void flushBatch() {
-        // Clear the buffer on the GPU, and then upload the CPU contents, and then draw
+        glDisable(GL_CULL_FACE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, Float.BYTES * VERTEX_SIZE * BATCH_SIZE, GL_DYNAMIC_DRAW);
         glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
 
-        // Draw the buffer that we just uploaded
         shader.bind();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_BUFFER, font.textureId);
@@ -85,15 +100,15 @@ public class Batch {
         shader.setMat4f("uProjection", projection);
 
         glBindVertexArray(vao);
-
         glDrawElements(GL_TRIANGLES, size * 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
 
-        // Reset batch for use on next draw call
         size = 0;
+        glEnable(GL_CULL_FACE);
+        glDisable(GL_BLEND);
     }
 
     public void addCharacter(float x, float y, float scale, CharInfo charInfo, int rgb) {
-        // If we have no more room in the current batch, flush it and start with a fresh batch
         if (size >= BATCH_SIZE - 4) {
             flushBatch();
         }

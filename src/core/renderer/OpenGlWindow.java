@@ -2,6 +2,7 @@ package core.renderer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -48,6 +49,7 @@ public class OpenGlWindow {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+        
 
         window = glfwCreateWindow(width, height, title, NULL, NULL);
         if (window == NULL) {
@@ -87,8 +89,6 @@ public class OpenGlWindow {
         glfwShowWindow(window);
         GL.createCapabilities();
 
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_STENCIL_TEST);
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
 

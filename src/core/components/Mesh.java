@@ -29,6 +29,10 @@ public class Mesh {
         return vao;
     }
 
+    public int getVBO() {
+        return vbo;
+    }
+
     public void setBuffer(int vao, int vbo) {
         this.vao = vao;
         this.vbo = vbo;

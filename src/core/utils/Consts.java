@@ -6,8 +6,8 @@ import org.joml.Vector4f;
 public class Consts {
     public static final int TEXTURE_COUNT = 925;
 
-    public static final float Z_NEAR = 0.01f;
-    public static final float Z_FAR = 1000f;
+    public static final float Z_NEAR = 0.1f;
+    public static final float Z_FAR = 2000f;
 
     public static Vector4f DEFAULT_COLOR = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
 

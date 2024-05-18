@@ -4,25 +4,18 @@ import core.launcher.Launcher;
 import core.launcher.Scene;
 import core.renderer.font.Cfont;
 import core.system.input.NormalInput;
-import core.renderer.font.Batch;
-
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.*;
+import core.renderer.font.FontBatch;
 
 public class StartScene extends Scene{
     private NormalInput input;
-    private Batch batch;
+    private FontBatch batch;
     private Cfont font;
 
     @Override
     public void init() {
         try {
-            glDisable(GL_CULL_FACE);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             font = new Cfont("Arial", 64);
-            batch = new Batch();
+            batch = new FontBatch();
             batch.font = font;
             batch.initBatch();
 
@@ -48,6 +41,7 @@ public class StartScene extends Scene{
 
     @Override
     public void cleanup() {
+        
     }
     
 }

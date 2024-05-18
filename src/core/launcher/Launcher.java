@@ -40,7 +40,7 @@ public class Launcher {
         deltaTime = 0;
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
         
-        window = new OpenGlWindow("pmc", 1800, 960, true);
+        window = new OpenGlWindow("pmc", 1500, 900, true);
         window.init();
 
         gpuLoader = new GPULoader();

@@ -37,4 +37,9 @@ public class Camera {
         viewMatrix.translate(-transform.position.x, -transform.position.y, -transform.position.z);
         return viewMatrix;
     }
+
+    public Vector3f getForwardVector(){
+        viewMatrix = getViewMatrix();
+        return new Vector3f(-viewMatrix.get(0, 2), -viewMatrix.get(1, 2), -viewMatrix.get(2, 2)).normalize();
+    }
 }

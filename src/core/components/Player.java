@@ -4,6 +4,7 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import core.launcher.Launcher;
+import core.renderer.Renderer2dBatch;
 import core.utils.Consts;
 import core.utils.Utils;
 
@@ -12,6 +13,9 @@ public class Player {
     public Camera camera;
     private BoxCollider boxCollider;
     private RigidBody rigidBody;
+
+    private boolean render = false;
+    private int maxRaycastDistance = 5;
 
     public Player(){
         instance = this;
@@ -38,7 +42,7 @@ public class Player {
         rigidBody.velocity = Utils.clampVelocity(rigidBody.velocity);
         
         checkCollision(dt);
-        
+        checkRaycast();
     }
 
     private void checkCollision(float dt){
@@ -62,7 +66,6 @@ public class Player {
                 }
             }    
         }
-
     }
 
     private Vector3f resolveCollision(float blockX, float blockY, float blockZ){
@@ -141,4 +144,63 @@ public class Player {
         }
     }
 
+    public void checkRaycast(){
+        try {
+        Vector3f direction = camera.getForwardVector();
+        Vector3f currentOrigin = (Vector3f)camera.transform.position.clone();
+        Vector3f pointOnRay = (Vector3f)camera.transform.position.clone();
+
+        for (float i = 0f; i < maxRaycastDistance; i+= 0.1f) {
+                Vector3f pointOnRayCopy = (Vector3f)pointOnRay.clone();
+                if(pointOnRayCopy.floor() != currentOrigin)
+                {
+                    currentOrigin = pointOnRayCopy;
+                    Block currentBlock = World.instance.getBlockAt((int)currentOrigin.x, (int)currentOrigin.y, (int)currentOrigin.z);
+                    if(currentBlock != null && !currentBlock.isNullBlock()){
+                        Vector3f max = ((Vector3f)currentOrigin.clone()).add(1.0f, 1.0f, 1.0f);
+                        Vector3f min = (Vector3f)currentOrigin.clone();
+
+                        float t1 = (min.x - camera.transform.position.x) / direction.x;
+                        float t2 = (max.x - camera.transform.position.x) / direction.x;
+
+                        float t3 = (min.y - camera.transform.position.y) / direction.y;
+                        float t4 = (max.y - camera.transform.position.y) / direction.y;
+
+                        float t5 = (min.z - camera.transform.position.z) / direction.z;
+                        float t6 = (max.z - camera.transform.position.z) / direction.z;
+
+                        float tmin = Math.max(Math.max(Math.min(t1, t2), Math.min(t3, t4)), Math.min(t5, t6));
+                        float tmax = Math.min(Math.min(Math.max(t1, t2), Math.max(t3, t4)), Math.max(t5, t6));
+                        if (tmax < 0 || tmin > tmax) 
+						{ 
+							// No intersection
+							break;
+						}
+						float depth = 0.0f;
+						if (tmin < 0.0f)
+						{
+							// The ray's origin is inside the AABB
+							depth = tmax;
+						}
+						else
+						{
+							depth = tmin;
+						}
+                        Renderer2dBatch.instance.drawBox(currentOrigin.add(0.5f, 0.5f, 0.5f), new Vector3f(1.0f));
+                        Renderer2dBatch.instance.drawBox(new Vector3f(
+                            camera.transform.position.x + direction.x * depth,
+                            camera.transform.position.y + direction.y * depth,
+                            camera.transform.position.z + direction.z * depth
+                        ), new Vector3f(0.1f));
+                        
+                        break;
+                    }
+                }
+                pointOnRay.add(direction.x * 0.1f, direction.y * 0.1f, direction.z * 0.1f);
+            }
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+    }
+    
 }
