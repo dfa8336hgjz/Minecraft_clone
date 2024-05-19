@@ -1,13 +1,10 @@
 package core.scene;
 
-import core.launcher.Launcher;
 import core.launcher.Scene;
 import core.renderer.font.Cfont;
-import core.system.input.NormalInput;
 import core.renderer.font.FontBatch;
 
 public class StartScene extends Scene{
-    private NormalInput input;
     private FontBatch batch;
     private Cfont font;
 
@@ -19,8 +16,6 @@ public class StartScene extends Scene{
             batch.font = font;
             batch.initBatch();
 
-            input = new NormalInput();
-            Launcher.getInputManager().setCurrentInputControl(input);
         } catch (Exception e) {
             e.printStackTrace();
         }

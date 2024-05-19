@@ -15,7 +15,6 @@ public class Consts {
     public static final int CHUNK_WIDTH = 16;
     public static final int CHUNK_HEIGHT = 256;
     public static final int CHUNK_DEPTH = 16;
-
     public static final int CHUNK_RADIUS = 7;
 
     public static final float increment = 100.0f;
@@ -34,4 +33,9 @@ public class Consts {
     // Gravity
     public static final float GRAVITY = 12.0f;
     public static final Vector3f VELOCITY_BOUND = new Vector3f(50.0f, 50.0f, 50.0f);
+
+    // Player Input
+    public static final float MouseSentivity = 0.05f;
+    public static final float CREATIVE_Speed = 10f;
+    public static final float SPECTATOR_Speed = 15f;
 }

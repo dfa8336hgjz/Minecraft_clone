@@ -9,7 +9,6 @@ import static org.lwjgl.opengl.GL45.glCreateVertexArrays;
 
 import org.joml.Vector3f;
 
-import core.components.Camera;
 import core.components.Mesh;
 import core.components.Player;
 import core.launcher.Launcher;
@@ -19,7 +18,6 @@ public class Renderer2dBatch {
     private final int BATCH_VERTEX_SIZE = 2400;
     private float vertices[] = new float[BATCH_VERTEX_SIZE];
 
-    private Camera camera;
     private Mesh renderMesh;
     private ShaderManager shader;
 

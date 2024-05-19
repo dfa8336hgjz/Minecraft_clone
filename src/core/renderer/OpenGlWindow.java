@@ -2,7 +2,6 @@ package core.renderer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -33,6 +32,7 @@ public class OpenGlWindow {
         this.vsync = vsync;
         this.title = title;
         this.projection = new Matrix4f();
+        init();
     }
 
     public void init() {

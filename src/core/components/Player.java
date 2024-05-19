@@ -5,20 +5,23 @@ import org.joml.Vector3f;
 
 import core.launcher.Launcher;
 import core.renderer.Renderer2dBatch;
+import core.system.PlayerInputManager;
 import core.utils.Consts;
 import core.utils.Utils;
 
 public class Player {
     public static Player instance;
-    public Camera camera;
     private BoxCollider boxCollider;
     private RigidBody rigidBody;
+    public Camera camera;
+    public PlayerInputManager input;
 
-    private boolean render = false;
     private int maxRaycastDistance = 5;
 
     public Player(){
         instance = this;
+        input = new PlayerInputManager();
+        input.init();
     }
 
     public void setPlayerView(Camera camera){
@@ -36,13 +39,18 @@ public class Player {
 
     public void update(){
         float dt = (float)Launcher.getDeltaTime();
+        if(!input.isSpectatorModeOn()){
+            gravityOn(dt);
+            checkCollision(dt);
+            checkRaycast();
+        }
+    }
+
+    private void gravityOn(float dt){
         camera.transform.position.add(rigidBody.velocity.x * dt, rigidBody.velocity.y * dt, rigidBody.velocity.z * dt);
         rigidBody.velocity.add(rigidBody.acceleration.x * dt, rigidBody.acceleration.y * dt, rigidBody.acceleration.z * dt);
         rigidBody.velocity.sub(0.0f , Consts.GRAVITY * dt, 0.0f);
         rigidBody.velocity = Utils.clampVelocity(rigidBody.velocity);
-        
-        checkCollision(dt);
-        checkRaycast();
     }
 
     private void checkCollision(float dt){
@@ -202,5 +210,4 @@ public class Player {
             e.printStackTrace();
         }
     }
-    
 }

@@ -7,7 +7,6 @@ import core.launcher.Launcher;
 import core.launcher.Scene;
 import core.renderer.Renderer2dBatch;
 import core.renderer.ShaderManager;
-import core.system.input.PlayerInput;
 import core.system.texturePackage.TextureMapLoader;
 import core.utils.Consts;
 
@@ -19,7 +18,6 @@ public class CraftScene extends Scene {
     private World world;
     private Camera playerView;
     private ShaderManager shader;
-    private PlayerInput playerInput;
     private Renderer2dBatch renderBatch;
     private Matrix4f model = new Matrix4f().identity();
 
@@ -29,10 +27,8 @@ public class CraftScene extends Scene {
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_STENCIL_TEST);
             TextureMapLoader mapLoader = new TextureMapLoader();
-            playerView = new Camera(36.0f, Consts.CHUNK_HEIGHT + 10, 5.0f);
-            playerInput = new PlayerInput(15.0f, 0.05f);
+            playerView = new Camera(0.0f, Consts.CHUNK_HEIGHT + 10, 0.0f);
             Player.instance.setPlayerView(playerView);
-            Launcher.getInputManager().setCurrentInputControl(playerInput);
             renderBatch = new Renderer2dBatch();
 
             shader = new ShaderManager("src\\assets\\shader\\vs.glsl","src\\assets\\shader\\fs.glsl");

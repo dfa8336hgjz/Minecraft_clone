@@ -9,11 +9,9 @@ import core.renderer.GPULoader;
 import core.renderer.OpenGlWindow;
 import core.scene.CraftScene;
 import core.scene.StartScene;
-import core.system.InputManager;
 
 public class Launcher {
     private static OpenGlWindow window;
-    private static InputManager inputManager;
     private static Scene currentScene;
     private static GPULoader gpuLoader;
     private Player player;
@@ -39,15 +37,8 @@ public class Launcher {
     private void init() throws Exception {
         deltaTime = 0;
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
-        
-        window = new OpenGlWindow("pmc", 1500, 900, true);
-        window.init();
-
+        window = new OpenGlWindow("pmc", 700, 900, true);
         gpuLoader = new GPULoader();
-
-        inputManager = new InputManager();
-        inputManager.init();
-
         player = new Player();
         changeScene(1);
     }
@@ -98,7 +89,7 @@ public class Launcher {
     }
 
     public void input() {
-        inputManager.input();
+        player.input.input();
     }
 
     public void stop() {
@@ -146,10 +137,6 @@ public class Launcher {
 
     public static OpenGlWindow getWindow(){
         return window;
-    }
-
-    public static InputManager getInputManager(){
-        return inputManager;
     }
 
     public static GPULoader getGpuLoader(){
