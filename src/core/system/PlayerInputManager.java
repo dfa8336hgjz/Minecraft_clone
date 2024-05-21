@@ -17,10 +17,13 @@ public class PlayerInputManager {
     private boolean isHolding = false;
     private boolean isGUIMode = true;
     private boolean isSpectatorMode = false;
-
+    private boolean leftButtonPressed = false;
+    private boolean rightButtonPressed = false;
 
     private float mouseSentivity;
     private float speed;
+    private float mouseClickTime = 0.0f;
+    private float mouseClickInterval = 0.2f;
 
     public PlayerInputManager() {
         currentMousePos = new Vector2d(0, 0);
@@ -52,6 +55,11 @@ public class PlayerInputManager {
                 isHolding = false;
             }
 
+        });
+
+        glfwSetMouseButtonCallback(this.window.getWindowHandle(), (window, button, action, mods) -> {
+            leftButtonPressed = ((button == GLFW_MOUSE_BUTTON_1) && (action == GLFW_PRESS));
+            rightButtonPressed = ((button == GLFW_MOUSE_BUTTON_2) && (action == GLFW_PRESS));
         });
         
         glfwSetCursorPosCallback(this.window.getWindowHandle(), (window, xpos, ypos) -> {
@@ -95,6 +103,7 @@ public class PlayerInputManager {
     }
 
     public void CreativeModeInput(){
+        mouseClickTime -= Launcher.getDeltaTime();
         speed = Consts.CREATIVE_Speed;
 
         float velocity = speed * (float) Launcher.getDeltaTime();
@@ -123,6 +132,11 @@ public class PlayerInputManager {
         }
 
         Player.instance.camera.transform.movePosition(xMove * velocity, yMove * velocity, zMove * velocity);
+
+        if (leftButtonPressed && mouseClickTime <= 0) {
+            System.out.println(Player.instance.currentBlock());
+            mouseClickTime = mouseClickInterval;
+        }
     }
 
     public void SpectatorModeInput(){

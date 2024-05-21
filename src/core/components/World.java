@@ -86,10 +86,10 @@ public class World {
 
     public void cleanup(){
         updater.cleanup();
-        File folder = new File(Paths.binaryFolder);
-        for (File file : folder.listFiles()) {
-            file.delete();
-        }
+        // File folder = new File(Paths.binaryFolder);
+        // for (File file : folder.listFiles()) {
+        //     file.delete();
+        // }
     }
 
     public Block getBlockAt(int worldX, int worldY, int worldZ){

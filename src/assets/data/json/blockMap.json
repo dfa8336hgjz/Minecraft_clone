@@ -1,7 +1,7 @@
 [
     {
         "id": 0,
-        "name": "null",
+        "name": "air",
         "top": "",
         "bottom": "",
         "front": "",
@@ -98,5 +98,15 @@
         "back": "lime_concrete",
         "left": "lime_concrete",
         "right": "lime_concrete"
+    },
+    {
+        "id": 10,
+        "name": "Bedrock",
+        "top": "bedrock",
+        "bottom": "bedrock",
+        "front": "bedrock",
+        "back": "bedrock",
+        "left": "bedrock",
+        "right": "bedrock"
     }
 ]

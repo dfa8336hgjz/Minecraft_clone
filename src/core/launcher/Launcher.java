@@ -37,7 +37,7 @@ public class Launcher {
     private void init() throws Exception {
         deltaTime = 0;
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
-        window = new OpenGlWindow("pmc", 700, 900, true);
+        window = new OpenGlWindow("pmc", 800, 400, true);
         gpuLoader = new GPULoader();
         player = new Player();
         changeScene(1);

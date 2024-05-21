@@ -10,6 +10,7 @@ import core.utils.SimplexNoise;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -20,7 +21,6 @@ import java.util.ArrayList;
 
 import org.joml.Vector3i;
 
-import static org.lwjgl.opengl.GL11.*;
 
 
 enum FACE{
@@ -94,6 +94,9 @@ public class Chunk {
                     }
                     if(y < GroundHeight){
                         this.blocks[blockId].setId(1);
+                    }
+                    if(y == 0){
+                        this.blocks[blockId].setId(10);
                     }
                     // if(chunkX % 2 == 0){
                     //     if(chunkZ % 2 ==0) this.blocks[blockId].setId(1);

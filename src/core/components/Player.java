@@ -16,10 +16,12 @@ public class Player {
     public Camera camera;
     public PlayerInputManager input;
 
-    private int maxRaycastDistance = 5;
+    private int maxRaycastDistance = 3;
+    private Vector3f currentBlockPointing;
 
     public Player(){
         instance = this;
+        currentBlockPointing = new Vector3f();
         input = new PlayerInputManager();
         input.init();
     }
@@ -182,7 +184,8 @@ public class Player {
                         if (tmax < 0 || tmin > tmax) 
 						{ 
 							// No intersection
-							break;
+                            currentBlockPointing.set(0.0f, 0.0f, 0.0f);
+							return;
 						}
 						float depth = 0.0f;
 						if (tmin < 0.0f)
@@ -194,20 +197,30 @@ public class Player {
 						{
 							depth = tmin;
 						}
+
                         Renderer2dBatch.instance.drawBox(currentOrigin.add(0.5f, 0.5f, 0.5f), new Vector3f(1.0f));
                         Renderer2dBatch.instance.drawBox(new Vector3f(
                             camera.transform.position.x + direction.x * depth,
                             camera.transform.position.y + direction.y * depth,
                             camera.transform.position.z + direction.z * depth
                         ), new Vector3f(0.1f));
-                        
-                        break;
+                        currentBlockPointing = currentOrigin;
+                        return;
                     }
                 }
                 pointOnRay.add(direction.x * 0.1f, direction.y * 0.1f, direction.z * 0.1f);
             }
         } catch (CloneNotSupportedException e) {
+            currentBlockPointing.set(0.0f, 0.0f, 0.0f);
             e.printStackTrace();
+            return;
         }
+
+        currentBlockPointing.set(0.0f, 0.0f, 0.0f);
+        return;
+    }
+
+    public Vector3f currentBlock(){
+        return currentBlockPointing;
     }
 }
