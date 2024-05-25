@@ -126,4 +126,15 @@ public class World {
         }
     }
 
+    public void addBlockAt(Vector3f worldPos){
+        int chunkX = (int)Math.floor(worldPos.x / 16.0f);
+        int chunkZ = (int)Math.floor(worldPos.z / 16.0f);
+        Chunk currentChunk = renderingChunks.get(new Vector2i(chunkX, chunkZ));
+        if(currentChunk != null)
+        {
+            currentChunk.addBlock((int)Math.floor(worldPos.x - chunkX * 16),
+             (int)worldPos.y, (int)Math.floor(worldPos.z - chunkZ * 16), 5);
+        }
+    }
+
 }

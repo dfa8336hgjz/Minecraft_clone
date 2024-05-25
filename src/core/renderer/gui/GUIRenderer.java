@@ -54,7 +54,7 @@ public class GUIRenderer {
         if(playerMousePos.x >= position.x && playerMousePos.x <= position.x + size.x
         && playerMousePos.y >= position.y && playerMousePos.y <= position.y + size.y)
         {
-            if(Player.instance.input.leftButtonPressed){
+            if(Player.instance.input.mouseClick){
                 return UIState.Click;
             }
             return UIState.Hover;

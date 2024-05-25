@@ -17,11 +17,9 @@ public class Player {
     public PlayerInputManager input;
 
     private int maxRaycastDistance = 3;
-    private Vector3f currentBlockPointing;
 
     public Player(){
         instance = this;
-        currentBlockPointing = new Vector3f();
         input = new PlayerInputManager();
         input.init();
     }
@@ -44,7 +42,6 @@ public class Player {
         if(!input.isSpectatorMode){
             gravityOn(dt);
             checkCollision(dt);
-            checkRaycast();
         }
     }
 
@@ -154,73 +151,82 @@ public class Player {
         }
     }
 
-    public void checkRaycast(){
+    public RayCastResult checkRaycast(){
+        RayCastResult result = new RayCastResult();
+        result.hit = false;
         try {
-        Vector3f direction = camera.getForwardVector();
-        Vector3f currentOrigin = (Vector3f)camera.transform.position.clone();
-        Vector3f pointOnRay = (Vector3f)camera.transform.position.clone();
+            Vector3f direction = camera.getForwardVector();
+            Vector3f currentOrigin = (Vector3f)camera.transform.position.clone();
+            Vector3f pointOnRay = (Vector3f)camera.transform.position.clone();
 
-        for (float i = 0f; i < maxRaycastDistance; i+= 0.1f) {
-                Vector3f pointOnRayCopy = (Vector3f)pointOnRay.clone();
-                if(pointOnRayCopy.floor() != currentOrigin)
-                {
-                    currentOrigin = pointOnRayCopy;
-                    Block currentBlock = World.instance.getBlockAt((int)currentOrigin.x, (int)currentOrigin.y, (int)currentOrigin.z);
-                    if(currentBlock != null && !currentBlock.isNullBlock()){
-                        Vector3f max = ((Vector3f)currentOrigin.clone()).add(1.0f, 1.0f, 1.0f);
-                        Vector3f min = (Vector3f)currentOrigin.clone();
+            for (float i = 0f; i < maxRaycastDistance; i+= 0.1f) {
+                    Vector3f pointOnRayCopy = (Vector3f)pointOnRay.clone();
+                    if(pointOnRayCopy.floor() != currentOrigin)
+                    {
+                        currentOrigin = pointOnRayCopy;
+                        Block currentBlock = World.instance.getBlockAt((int)currentOrigin.x, (int)currentOrigin.y, (int)currentOrigin.z);
+                        if(currentBlock != null && !currentBlock.isNullBlock()){
+                            Vector3f max = ((Vector3f)currentOrigin.clone()).add(1.0f, 1.0f, 1.0f);
+                            Vector3f min = (Vector3f)currentOrigin.clone();
 
-                        float t1 = (min.x - camera.transform.position.x) / direction.x;
-                        float t2 = (max.x - camera.transform.position.x) / direction.x;
+                            float t1 = (min.x - camera.transform.position.x) / direction.x;
+                            float t2 = (max.x - camera.transform.position.x) / direction.x;
 
-                        float t3 = (min.y - camera.transform.position.y) / direction.y;
-                        float t4 = (max.y - camera.transform.position.y) / direction.y;
+                            float t3 = (min.y - camera.transform.position.y) / direction.y;
+                            float t4 = (max.y - camera.transform.position.y) / direction.y;
 
-                        float t5 = (min.z - camera.transform.position.z) / direction.z;
-                        float t6 = (max.z - camera.transform.position.z) / direction.z;
+                            float t5 = (min.z - camera.transform.position.z) / direction.z;
+                            float t6 = (max.z - camera.transform.position.z) / direction.z;
 
-                        float tmin = Math.max(Math.max(Math.min(t1, t2), Math.min(t3, t4)), Math.min(t5, t6));
-                        float tmax = Math.min(Math.min(Math.max(t1, t2), Math.max(t3, t4)), Math.max(t5, t6));
-                        if (tmax < 0 || tmin > tmax) 
-						{ 
-							// No intersection
-                            currentBlockPointing.set(0.0f, 0.0f, 0.0f);
-							return;
-						}
-						float depth = 0.0f;
-						if (tmin < 0.0f)
-						{
-							// The ray's origin is inside the AABB
-							depth = tmax;
-						}
-						else
-						{
-							depth = tmin;
-						}
+                            float tmin = Math.max(Math.max(Math.min(t1, t2), Math.min(t3, t4)), Math.min(t5, t6));
+                            float tmax = Math.min(Math.min(Math.max(t1, t2), Math.max(t3, t4)), Math.max(t5, t6));
+                            if (tmax < 0 || tmin > tmax) 
+                            { 
+                                // No intersection
+                                return result;
+                            }
+                            float depth = 0.0f;
+                            if (tmin < 0.0f)
+                            {
+                                // The ray's origin is inside the AABB
+                                depth = tmax;
+                            }
+                            else
+                            {
+                                depth = tmin;
+                            }
 
-                        _3DRendererBatch.instance.drawBox(currentOrigin.add(0.5f, 0.5f, 0.5f), new Vector3f(1.0f));
-                        _3DRendererBatch.instance.drawBox(new Vector3f(
-                            camera.transform.position.x + direction.x * depth,
-                            camera.transform.position.y + direction.y * depth,
-                            camera.transform.position.z + direction.z * depth
-                        ), new Vector3f(0.1f));
-                        currentBlockPointing = currentOrigin;
-                        return;
+                            result.hitPoint = new Vector3f(camera.transform.position.x + direction.x * depth,
+                                                        camera.transform.position.y + direction.y * depth,
+                                                        camera.transform.position.z + direction.z * depth);
+                            result.hit = true;
+                            result.hitFaceNormal = new Vector3f(result.hitPoint.x - currentOrigin.x - 0.5f,
+                                                                result.hitPoint.y - currentOrigin.y - 0.5f,
+                                                                result.hitPoint.z - currentOrigin.z - 0.5f);
+                            float maxSide = Math.max(
+                                Math.max(Math.abs(result.hitFaceNormal.x), Math.abs(result.hitFaceNormal.y)),
+                                Math.abs(result.hitFaceNormal.z));
+                            
+                            result.hitFaceNormal = (Math.abs(result.hitFaceNormal.x) == maxSide) ? new Vector3f(Math.signum(result.hitFaceNormal.x), 0, 0):
+                                                    (Math.abs(result.hitFaceNormal.y) == maxSide) ? new Vector3f(0, Math.signum(result.hitFaceNormal.y), 0):
+                                                    new Vector3f(0, 0, Math.signum(result.hitFaceNormal.z));
+                                                
+                            result.hitAtBlock = currentOrigin;
+
+                            _3DRendererBatch.instance.drawBox(currentOrigin.add(0.5f, 0.5f, 0.5f), new Vector3f(1.0f));
+                            _3DRendererBatch.instance.drawBox(new Vector3f(
+                                camera.transform.position.x + direction.x * depth,
+                                camera.transform.position.y + direction.y * depth,
+                                camera.transform.position.z + direction.z * depth
+                            ), new Vector3f(0.1f));
+                            return result;
+                        }
                     }
+                    pointOnRay.add(direction.x * 0.1f, direction.y * 0.1f, direction.z * 0.1f);
                 }
-                pointOnRay.add(direction.x * 0.1f, direction.y * 0.1f, direction.z * 0.1f);
-            }
         } catch (CloneNotSupportedException e) {
-            currentBlockPointing.set(0.0f, 0.0f, 0.0f);
             e.printStackTrace();
-            return;
         }
-
-        currentBlockPointing.set(0.0f, 0.0f, 0.0f);
-        return;
-    }
-
-    public Vector3f currentBlock(){
-        return currentBlockPointing;
+        return result;
     }
 }

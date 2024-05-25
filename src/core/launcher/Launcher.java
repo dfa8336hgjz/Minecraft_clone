@@ -8,6 +8,7 @@ import core.components.Player;
 import core.renderer.OpenGlWindow;
 import core.renderer.font.Cfont;
 import core.scene.CraftScene;
+import core.scene.CreateWorldScene;
 import core.scene.StartScene;
 import core.system.texturePackage.TextureMapLoader;
 import core.utils.Consts;
@@ -46,7 +47,7 @@ public class Launcher {
         TextureMapLoader mapLoader = new TextureMapLoader();
         player = new Player();
         font = new Cfont("Arial", 64);
-        changeScene(0);
+        changeScene(1);
     }
 
     public void run() {
@@ -126,7 +127,6 @@ public class Launcher {
     public void changeScene(int sceneId){
         if(currentScene != null) {
             currentScene.cleanup();
-            currentScene = null;
         }
         switch (sceneId) {
             case 0:
@@ -134,6 +134,10 @@ public class Launcher {
                 currentScene.init();
                 break;
             case 1:
+                currentScene = new CreateWorldScene();
+                currentScene.init();
+                break;
+            case 2:
                 currentScene = new CraftScene();
                 currentScene.init();
                 break;

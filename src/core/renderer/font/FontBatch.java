@@ -23,7 +23,7 @@ public class FontBatch {
     };
 
     // 25 quads
-    public static int BATCH_SIZE = 100;
+    public static int BATCH_SIZE = 200;
     public static int VERTEX_SIZE = 7;
     public float[] vertices = new float[BATCH_SIZE * VERTEX_SIZE];
     public int size = 0;
@@ -191,6 +191,5 @@ public class FontBatch {
     public void cleanup(){
         shader.cleanup();
         glDeleteVertexArrays(vao);
-        glDeleteTextures(font.textureId);
     }
 }

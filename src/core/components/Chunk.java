@@ -230,7 +230,11 @@ public class Chunk {
     public void addBlock(int x, int y, int z, int typeId) {
         int id = getflattenedID(x, y, z);
         if(blocks[id].isNullBlock()) {
-
+            blocks[id] = new Block(typeId, true);
+            isChanged = true;
+    
+            generateNewChunkData();
+            uploadToGPU();
         }
     }
 

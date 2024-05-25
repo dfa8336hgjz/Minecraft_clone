@@ -4,6 +4,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import org.joml.Vector2d;
 
 import core.components.Player;
+import core.components.RayCastResult;
 import core.components.World;
 import core.launcher.Launcher;
 import core.renderer.OpenGlWindow;
@@ -15,16 +16,18 @@ public class PlayerInputManager {
     public Vector2d currentMousePos;
     private double xScrollOffset, yScrollOffset;
 
-    public boolean isHolding = false;
+    public boolean keyIsHolding = false;
+    public boolean mouseIsHolding = false;
     public boolean isGUIMode = true;
     public boolean leftButtonPressed = false;
     public boolean rightButtonPressed = false;
+    public boolean mouseClick = false;
     public boolean isSpectatorMode = false;
 
     private float mouseSentivity;
     private float speed;
     private float mouseClickTime = 0.0f;
-    private float mouseClickInterval = 0.5f;
+    private float mouseClickInterval = 0.3f;
 
     public PlayerInputManager() {
         currentMousePos = new Vector2d(0, 0);
@@ -41,7 +44,7 @@ public class PlayerInputManager {
                 glfwSetWindowShouldClose(window, true);
             }
             
-            if(action == GLFW_PRESS && !isHolding){
+            if(action == GLFW_PRESS && !keyIsHolding){
                 if(key == GLFW_KEY_K){
                     isGUIMode = !isGUIMode;
                 }
@@ -50,10 +53,10 @@ public class PlayerInputManager {
                     isSpectatorMode = !isSpectatorMode;
                 }
 
-                isHolding = true;
+                keyIsHolding = true;
             }
             else if(action == GLFW_RELEASE){
-                isHolding = false;
+                keyIsHolding = false;
             }
 
         });
@@ -78,6 +81,22 @@ public class PlayerInputManager {
         return glfwGetKey(window.getWindowHandle(), keycode) == GLFW_PRESS;
     }
 
+    public void updateOnGUI(){
+        if (leftButtonPressed) {
+            if(!mouseIsHolding){
+                mouseClick = true;
+                mouseIsHolding = true;
+            }
+            else{
+                mouseClick = false;
+            } 
+        }
+        else{
+            mouseClick = false;
+            mouseIsHolding = false;
+        }    
+    }
+
     public void input() {
         if(isGUIMode){
             glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -85,8 +104,8 @@ public class PlayerInputManager {
         }
 
         glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-        float deltaX = (float) (currentMousePos.x - Launcher.instance.getWindow().getWidth() / 2) * mouseSentivity;
-        float deltaY = (float) (currentMousePos.y - Launcher.instance.getWindow().getHeight() / 2) * mouseSentivity;
+        float deltaX = (float) (currentMousePos.x - window.getWidth() / 2) * mouseSentivity;
+        float deltaY = (float) (currentMousePos.y - window.getHeight() / 2) * mouseSentivity;
         Player.instance.camera.transform.moveRotation(deltaY, deltaX, 0);
         glfwSetCursorPos(window.getWindowHandle(), window.getWidth() / 2, window.getHeight() / 2);
 
@@ -126,14 +145,22 @@ public class PlayerInputManager {
 
         Player.instance.camera.transform.movePosition(xMove * velocity, yMove * velocity, zMove * velocity);
 
-        if (leftButtonPressed && mouseClickTime <= 0) {
-            //System.out.println(Player.instance.currentBlock());
-            World.instance.removeBlockAt(Player.instance.currentBlock());
-            mouseClickTime = mouseClickInterval;
+        RayCastResult rayCastResult = Player.instance.checkRaycast();
+        if(rayCastResult.hit){
+            if (leftButtonPressed && mouseClickTime <= 0) {
+                World.instance.removeBlockAt(rayCastResult.hitAtBlock);
+                mouseClickTime = mouseClickInterval;
+            }
+    
+            else if (rightButtonPressed && mouseClickTime <= 0) {
+                World.instance.addBlockAt(rayCastResult.hitPoint.add(rayCastResult.hitFaceNormal.mul(0.4f)));
+                mouseClickTime = mouseClickInterval;
+            }
         }
     }
 
     public void SpectatorModeInput(){
+        mouseClickTime -= Launcher.instance.getDeltaTime();
         speed = Consts.SPECTATOR_Speed;
 
         float velocity = speed * (float) Launcher.instance.getDeltaTime();
@@ -162,6 +189,7 @@ public class PlayerInputManager {
         }
 
         Player.instance.camera.transform.movePosition(xMove * velocity, yMove * velocity, zMove * velocity);
+
     }
 
 }

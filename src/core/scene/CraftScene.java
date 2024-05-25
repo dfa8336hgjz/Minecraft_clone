@@ -11,6 +11,7 @@ import core.renderer.ShaderManager;
 import core.utils.Consts;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.glfw.GLFW.*;
 
 import org.joml.Matrix4f;
 
@@ -29,6 +30,9 @@ public class CraftScene extends Scene {
             glEnable(GL_STENCIL_TEST);
             playerView = new Camera(0.0f, Consts.CHUNK_HEIGHT + 10, 0.0f);
             Player.instance.setPlayerView(playerView);
+            Player.instance.input.isGUIMode = false;
+            glfwSetCursorPos(Launcher.instance.getWindow().getWindowHandle(), (double)Consts.WINDOW_WIDTH / 2, (double)Consts.WINDOW_HEIGHT / 2 - 1);
+            
             renderBatch = new _3DRendererBatch();
 
             shader = new ShaderManager("src\\assets\\shader\\vs.glsl","src\\assets\\shader\\fs.glsl");

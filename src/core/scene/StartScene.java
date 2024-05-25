@@ -2,6 +2,7 @@ package core.scene;
 
 import org.joml.Vector2i;
 
+import core.components.Player;
 import core.launcher.Launcher;
 import core.launcher.Scene;
 import core.renderer.gui.Button;
@@ -22,18 +23,18 @@ public class StartScene extends Scene{
             playGameButton.clickSprite = TextureMapLoader.getGUITexture("buttonClick");
             playGameButton.hoverSprite = TextureMapLoader.getGUITexture("buttonHover");
             playGameButton.defaultSprite = TextureMapLoader.getGUITexture("buttonDefault");
-            playGameButton.position = new Vector2i(0, 0);
-            playGameButton.size = new Vector2i(300, 50);
-            playGameButton.textScale = 0.35f;
+            playGameButton.position = new Vector2i(600, 500);
+            playGameButton.size = new Vector2i(400, 80);
+            playGameButton.textScale = 0.45f;
             playGameButton.text = "Start Game";
 
             quitButton = new Button();
             quitButton.clickSprite = TextureMapLoader.getGUITexture("buttonClick");
             quitButton.hoverSprite = TextureMapLoader.getGUITexture("buttonHover");
             quitButton.defaultSprite = TextureMapLoader.getGUITexture("buttonDefault");
-            quitButton.position = new Vector2i(250, 450);
-            quitButton.size = new Vector2i(300, 50);
-            quitButton.textScale = 0.35f;
+            quitButton.position = new Vector2i(600, 650);
+            quitButton.size = new Vector2i(400, 80);
+            quitButton.textScale = 0.45f;
             quitButton.text = "Quit Game";
 
         } catch (Exception e) {
@@ -43,19 +44,19 @@ public class StartScene extends Scene{
 
     @Override
     public void update() {
-        
+        Player.instance.input.updateOnGUI();
     }
 
     @Override
     public void render() {
-        renderer.drawSprite(400, 250, 750, 150, "logo");
+        renderer.drawSprite(350, 150, 900, 250, "logo");
         if(renderer.isButtonClicked(playGameButton)){
             Launcher.instance.changeScene(1);
         }
 
-        // if(renderer.isButtonClicked(quitButton)){
-        //     Launcher.instance.stop();
-        // }
+        if(renderer.isButtonClicked(quitButton)){
+            Launcher.instance.stop();
+        }
 
         renderer.flushBatch();
     }

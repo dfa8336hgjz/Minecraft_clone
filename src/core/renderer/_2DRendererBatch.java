@@ -158,6 +158,5 @@ public class _2DRendererBatch {
         shader.cleanup();
         glDeleteVertexArrays(vao);
         glDeleteBuffers(vbo);
-        glDeleteTextures(texture);
     }
 }

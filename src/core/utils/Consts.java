@@ -4,8 +4,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import core.renderer.font.Cfont;
-
 public class Consts {
     public static final int TEXTURE_COUNT = 925;
 
