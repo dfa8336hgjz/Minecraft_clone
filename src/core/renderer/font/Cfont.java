@@ -10,12 +10,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 
 public class Cfont {
     private String fontType;
     private int fontSize;
 
-    private int width, height, lineHeight;
+    private int width, height;
     private Map<Integer, CharInfo> characterMap;
 
     public int textureId;
@@ -42,10 +44,8 @@ public class Cfont {
         int estimatedWidth = (int)Math.sqrt(font.getNumGlyphs()) * font.getSize() + 1;
         width = 0;
         height = fontMetrics.getHeight();
-        lineHeight = fontMetrics.getHeight();
         int x = 0;
-        int y = (int)(fontMetrics.getHeight() * 1.4f);
-        System.out.println(font.getNumGlyphs());
+        int y = (int)(fontMetrics.getHeight());
 
         for (int i=0; i < font.getNumGlyphs(); i++) {
             if (font.canDisplay(i)) {
@@ -54,15 +54,15 @@ public class Cfont {
                 characterMap.put(i, charInfo);
                 width = Math.max(x + fontMetrics.charWidth(i), width);
 
-                x += charInfo.width;
+                x += charInfo.width * 1.2f;
                 if (x > estimatedWidth) {
                     x = 0;
-                    y += fontMetrics.getHeight() * 1.4f;
-                    height += fontMetrics.getHeight() * 1.4f;
+                    y += fontMetrics.getHeight();
+                    height += fontMetrics.getHeight();
                 }
             }
         }
-        height += fontMetrics.getHeight() * 1.4f;
+        height += fontMetrics.getHeight();
         g2d.dispose();
 
         // Create the real texture
@@ -75,11 +75,10 @@ public class Cfont {
             if (font.canDisplay(i)) {
                 CharInfo info = characterMap.get(i);
                 info.calculateTextureCoordinates(width, height);
-                g2d.drawString("" + (char)i, info.sourceX, info.sourceY);
+                g2d.drawString("" + (char)i, info.sourceX, info.sourceY - fontMetrics.getDescent());
             }
         }
         g2d.dispose();
-
         uploadTexture(img);
     }
 
@@ -101,7 +100,7 @@ public class Cfont {
         buffer.flip();
 
         textureId = glGenTextures();
-
+        glBindTexture(GL_TEXTURE_2D, textureId);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -109,6 +108,7 @@ public class Cfont {
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, image.getWidth(), image.getHeight(),
                 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
         buffer.clear();
     }
 }

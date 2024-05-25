@@ -20,9 +20,10 @@ import java.util.Map;
 
 public class TextureMapLoader {
     private JSONParser parser;
-    private static ArrayList<BlockData> blockDataMap;
     private static Map<String, Integer> textureMap;
-    private static ArrayList<TextureData> textureDataMap;
+    private static Map<String, TextureData> guiTextureMap;
+    private static ArrayList<BlockData> blockDataMap;
+    private static ArrayList<TextureData> blockTextureDataMap;
 
     public TextureMapLoader() {
         parser = new JSONParser();
@@ -37,8 +38,11 @@ public class TextureMapLoader {
     public void loadTextureUV() throws IOException, ParseException {
         Reader reader = new FileReader(Paths.textureData);
         JSONArray jsonArray = (JSONArray) parser.parse(reader);
-
         setTextureMap(jsonArray);
+
+        reader = new FileReader(Paths.guiTextureData);
+        jsonArray = (JSONArray) parser.parse(reader);
+        setGUITextureMap(jsonArray);
 
         reader.close();
         reader = null;
@@ -72,7 +76,7 @@ public class TextureMapLoader {
 
     private void setTextureMap(JSONArray map){
         textureMap = new HashMap<>();
-        textureDataMap = new ArrayList<>();
+        blockTextureDataMap = new ArrayList<>();
         int count = 0;
         for (Object obj : map) {
             JSONObject jsonObj = (JSONObject) obj;
@@ -86,10 +90,28 @@ public class TextureMapLoader {
             }
 
             TextureData texture = new TextureData(jsonObj.get("name").toString(), uvs);
-            textureDataMap.add(texture);
+            blockTextureDataMap.add(texture);
             textureMap.put(jsonObj.get("name").toString(), count++);
-
         }
+    }
+
+    private void setGUITextureMap(JSONArray map){
+        guiTextureMap = new HashMap<>();
+        for (Object obj : map) {
+            JSONObject jsonObj = (JSONObject) obj;
+            JSONArray currentTexture = (JSONArray)jsonObj.get("coords");
+            Vector2f[] uvs = new Vector2f[4];
+            for (int i = 0; i < 4; i++) {
+                JSONObject result = (JSONObject) currentTexture.get(i);
+                Number x = (Number) result.get("x");
+                Number y = (Number) result.get("y");
+                uvs[i] = new Vector2f(x.floatValue(), y.floatValue());
+            }
+
+            TextureData texture = new TextureData(jsonObj.get("name").toString(), uvs);
+            guiTextureMap.put(jsonObj.get("name").toString(), texture);
+        }
+
     }
 
     public static BlockData getBlock(int blockId){
@@ -102,14 +124,22 @@ public class TextureMapLoader {
     }
 
     public static String getTextureName(int id){
-        return textureDataMap.get(id).getTextureName();
+        return blockTextureDataMap.get(id).getTextureName();
+    }
+
+    public static Vector2f getGUIUV(String name, int id){
+        return guiTextureMap.get(name).getCoordsAt(id);
+    }
+
+    public static TextureData getGUITexture(String name){
+        return guiTextureMap.get(name);
     }
 
     public static float[] getTexCoordList(){
         float[] texCoordList = new float[8 * Consts.TEXTURE_COUNT];
         int texCursor = 0;
 
-        for (TextureData f : textureDataMap) {
+        for (TextureData f : blockTextureDataMap) {
             texCoordList[texCursor] = f.getCoordsAt(0).x;
             texCoordList[texCursor + 1] = f.getCoordsAt(0).y;
             texCoordList[texCursor + 2] = f.getCoordsAt(1).x;

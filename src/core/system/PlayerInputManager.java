@@ -4,6 +4,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import org.joml.Vector2d;
 
 import core.components.Player;
+import core.components.World;
 import core.launcher.Launcher;
 import core.renderer.OpenGlWindow;
 import core.utils.Consts;
@@ -11,23 +12,23 @@ import core.utils.Consts;
 public class PlayerInputManager {
     private final OpenGlWindow window;
 
-    private Vector2d currentMousePos;
+    public Vector2d currentMousePos;
     private double xScrollOffset, yScrollOffset;
 
-    private boolean isHolding = false;
-    private boolean isGUIMode = true;
-    private boolean isSpectatorMode = false;
-    private boolean leftButtonPressed = false;
-    private boolean rightButtonPressed = false;
+    public boolean isHolding = false;
+    public boolean isGUIMode = true;
+    public boolean leftButtonPressed = false;
+    public boolean rightButtonPressed = false;
+    public boolean isSpectatorMode = false;
 
     private float mouseSentivity;
     private float speed;
     private float mouseClickTime = 0.0f;
-    private float mouseClickInterval = 0.2f;
+    private float mouseClickInterval = 0.5f;
 
     public PlayerInputManager() {
         currentMousePos = new Vector2d(0, 0);
-        this.window = Launcher.getWindow();
+        this.window = Launcher.instance.getWindow();
         init();
 
         speed = Consts.CREATIVE_Speed;
@@ -80,13 +81,12 @@ public class PlayerInputManager {
     public void input() {
         if(isGUIMode){
             glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            GUIModeInput();
             return;
         }
 
         glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-        float deltaX = (float) (currentMousePos.x - Launcher.getWindow().getWidth() / 2) * mouseSentivity;
-        float deltaY = (float) (currentMousePos.y - Launcher.getWindow().getHeight() / 2) * mouseSentivity;
+        float deltaX = (float) (currentMousePos.x - Launcher.instance.getWindow().getWidth() / 2) * mouseSentivity;
+        float deltaY = (float) (currentMousePos.y - Launcher.instance.getWindow().getHeight() / 2) * mouseSentivity;
         Player.instance.camera.transform.moveRotation(deltaY, deltaX, 0);
         glfwSetCursorPos(window.getWindowHandle(), window.getWidth() / 2, window.getHeight() / 2);
 
@@ -94,19 +94,12 @@ public class PlayerInputManager {
         else CreativeModeInput();
     }
 
-    public Vector2d getCurrentMousePos(){
-        return currentMousePos;
-    }
-
-    public boolean isSpectatorModeOn(){
-        return isSpectatorMode;
-    }
 
     public void CreativeModeInput(){
-        mouseClickTime -= Launcher.getDeltaTime();
+        mouseClickTime -= Launcher.instance.getDeltaTime();
         speed = Consts.CREATIVE_Speed;
 
-        float velocity = speed * (float) Launcher.getDeltaTime();
+        float velocity = speed * (float) Launcher.instance.getDeltaTime();
         int xMove = 0;
         int yMove = 0;
         int zMove = 0;
@@ -134,7 +127,8 @@ public class PlayerInputManager {
         Player.instance.camera.transform.movePosition(xMove * velocity, yMove * velocity, zMove * velocity);
 
         if (leftButtonPressed && mouseClickTime <= 0) {
-            System.out.println(Player.instance.currentBlock());
+            //System.out.println(Player.instance.currentBlock());
+            World.instance.removeBlockAt(Player.instance.currentBlock());
             mouseClickTime = mouseClickInterval;
         }
     }
@@ -142,7 +136,7 @@ public class PlayerInputManager {
     public void SpectatorModeInput(){
         speed = Consts.SPECTATOR_Speed;
 
-        float velocity = speed * (float) Launcher.getDeltaTime();
+        float velocity = speed * (float) Launcher.instance.getDeltaTime();
         int xMove = 0;
         int yMove = 0;
         int zMove = 0;
@@ -170,7 +164,4 @@ public class PlayerInputManager {
         Player.instance.camera.transform.movePosition(xMove * velocity, yMove * velocity, zMove * velocity);
     }
 
-    public void GUIModeInput(){
-
-    }
 }

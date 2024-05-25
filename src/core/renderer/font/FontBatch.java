@@ -1,31 +1,19 @@
 package core.renderer.font;
 
-import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL15;
+import org.joml.Vector2i;
 
+import core.launcher.Launcher;
 import core.renderer.ShaderManager;
+import core.renderer.gui.Button;
+import core.utils.Consts;
 
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL15C.GL_ELEMENT_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15C.glGenBuffers;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import static org.lwjgl.opengl.GL31.GL_TEXTURE_BUFFER;
 
 public class FontBatch {
@@ -39,12 +27,11 @@ public class FontBatch {
     public static int VERTEX_SIZE = 7;
     public float[] vertices = new float[BATCH_SIZE * VERTEX_SIZE];
     public int size = 0;
-    private Matrix4f projection = new Matrix4f();
 
-    public int vao;
-    public int vbo;
-    public ShaderManager shader;
-    public Cfont font;
+    private int vao;
+    private int vbo;
+    private ShaderManager shader;
+    private Cfont font;
 
     public void generateEbo() {
         int elementSize = BATCH_SIZE * 3;
@@ -56,14 +43,12 @@ public class FontBatch {
 
         int ebo = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, elementBuffer, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementBuffer, GL_STATIC_DRAW);
     }
 
     public void initBatch() throws Exception {
-        shader = new ShaderManager("src\\assets\\shader\\vsText.glsl", "src\\assets\\shader\\fsText.glsl");
+        shader = new ShaderManager("src\\assets\\shader\\vsFont.glsl", "src\\assets\\shader\\fsFont.glsl");
         shader.init();
-        projection.identity();
-        projection.ortho(0, 800, 0, 600, 1f, 100f);
 
         vao = glGenVertexArrays();
         glBindVertexArray(vao);
@@ -83,9 +68,16 @@ public class FontBatch {
 
         glVertexAttribPointer(2, 2, GL_FLOAT, false, stride, 5 * Float.BYTES);
         glEnableVertexAttribArray(2);
+
+        font = Launcher.instance.font;
+        
+        shader.bind();
+        shader.set1i("uFontTexture", 0);
+        shader.unbind();
     }
 
     public void flushBatch() {
+        shader.bind();
         glDisable(GL_CULL_FACE);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -93,11 +85,9 @@ public class FontBatch {
         glBufferData(GL_ARRAY_BUFFER, Float.BYTES * VERTEX_SIZE * BATCH_SIZE, GL_DYNAMIC_DRAW);
         glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
 
-        shader.bind();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_BUFFER, font.textureId);
-        shader.set1i("uFontTexture", 0);
-        shader.setMat4f("uProjection", projection);
+        shader.setMat4f("uProjection", Consts.GUI_PROJECTION);
 
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, size * 6, GL_UNSIGNED_INT, 0);
@@ -106,6 +96,7 @@ public class FontBatch {
         size = 0;
         glEnable(GL_CULL_FACE);
         glDisable(GL_BLEND);
+        shader.unbind();
     }
 
     public void addCharacter(float x, float y, float scale, CharInfo charInfo, int rgb) {
@@ -148,7 +139,39 @@ public class FontBatch {
         size += 4;
     }
 
-    public void addText(String text, int x, int y, float scale, int rgb) {
+    public void drawTextOnButton(Button button, float scale, int rgb){
+        int textSizeX = 0;
+        for (int i=0; i < button.text.length(); i++) {
+            char c = button.text.charAt(i);
+            CharInfo charInfo = font.getCharacter(c);
+            if (charInfo.width == 0) {
+                System.out.println("Unknown character " + c);
+                continue;
+            }
+            textSizeX += charInfo.width * scale;
+        }
+        int textSizeY = (int)(font.getCharacter(button.text.charAt(0)).height * scale);
+        Vector2i startPosition = new Vector2i(0);
+        startPosition.x = button.position.x + (button.size.x - textSizeX)/ 2;
+        startPosition.y = button.position.y + (button.size.y - textSizeY)/ 2;
+        
+        for (int i=0; i < button.text.length(); i++) {
+            char c = button.text.charAt(i);
+
+            CharInfo charInfo = font.getCharacter(c);
+            if (charInfo.width == 0) {
+                System.out.println("Unknown character " + c);
+                continue;
+            }
+
+            float xPos = startPosition.x;
+            float yPos = startPosition.y;
+            addCharacter(xPos, yPos, scale, charInfo, rgb);
+            startPosition.x += charInfo.width * scale;
+        }
+    }
+
+    public void drawText(String text, int x, int y, float scale, int rgb) {
         for (int i=0; i < text.length(); i++) {
             char c = text.charAt(i);
 
@@ -163,5 +186,11 @@ public class FontBatch {
             addCharacter(xPos, yPos, scale, charInfo, rgb);
             x += charInfo.width * scale;
         }
+    }
+
+    public void cleanup(){
+        shader.cleanup();
+        glDeleteVertexArrays(vao);
+        glDeleteTextures(font.textureId);
     }
 }

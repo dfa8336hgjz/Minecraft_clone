@@ -5,19 +5,23 @@ import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
 import core.components.Player;
-import core.renderer.GPULoader;
 import core.renderer.OpenGlWindow;
+import core.renderer.font.Cfont;
 import core.scene.CraftScene;
 import core.scene.StartScene;
+import core.system.texturePackage.TextureMapLoader;
+import core.utils.Consts;
 
 public class Launcher {
-    private static OpenGlWindow window;
-    private static Scene currentScene;
-    private static GPULoader gpuLoader;
+    public static Launcher instance;
+    private OpenGlWindow window;
+    private Scene currentScene;
     private Player player;
 
-    public static final long NANOSECOND = 1000000000;
-    public static final float FRAMERATE = 1000;
+    public Cfont font;
+
+    public final long NANOSECOND = 1000000000;
+    public final float FRAMERATE = 1000;
 
     private int fps;
     private static long deltaTime;
@@ -27,6 +31,7 @@ public class Launcher {
     private GLFWErrorCallback errorCallback;
 
     public void start() throws Exception {
+        instance = this;
         init();
         if (isRunning)
             return;
@@ -37,10 +42,11 @@ public class Launcher {
     private void init() throws Exception {
         deltaTime = 0;
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
-        window = new OpenGlWindow("pmc", 800, 400, true);
-        gpuLoader = new GPULoader();
+        window = new OpenGlWindow("pmc", Consts.WINDOW_WIDTH, Consts.WINDOW_HEIGHT, true);
+        TextureMapLoader mapLoader = new TextureMapLoader();
         player = new Player();
-        changeScene(1);
+        font = new Cfont("Arial", 64);
+        changeScene(0);
     }
 
     public void run() {
@@ -84,7 +90,7 @@ public class Launcher {
         cleanup();
     }
 
-    public static double getDeltaTime() {
+    public double getDeltaTime() {
         return deltaTime / (double) NANOSECOND;
     }
 
@@ -108,7 +114,6 @@ public class Launcher {
 
     public void cleanup() {
         window.cleanup();
-        gpuLoader.cleanup();
         currentScene.cleanup();
         errorCallback.free();
         glfwTerminate();
@@ -118,8 +123,11 @@ public class Launcher {
         this.fps = fps;
     }
 
-    public static void changeScene(int sceneId){
-        if(currentScene != null) currentScene.cleanup();
+    public void changeScene(int sceneId){
+        if(currentScene != null) {
+            currentScene.cleanup();
+            currentScene = null;
+        }
         switch (sceneId) {
             case 0:
                 currentScene = new StartScene();
@@ -135,11 +143,8 @@ public class Launcher {
         }
     }
 
-    public static OpenGlWindow getWindow(){
+    public OpenGlWindow getWindow(){
         return window;
     }
 
-    public static GPULoader getGpuLoader(){
-        return gpuLoader;
-    }
 }

@@ -1,7 +1,10 @@
 package core.utils;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+
+import core.renderer.font.Cfont;
 
 public class Consts {
     public static final int TEXTURE_COUNT = 925;
@@ -11,9 +14,16 @@ public class Consts {
 
     public static Vector4f DEFAULT_COLOR = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
 
+    // Window size
+    public static final int WINDOW_WIDTH = 1600;
+    public static final int WINDOW_HEIGHT = 960;
+    
+    public static Matrix4f GUI_PROJECTION = 
+        new Matrix4f().identity().ortho(0, Consts.WINDOW_WIDTH, Consts.WINDOW_HEIGHT, 0, 1f, 10f);
+
     // Chunk data
     public static final int CHUNK_WIDTH = 16;
-    public static final int CHUNK_HEIGHT = 256;
+    public static final int CHUNK_HEIGHT = 100;
     public static final int CHUNK_DEPTH = 16;
     public static final int CHUNK_RADIUS = 7;
 
@@ -22,6 +32,9 @@ public class Consts {
     // Packaged image
     public static final int MAP_WIDTH = 752;
     public static final int MAP_HEIGHT = 512;
+
+    public static final int GUI_MAP_WIDTH = 385;
+    public static final int GUI_MAP_HEIGHT = 200;
 
     // Bitmask
     public static final long POSITION_MASK = 0x1FFFF;

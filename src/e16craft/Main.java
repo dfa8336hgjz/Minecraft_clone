@@ -1,7 +1,7 @@
 package e16craft;
 
 import core.launcher.Launcher;
-//import core.generator.TextureMapGenerator;
+//import core.system.texturePackage.TextureMapGenerator;
 
 public class Main {
     public static void main(String[] args) {

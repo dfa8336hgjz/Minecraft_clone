@@ -106,11 +106,12 @@ class ChunkUpdateThread implements Runnable{
 
         if(!Utils.hasBeenSerialized(thisChunk.getChunkX(), thisChunk.getChunkZ())){
             thisChunk.generateBlockType(this.worldSeed);
-            thisChunk.generateNewChunkData();
             thisChunk.serialize();
+            thisChunk.generateNewChunkData();
         }
         else{
             thisChunk.deserialize();
+            thisChunk.generateNewChunkData();
         }
     }
 

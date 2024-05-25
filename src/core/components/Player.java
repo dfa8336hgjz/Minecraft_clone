@@ -4,7 +4,7 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import core.launcher.Launcher;
-import core.renderer.Renderer2dBatch;
+import core.renderer._3DRendererBatch;
 import core.system.PlayerInputManager;
 import core.utils.Consts;
 import core.utils.Utils;
@@ -40,8 +40,8 @@ public class Player {
     }
 
     public void update(){
-        float dt = (float)Launcher.getDeltaTime();
-        if(!input.isSpectatorModeOn()){
+        float dt = (float)Launcher.instance.getDeltaTime();
+        if(!input.isSpectatorMode){
             gravityOn(dt);
             checkCollision(dt);
             checkRaycast();
@@ -198,8 +198,8 @@ public class Player {
 							depth = tmin;
 						}
 
-                        Renderer2dBatch.instance.drawBox(currentOrigin.add(0.5f, 0.5f, 0.5f), new Vector3f(1.0f));
-                        Renderer2dBatch.instance.drawBox(new Vector3f(
+                        _3DRendererBatch.instance.drawBox(currentOrigin.add(0.5f, 0.5f, 0.5f), new Vector3f(1.0f));
+                        _3DRendererBatch.instance.drawBox(new Vector3f(
                             camera.transform.position.x + direction.x * depth,
                             camera.transform.position.y + direction.y * depth,
                             camera.transform.position.z + direction.z * depth
