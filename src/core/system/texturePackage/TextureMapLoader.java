@@ -63,13 +63,14 @@ public class TextureMapLoader {
 
         for (Object object : map) {
             JSONObject jsonObj = (JSONObject) object;
-            BlockData block = new BlockData(jsonObj.get("name").toString(), false,
+            BlockData block = new BlockData(jsonObj.get("name").toString(), 
                     jsonObj.get("top").toString(),
                     jsonObj.get("bottom").toString(), 
                     jsonObj.get("front").toString(),
                     jsonObj.get("back").toString(),
                     jsonObj.get("left").toString(), 
-                    jsonObj.get("right").toString());
+                    jsonObj.get("right").toString(),
+                    (Boolean)jsonObj.get("transparent"));
             blockDataMap.add(block);
         }
     }
@@ -114,8 +115,8 @@ public class TextureMapLoader {
 
     }
 
-    public static BlockData getBlock(int blockId){
-        return blockDataMap.get(blockId);
+    public static ArrayList<BlockData> getBlockDataMap(){
+        return blockDataMap;
     }
 
     public static int getFaceTextureId(int blockId, int face){

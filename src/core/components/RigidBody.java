@@ -11,4 +11,9 @@ public class RigidBody {
         velocity = new Vector3f(0.0f);
         acceleration = new Vector3f(0.0f);
     }
+
+    public void cleanup(){
+        velocity = null;
+        acceleration = null;
+    }
 }

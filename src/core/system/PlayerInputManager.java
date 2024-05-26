@@ -47,6 +47,7 @@ public class PlayerInputManager {
             if(action == GLFW_PRESS && !keyIsHolding){
                 if(key == GLFW_KEY_K){
                     isGUIMode = !isGUIMode;
+                    mouseClick = !isGUIMode;
                 }
                 
                 if(key == GLFW_KEY_C && isGUIMode == false){
@@ -106,7 +107,7 @@ public class PlayerInputManager {
         glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         float deltaX = (float) (currentMousePos.x - window.getWidth() / 2) * mouseSentivity;
         float deltaY = (float) (currentMousePos.y - window.getHeight() / 2) * mouseSentivity;
-        Player.instance.camera.transform.moveRotation(deltaY, deltaX, 0);
+        Player.instance.moveRotation(deltaY, deltaX, 0);
         glfwSetCursorPos(window.getWindowHandle(), window.getWidth() / 2, window.getHeight() / 2);
 
         if(isSpectatorMode) SpectatorModeInput();

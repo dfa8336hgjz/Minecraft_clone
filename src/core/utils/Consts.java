@@ -16,6 +16,8 @@ public class Consts {
     public static final int WINDOW_WIDTH = 1600;
     public static final int WINDOW_HEIGHT = 960;
     
+    // MVP
+    public static float FOV = (float) Math.toRadians(60);
     public static Matrix4f GUI_PROJECTION = 
         new Matrix4f().identity().ortho(0, Consts.WINDOW_WIDTH, Consts.WINDOW_HEIGHT, 0, 1f, 10f);
 
@@ -32,7 +34,7 @@ public class Consts {
     public static final int MAP_HEIGHT = 512;
 
     public static final int GUI_MAP_WIDTH = 385;
-    public static final int GUI_MAP_HEIGHT = 200;
+    public static final int GUI_MAP_HEIGHT = 264;
 
     // Bitmask
     public static final long POSITION_MASK = 0x1FFFF;

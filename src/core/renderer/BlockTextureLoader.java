@@ -88,8 +88,6 @@ public class BlockTextureLoader {
     }
 
     public void bindTexture(){
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_BUFFER, textureObjectId);
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_BUFFER, textureId);
     }

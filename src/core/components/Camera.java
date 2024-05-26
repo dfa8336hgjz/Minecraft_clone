@@ -38,8 +38,22 @@ public class Camera {
         return viewMatrix;
     }
 
+    public Matrix4f getViewMatrixForCubemap() {
+        viewMatrix.identity();
+        viewMatrix.rotate((float) Math.toRadians(transform.rotation.x), new Vector3f(1.0f, 0.0f, 0.0f))
+                .rotate((float) Math.toRadians(transform.rotation.y), new Vector3f(0.0f, 1.0f, 0.0f))
+                .rotate((float) Math.toRadians(transform.rotation.z), new Vector3f(0.0f, 0.0f, 1.0f));
+
+        return viewMatrix;
+    }
+
     public Vector3f getForwardVector(){
         viewMatrix = getViewMatrix();
         return new Vector3f(-viewMatrix.get(0, 2), -viewMatrix.get(1, 2), -viewMatrix.get(2, 2)).normalize();
+    }
+
+    public void cleanup(){
+        viewMatrix = null;
+        transform.cleanup();
     }
 }

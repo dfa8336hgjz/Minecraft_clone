@@ -1,18 +1,21 @@
 package core.components;
 
+import java.util.ArrayList;
+
 import core.utils.Consts;
 
 public class Block {
-    private int id; // id of block in blockMap.json
-    private boolean isSolid;
+    public int id; // id of block in blockMap.json
+    public boolean isTransparent;
 
-    public Block(int id, boolean isSolid) {
+    public Block(int id, ArrayList<BlockData> data) {
         this.id = id;
-        this.isSolid = isSolid;
+        this.isTransparent = data.get(id).Transparent();
     }
 
     public Block() {
         this.id = 0;
+        this.isTransparent = false;
     }
 
     public boolean compare(Block otherBlock) {
@@ -23,28 +26,15 @@ public class Block {
         return (this.id == 0);
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-        this.isSolid = true;
-    }
-
-    public boolean isSolid(){
-        return isSolid;
-    }
-
-    public byte wrapData(){
-        byte newData = 0;
-        newData |= isSolid ? 1: 0;
+    public int wrapData(){
+        int newData = 0;
+        newData |= isTransparent ? 1 : 0;
         newData |= ((id << 1) & Consts.BLOCKID_MASK);
         return newData;
     }
 
-    public void unwrapData(byte data){
-        isSolid = ((data & 1) == 0);
+    public void unwrapData(int data){
+        isTransparent = ((data & 1) == 0);
         id = (int)((data & Consts.BLOCKID_MASK) >> 1);
     }
 

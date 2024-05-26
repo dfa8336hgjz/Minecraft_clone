@@ -12,6 +12,7 @@ import org.joml.Vector3f;
 import core.components.Mesh;
 import core.components.Player;
 import core.launcher.Launcher;
+import core.utils.Consts;
 
 public class _3DRendererBatch {
     public static _3DRendererBatch instance;
@@ -56,12 +57,12 @@ public class _3DRendererBatch {
         glVertexAttribPointer(3, 3, GL_FLOAT, false,  8 * Float.BYTES, 5 * Float.BYTES);
         glEnableVertexAttribArray(3);
 
-        renderMesh = new Mesh(vao, vbo, 0);
+        renderMesh = new Mesh(vao, vbo, 0, 0);
 
         shader.bind();
         shader.set1f("uStrokeWidth", 0.02f);
         shader.set4f("uColor", 0.0f, 0.0f, 0.0f, 1.0f);
-        shader.set1f("uAspectRatio", (float)Launcher.instance.getWindow().getWidth() / Launcher.instance.getWindow().getHeight());
+        shader.set1f("uAspectRatio", Consts.WINDOW_WIDTH / Consts.WINDOW_HEIGHT);
         shader.unbind();
     }
 
@@ -73,14 +74,14 @@ public class _3DRendererBatch {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        glBindBuffer(GL_ARRAY_BUFFER, renderMesh.getVBO());
+        glBindBuffer(GL_ARRAY_BUFFER, renderMesh.vbo);
         glBufferData(GL_ARRAY_BUFFER, vertices, GL_DYNAMIC_DRAW);
 
         shader.bind();
         shader.setMat4f("uProjection", Launcher.instance.getWindow().updateProjection(Player.instance.camera.getViewMatrix()));
         shader.setMat4f("uView", Player.instance.camera.getViewMatrix());
 
-        glBindVertexArray(renderMesh.getVAO());
+        glBindVertexArray(renderMesh.vao);
         glDrawArrays(GL_TRIANGLES, 0, numVertices);
 
         // Clear the batch

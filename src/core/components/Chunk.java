@@ -45,11 +45,13 @@ public class Chunk {
     private boolean readyToOut;
     private boolean readyToIn;
     private boolean isChanged;
+    private ArrayList<BlockData> blockMap;
 
     public Block[] blocks;
 
     public Chunk(int chunkX, int chunkZ) {
         blocks = new Block[Consts.CHUNK_WIDTH * Consts.CHUNK_HEIGHT * Consts.CHUNK_DEPTH];
+        blockMap = TextureMapLoader.getBlockDataMap();
         data = new ChunkRenderData();
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
@@ -64,15 +66,16 @@ public class Chunk {
             glBindVertexArray(vao);
             int vbo = glGenBuffers();
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(GL_ARRAY_BUFFER, 3000 * Integer.BYTES, GL_DYNAMIC_DRAW);
-            glVertexAttribIPointer(0, 1, GL_UNSIGNED_INT, 0, 0);
+            glBufferData(GL_ARRAY_BUFFER, 30000 * Integer.BYTES, GL_DYNAMIC_DRAW);
+            glVertexAttribIPointer(0, 1, GL_UNSIGNED_INT, Integer.BYTES, 0);
+            glEnableVertexAttribArray(0);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
-            mesh = new Mesh(vao, vbo, data.vertexCount);
+            mesh = new Mesh(vao, vbo, data.vertexCount, 0);
         }
     }
 
     public void uploadToGPU(){
-        glBindBuffer(GL_ARRAY_BUFFER, mesh.getVBO());
+        glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
         glBufferData(GL_ARRAY_BUFFER, data.vertdata, GL_DYNAMIC_DRAW);
     }
 
@@ -84,10 +87,11 @@ public class Chunk {
         }
 
         shader.set2i("chunkPos", chunkX, chunkZ);
-        glBindVertexArray(mesh.getVAO());
+        glBindVertexArray(mesh.vao);
         glEnableVertexAttribArray(0);
         glDrawArrays(GL_TRIANGLES, 0, data.vertexCount);
         glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
         glBindVertexArray(0);
     }
 
@@ -107,25 +111,14 @@ public class Chunk {
                             * 10 + 70;
 
                     if (y < MountainHeight) {
-                        this.blocks[blockId].setId(5);
+                        this.blocks[blockId].id = 4;
                     }
                     if(y < GroundHeight){
-                        this.blocks[blockId].setId(1);
+                        this.blocks[blockId].id = 1;
                     }
                     if(y == 0){
-                        this.blocks[blockId].setId(10);
+                        this.blocks[blockId].id = 9;
                     }
-                    // if(chunkX % 2 == 0){
-                    //     if(chunkZ % 2 ==0) this.blocks[blockId].setId(1);
-                    //     else this.blocks[blockId].setId(3);
-                    // }
-                    // else 
-                    // {
-                    //     if(chunkZ % 2 !=0) this.blocks[blockId].setId(2);
-                    //     else this.blocks[blockId].setId(4);
-                    // }
-
-                    
                 }
             }
         }
@@ -153,42 +146,42 @@ public class Chunk {
 
                     Block topNeighborBlock = getBlock(x, y + 1, z);
                     if (topNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(topNeighborBlock.getId()).isSolid()) {
+                            || blockMap.get(topNeighborBlock.id).Transparent()) {
                         loadBlock(vert0, vert1, vert2, vert3, thisBlock, FACE.TOP, newVertData);
                         vertexCursor += 6;
                     }
 
                     Block bottomNeighborBlock = getBlock(x, y - 1, z);
                     if (bottomNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(bottomNeighborBlock.getId()).isSolid()) {
+                            || blockMap.get(bottomNeighborBlock.id).Transparent()) {
                         loadBlock(vert5, vert4, vert7, vert6, thisBlock, FACE.BOTTOM, newVertData);
                         vertexCursor += 6;
                     }
 
                     Block frontNeighborBlock = getBlock(x, y, z + 1);
                     if (frontNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(frontNeighborBlock.getId()).isSolid()) {
+                            || blockMap.get(frontNeighborBlock.id).Transparent()) {
                         loadBlock(vert1, vert0, vert4, vert5, thisBlock, FACE.FRONT, newVertData);
                         vertexCursor += 6;
                     }
 
                     Block backNeighborBlock = getBlock(x, y, z - 1);
                     if (backNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(backNeighborBlock.getId()).isSolid()) {
+                            || blockMap.get(backNeighborBlock.id).Transparent()) {
                         loadBlock(vert3, vert2, vert6, vert7, thisBlock, FACE.BACK, newVertData);
                         vertexCursor += 6;
                     }
 
                     Block leftNeighborBlock = getBlock(x - 1, y, z);
                     if (leftNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(leftNeighborBlock.getId()).isSolid()) {
+                            || blockMap.get(leftNeighborBlock.id).Transparent()) {
                         loadBlock(vert2, vert1, vert5, vert6, thisBlock, FACE.LEFT, newVertData);
                         vertexCursor += 6;
                     }
 
                     Block rightNeighborBlock = getBlock(x + 1, y, z);
                     if (rightNeighborBlock.isNullBlock()
-                            || TextureMapLoader.getBlock(rightNeighborBlock.getId()).isSolid()) {
+                            || blockMap.get(rightNeighborBlock.id).Transparent()) {
                         loadBlock(vert0, vert3, vert7, vert4, thisBlock, FACE.RIGHT, newVertData);
                         vertexCursor += 6;
                     }
@@ -211,15 +204,15 @@ public class Chunk {
 
     public Block getBlock(int x, int y, int z) {
         int id = getflattenedID(x, y, z);
-        Block NULLBLOCK = new Block(0, false);
+        Block NULLBLOCK = new Block(0, blockMap);
         return (x >= Consts.CHUNK_WIDTH || x < 0 || z >= Consts.CHUNK_DEPTH || z < 0 || y >= Consts.CHUNK_HEIGHT || y < 0) 
         ? NULLBLOCK : blocks[id];
     }
 
     public void removeBlock(int x, int y, int z) {
         int id = getflattenedID(x, y, z);
-        if(blocks[id].getId() == 10) return;
-        Block NULLBLOCK = new Block(0, false);
+        if(blocks[id].id == 9) return; // bedrock
+        Block NULLBLOCK = new Block(0, blockMap);
         blocks[id] = NULLBLOCK;
         isChanged = true;
 
@@ -230,7 +223,7 @@ public class Chunk {
     public void addBlock(int x, int y, int z, int typeId) {
         int id = getflattenedID(x, y, z);
         if(blocks[id].isNullBlock()) {
-            blocks[id] = new Block(typeId, true);
+            blocks[id] = new Block(typeId, blockMap);
             isChanged = true;
     
             generateNewChunkData();
@@ -251,7 +244,7 @@ public class Chunk {
     private int loadFace(Vector3i pos, FACE face, Block block, UV_INDEX uvId){
         int newData = 0;
         int posId = getEncodedID(pos.x, pos.y, pos.z);
-        int texId = TextureMapLoader.getFaceTextureId(block.getId(), face.ordinal());
+        int texId = TextureMapLoader.getFaceTextureId(block.id, face.ordinal());
         newData |= ((posId << 0) & Consts.POSITION_MASK);
         newData |= ((texId << 17) & Consts.TEXID_MASK);
         newData |= ((face.ordinal() << 27) & Consts.NORMAL_MASK);

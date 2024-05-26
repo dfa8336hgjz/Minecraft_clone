@@ -47,7 +47,7 @@ public class Launcher {
         TextureMapLoader mapLoader = new TextureMapLoader();
         player = new Player();
         font = new Cfont("Arial", 64);
-        changeScene(1);
+        changeScene(0);
     }
 
     public void run() {

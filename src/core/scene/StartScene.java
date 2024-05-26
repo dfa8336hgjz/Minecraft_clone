@@ -1,7 +1,10 @@
 package core.scene;
 
+import org.joml.Matrix4f;
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 
+import core.components.CubeMap;
 import core.components.Player;
 import core.launcher.Launcher;
 import core.launcher.Scene;
@@ -13,12 +16,15 @@ public class StartScene extends Scene{
     private Button playGameButton;
     private Button quitButton;
     private GUIRenderer renderer;
+    private CubeMap cubemap;
+    private Matrix4f view;
+
+    private float yRotate = 0.0f;
 
     @Override
     public void init() {
         try {
             renderer = new GUIRenderer();
-
             playGameButton = new Button();
             playGameButton.clickSprite = TextureMapLoader.getGUITexture("buttonClick");
             playGameButton.hoverSprite = TextureMapLoader.getGUITexture("buttonHover");
@@ -36,7 +42,15 @@ public class StartScene extends Scene{
             quitButton.size = new Vector2i(400, 80);
             quitButton.textScale = 0.45f;
             quitButton.text = "Quit Game";
+            
+            cubemap = new CubeMap("src\\assets\\textures\\skybox\\menu\\Top.png",
+                                "src\\assets\\textures\\skybox\\menu\\Bottom.png",
+                                "src\\assets\\textures\\skybox\\menu\\Front.png",
+                                "src\\assets\\textures\\skybox\\menu\\Back.png",
+                                "src\\assets\\textures\\skybox\\menu\\Left.png",
+                                "src\\assets\\textures\\skybox\\menu\\Right.png");
 
+            view = new Matrix4f();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -49,6 +63,13 @@ public class StartScene extends Scene{
 
     @Override
     public void render() {
+        view.identity().rotate((float) Math.toRadians(10.0f), new Vector3f(1.0f, 0.0f, 0.0f))
+                        .rotate((float) Math.toRadians(yRotate), new Vector3f(0.0f, 1.0f, 0.0f))
+                        .rotate((float) Math.toRadians(0.0f), new Vector3f(0.0f, 0.0f, 1.0f));
+        yRotate += 0.08f;
+        if(yRotate >= 360.0f) yRotate = 0.0f;
+
+        cubemap.render(view);
         renderer.drawSprite(350, 150, 900, 250, "logo");
         if(renderer.isButtonClicked(playGameButton)){
             Launcher.instance.changeScene(1);

@@ -12,4 +12,8 @@ public class BoxCollider {
     public boolean isCollidedWith(BoxCollider collider){
         return false;
     }
+
+    public void cleanup(){
+        size = null;
+    }
 }

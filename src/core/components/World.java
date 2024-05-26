@@ -133,7 +133,7 @@ public class World {
         if(currentChunk != null)
         {
             currentChunk.addBlock((int)Math.floor(worldPos.x - chunkX * 16),
-             (int)worldPos.y, (int)Math.floor(worldPos.z - chunkZ * 16), 5);
+             (int)worldPos.y, (int)Math.floor(worldPos.z - chunkZ * 16), 10);
         }
     }
 

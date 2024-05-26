@@ -16,7 +16,7 @@ public class Player {
     public Camera camera;
     public PlayerInputManager input;
 
-    private int maxRaycastDistance = 3;
+    private int maxRaycastDistance = 5;
 
     public Player(){
         instance = this;
@@ -43,6 +43,13 @@ public class Player {
             gravityOn(dt);
             checkCollision(dt);
         }
+    }
+
+    public void moveRotation(float x, float y, float z){
+        Vector3f rot = camera.transform.rotation;
+        if(rot.x + x >= 90 || rot.x + x < -90) return;
+        if(rot.z + z >= 90 || rot.z + z < -90) return;
+        camera.transform.moveRotation(x, y, z);
     }
 
     private void gravityOn(float dt){

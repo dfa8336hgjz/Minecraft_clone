@@ -9,17 +9,12 @@ import core.renderer._2DRendererBatch;
 import core.renderer.font.FontBatch;
 import core.system.texturePackage.TextureMapLoader;
 
-enum UIState{
-    Default,
-    Hover,
-    Click
-}
-
-public class GUIRenderer {
+public class CraftGUIRenderer {
     private _2DRendererBatch batch2d;
     private FontBatch batchFont;
+    
 
-    public GUIRenderer() throws Exception{
+    public CraftGUIRenderer() throws Exception{
         batchFont = new FontBatch();
         batchFont.initBatch();
 
@@ -62,7 +57,7 @@ public class GUIRenderer {
         return UIState.Default;
     }
 
-    public void drawSprite(float x, float y, float sizeX, float sizeY, String spriteName){
+    public void draw(float x, float y, float sizeX, float sizeY, String spriteName){
         batch2d.drawSprite(x, y, sizeX, sizeY, TextureMapLoader.getGUITexture(spriteName));
     }
 

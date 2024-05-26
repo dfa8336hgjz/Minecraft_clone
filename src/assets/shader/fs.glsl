@@ -2,9 +2,10 @@
 
 in vec3 fragPos;
 in vec2 fragTexCoord;
+in vec3 fragColor;
 flat in uint fragFace;
 
-out vec4 fragColor;
+out vec4 FragColor;
 uniform sampler2D txt;
 uniform vec3 playerPos;
 
@@ -48,13 +49,19 @@ void main()
 	float diff = max(dot(fragNormal, lightDir), 0.0);
 	vec3 diffuse = diff * lightColor;
 
-	vec3 objectColor = texture(txt, fragTexCoord).rgb;
-	vec3 result = (diffuse + ambient) * objectColor;
 
 	float distanceToPlayer = length(fragPos - playerPos);
 	float d = (distanceToPlayer / 96.0) - 0.5;
 	d = clamp(d, 0, 1);
 	vec4 fogColor = vec4(153.0 / 255.0, 204.0 / 255.0, 1.0, 1.0);
+	
+	vec4 objectColor = texture(txt, fragTexCoord);
+	vec3 result = (diffuse + ambient) * objectColor.rgb;
 
-    fragColor = vec4(result, 0.0) * (1-d) + fogColor * d;
+    FragColor = (vec4(result, 1.0) * (1 - d) + fogColor * d) * vec4(fragColor, 1);
+	
+	if (objectColor.a == 0) 
+	{
+		discard;
+	}
 }

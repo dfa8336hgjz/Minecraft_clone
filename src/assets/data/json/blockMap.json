@@ -1,6 +1,7 @@
 [
     {
         "id": 0,
+        "transparent": true,
         "name": "air",
         "top": "",
         "bottom": "",
@@ -11,9 +12,10 @@
     },
     {
         "id": 1,
+        "transparent": false,
         "name": "Dirt",
-        "top": "grass_block_top",
-        "bottom": "grass_block_top",
+        "top": "green_concrete_powder",
+        "bottom": "green_concrete",
         "front": "grass_block_side",
         "back": "grass_block_side",
         "left": "grass_block_side",
@@ -21,6 +23,7 @@
     },
     {
         "id": 2,
+        "transparent": false,
         "name": "Sand",
         "top": "sand",
         "bottom": "sand",
@@ -31,26 +34,29 @@
     },
     {
         "id": 3,
-        "name": "Plank",
-        "top": "oak_planks",
-        "bottom": "oak_planks",
-        "front": "oak_planks",
-        "back": "oak_planks",
-        "left": "oak_planks",
-        "right": "oak_planks"
+        "transparent": false,
+        "name": "Birch Plank",
+        "top": "birch_planks",
+        "bottom": "birch_planks",
+        "front": "birch_planks",
+        "back": "birch_planks",
+        "left": "birch_planks",
+        "right": "birch_planks"
     },
     {
         "id": 4,
-        "name": "Cobblestone",
-        "top": "cobblestone",
-        "bottom": "cobblestone",
-        "front": "cobblestone",
-        "back": "cobblestone",
-        "left": "cobblestone",
-        "right": "cobblestone"
+        "transparent": false,
+        "name": "Stone",
+        "top": "stone",
+        "bottom": "stone",
+        "front": "stone",
+        "back": "stone",
+        "left": "stone",
+        "right": "stone"
     },
     {
         "id": 5,
+        "transparent": false,
         "name": "Diamond block",
         "top": "diamond_block",
         "bottom": "diamond_block",
@@ -61,6 +67,7 @@
     },
     {
         "id": 6,
+        "transparent": false,
         "name": "Quartz brick",
         "top": "quartz_bricks",
         "bottom": "quartz_bricks",
@@ -71,6 +78,7 @@
     },
     {
         "id": 7,
+        "transparent": false,
         "name": "Quartz block",
         "top": "quartz_block_top",
         "bottom": "quartz_block_bottom",
@@ -81,26 +89,18 @@
     },
     {
         "id": 8,
-        "name": "Chiseled Quartz",
-        "top": "chiseled_quartz_block_top",
-        "bottom": "chiseled_quartz_block_top",
-        "front": "chiseled_quartz_block",
-        "back": "chiseled_quartz_block",
-        "left": "chiseled_quartz_block",
-        "right": "chiseled_quartz_block"
+        "transparent": false,
+        "name": "Oak Log",
+        "top": "oak_log_top",
+        "bottom": "oak_log_top",
+        "front": "oak_log",
+        "back": "oak_log",
+        "left": "oak_log",
+        "right": "oak_log"
     },
     {
         "id": 9,
-        "name": "Lime concrete",
-        "top": "lime_concrete",
-        "bottom": "lime_concrete",
-        "front": "lime_concrete",
-        "back": "lime_concrete",
-        "left": "lime_concrete",
-        "right": "lime_concrete"
-    },
-    {
-        "id": 10,
+        "transparent": false,
         "name": "Bedrock",
         "top": "bedrock",
         "bottom": "bedrock",
@@ -108,5 +108,27 @@
         "back": "bedrock",
         "left": "bedrock",
         "right": "bedrock"
+    }, 
+    {
+        "id": 10,
+        "transparent": true,
+        "name":"glass",
+        "top": "glass",
+        "bottom": "glass",
+        "front": "glass",
+        "back": "glass",
+        "left": "glass",
+        "right": "glass"
+    },
+    {
+        "id":11,
+        "transparent": true,
+        "name":"Leaves",
+        "top": "azalea_leaves",
+        "bottom": "azalea_leaves",
+        "front": "azalea_leaves",
+        "back": "azalea_leaves",
+        "left": "azalea_leaves",
+        "right": "azalea_leaves"
     }
 ]

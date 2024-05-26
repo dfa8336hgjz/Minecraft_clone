@@ -4,19 +4,19 @@ public class BlockData {
     private String blockName;
     private String[] textureName;
 
-    private boolean isSolid;
+    private boolean isTransparent;
 
     public BlockData() {
         textureName = new String[6];
         blockName = "";
-        isSolid = true;
+        isTransparent = true;
     }
 
-    public BlockData(String name, boolean isSolid, String top, String bottom, String front, String back, String left,
-            String right) {
+    public BlockData(String name, String top, String bottom, String front, String back, String left,
+            String right, boolean isTransparent) {
         textureName = new String[] { top, bottom, front, back, left, right };
         this.blockName = name;
-        this.isSolid = isSolid;
+        this.isTransparent = isTransparent;
     }
 
     public String getBlockName() {
@@ -35,12 +35,11 @@ public class BlockData {
         this.textureName = textureName;
     }
 
-    public boolean isSolid() {
-        return isSolid;
+    public boolean Transparent() {
+        return isTransparent;
     }
 
-    public void setTransparent(boolean isSolid) {
-        this.isSolid = isSolid;
+    public void setTransparent(boolean isTransparent) {
+        this.isTransparent = isTransparent;
     }
-
 }

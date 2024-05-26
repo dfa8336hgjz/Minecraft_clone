@@ -5,8 +5,8 @@ import org.joml.Vector3f;
 
 public class Transform {
     public Vector3f position, rotation;
-    public float scale;
     public Matrix4f modelMatrix;
+    public float scale;
 
     public Transform(){
         position = new Vector3f(0.0f, 0.0f, 0.0f);
@@ -88,5 +88,11 @@ public class Transform {
                 .scale(this.scale);
 
         return modelMatrix;
+    }
+
+    public void cleanup(){
+        position = null;
+        rotation = null;
+        modelMatrix = null;
     }
 }

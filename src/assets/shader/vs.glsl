@@ -3,6 +3,7 @@ layout (location=0) in uint vertdata;
 
 out vec3 fragPos;
 out vec2 fragTexCoord;
+out vec3 fragColor;
 flat out uint fragFace;
 
 uniform samplerBuffer texCoordBuffer;
@@ -66,4 +67,6 @@ void main()
     fragPos.z += chunkPos.y * 16.0f;
 
     gl_Position = projection * view * model * vec4(fragPos, 1.0);
+
+	fragColor = vec3(1, 1, 1);
 }
