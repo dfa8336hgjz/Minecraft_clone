@@ -8,8 +8,10 @@ import org.joml.Random;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
+import core.gameplay.Player;
 import core.renderer.ShaderManager;
 import core.system.ChunkUpdateManager;
+import core.utils.Consts;
 import core.utils.Paths;
 
 public class World {
@@ -21,6 +23,7 @@ public class World {
     private Vector2i playerLastPos;
 
     private boolean onUpdate;
+    private boolean firstUpdateDone;
 
     public World() {
         Random rng = new Random();
@@ -48,6 +51,10 @@ public class World {
 
         ArrayList<Vector2i> keys = new ArrayList<>(renderingChunks.keySet());
         for (Vector2i pos : keys) {
+            if(!firstUpdateDone){
+                firstUpdateDone = true;
+                Player.instance.fallingAcceleration = Consts.GRAVITY;
+            }
             Chunk chunk = renderingChunks.get(pos);
             if(!chunk.isReadyToIn() && !chunk.isReadyToOut())
                 chunk.render(shader);

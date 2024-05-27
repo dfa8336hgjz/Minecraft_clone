@@ -1,27 +1,39 @@
-package core.components;
+package core.gameplay;
 
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
+import core.components.Block;
+import core.components.BoxCollider;
+import core.components.Camera;
+import core.components.RayCastResult;
+import core.components.RigidBody;
+import core.components.World;
+import core.enums.GameMode;
+import core.enums.InteractMode;
 import core.launcher.Launcher;
 import core.renderer._3DRendererBatch;
-import core.system.PlayerInputManager;
-import core.utils.Consts;
 import core.utils.Utils;
 
 public class Player {
     public static Player instance;
-    private BoxCollider boxCollider;
-    private RigidBody rigidBody;
     public Camera camera;
+    public GameMode gameMode;
+    private RigidBody rigidBody;
     public PlayerInputManager input;
+    private BoxCollider boxCollider;
+    public InteractMode interactMode;
 
+    private float jumpHeight = 2.0f;
     private int maxRaycastDistance = 5;
+    public float fallingAcceleration = 1.0f;
+    public int slotPicking = 0;
 
     public Player(){
         instance = this;
+        gameMode = GameMode.GUI;
+        interactMode = InteractMode.Creative;
         input = new PlayerInputManager();
-        input.init();
     }
 
     public void setPlayerView(Camera camera){
@@ -37,12 +49,28 @@ public class Player {
         return currentPos.div(16);
     }
 
+    public void input(){
+        input.input();
+    }
+
     public void update(){
         float dt = (float)Launcher.instance.getDeltaTime();
-        if(!input.isSpectatorMode){
+        if(gameMode != GameMode.GUI && interactMode == InteractMode.Creative){
             gravityOn(dt);
             checkCollision(dt);
         }
+    }
+
+    public void jump(float dt){
+        if(input.isJumping){
+            camera.transform.position.add(0 , 10 * dt, 0);
+            jumpHeight -= 10 * dt;
+            if(jumpHeight < 0.0f){
+                input.isJumping = false;
+            }
+            return;
+        }
+        jumpHeight = 2.0f;
     }
 
     public void moveRotation(float x, float y, float z){
@@ -54,8 +82,7 @@ public class Player {
 
     private void gravityOn(float dt){
         camera.transform.position.add(rigidBody.velocity.x * dt, rigidBody.velocity.y * dt, rigidBody.velocity.z * dt);
-        rigidBody.velocity.add(rigidBody.acceleration.x * dt, rigidBody.acceleration.y * dt, rigidBody.acceleration.z * dt);
-        rigidBody.velocity.sub(0.0f , Consts.GRAVITY * dt, 0.0f);
+        rigidBody.velocity.sub(0.0f , fallingAcceleration * dt, 0.0f);
         rigidBody.velocity = Utils.clampVelocity(rigidBody.velocity);
     }
 
@@ -75,7 +102,6 @@ public class Player {
                         Vector3f overlap = resolveCollision(x - 0.5f, y - 0.5f, z - 0.5f);
                         camera.transform.position.sub(overlap);
                         rigidBody.velocity.set(0.0f);
-                        rigidBody.acceleration.set(0.0f);
                     }
                 }
             }    
@@ -221,11 +247,6 @@ public class Player {
                             result.hitAtBlock = currentOrigin;
 
                             _3DRendererBatch.instance.drawBox(currentOrigin.add(0.5f, 0.5f, 0.5f), new Vector3f(1.0f));
-                            _3DRendererBatch.instance.drawBox(new Vector3f(
-                                camera.transform.position.x + direction.x * depth,
-                                camera.transform.position.y + direction.y * depth,
-                                camera.transform.position.z + direction.z * depth
-                            ), new Vector3f(0.1f));
                             return result;
                         }
                     }

@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import org.joml.Vector2i;
 
 import core.components.Chunk;
-import core.components.Player;
+import core.gameplay.Player;
 import core.utils.Consts;
 import core.utils.Utils;
 

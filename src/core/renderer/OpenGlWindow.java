@@ -102,6 +102,10 @@ public class OpenGlWindow {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
+    public void setMouseCenter(){
+        glfwSetCursorPos(window, width / 2, height / 2);
+    }
+
     public void cleanup() {
         glfwDestroyWindow(window);
     }

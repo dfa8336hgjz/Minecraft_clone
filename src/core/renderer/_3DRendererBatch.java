@@ -10,7 +10,7 @@ import static org.lwjgl.opengl.GL45.glCreateVertexArrays;
 import org.joml.Vector3f;
 
 import core.components.Mesh;
-import core.components.Player;
+import core.gameplay.Player;
 import core.launcher.Launcher;
 import core.utils.Consts;
 

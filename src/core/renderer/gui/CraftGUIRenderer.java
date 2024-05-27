@@ -1,12 +1,15 @@
 package core.renderer.gui;
 
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
-import core.components.Player;
 import core.components.TextureData;
+import core.gameplay.Player;
 import core.renderer._2DRendererBatch;
 import core.renderer.font.FontBatch;
+import core.system.Input;
 import core.system.texturePackage.TextureMapLoader;
 
 public class CraftGUIRenderer {
@@ -44,12 +47,12 @@ public class CraftGUIRenderer {
     }
 
     public UIState mouseInUIComponent(Vector2i position, Vector2i size){
-        Vector2f playerMousePos = new Vector2f((float)Player.instance.input.currentMousePos.x, (float)Player.instance.input.currentMousePos.y);
+        Vector2f playerMousePos = new Vector2f((float)Input.currentMousePos.x, (float)Input.currentMousePos.y);
        
         if(playerMousePos.x >= position.x && playerMousePos.x <= position.x + size.x
         && playerMousePos.y >= position.y && playerMousePos.y <= position.y + size.y)
         {
-            if(Player.instance.input.mouseClick){
+            if(Input.isMousePressed(GLFW_MOUSE_BUTTON_LEFT)){
                 return UIState.Click;
             }
             return UIState.Hover;
@@ -57,8 +60,16 @@ public class CraftGUIRenderer {
         return UIState.Default;
     }
 
-    public void draw(float x, float y, float sizeX, float sizeY, String spriteName){
-        batch2d.drawSprite(x, y, sizeX, sizeY, TextureMapLoader.getGUITexture(spriteName));
+    public void draw(){
+        batch2d.drawSprite(785, 465, 30, 30, TextureMapLoader.getGUITexture("picker"));
+        for (int i = 0; i < 12; i++) {
+            if(i == (int)Player.instance.slotPicking)
+                batch2d.drawSprite(380 + i * 70, 890, 70, 70, TextureMapLoader.getGUITexture("inventoryPicking"));
+            else
+                batch2d.drawSprite(380 + i * 70, 890, 70, 70, TextureMapLoader.getGUITexture("inventoryDefault"));
+
+            
+        }
     }
 
     public void flushBatch(){

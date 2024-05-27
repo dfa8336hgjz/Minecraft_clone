@@ -5,7 +5,6 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import core.components.CubeMap;
-import core.components.Player;
 import core.launcher.Launcher;
 import core.launcher.Scene;
 import core.renderer.gui.Button;
@@ -58,17 +57,15 @@ public class StartScene extends Scene{
 
     @Override
     public void update() {
-        Player.instance.input.updateOnGUI();
+        view.identity().rotate((float) Math.toRadians(10.0f), new Vector3f(1.0f, 0.0f, 0.0f))
+                        .rotate((float) Math.toRadians(yRotate), new Vector3f(0.0f, 1.0f, 0.0f))
+                        .rotate((float) Math.toRadians(0.0f), new Vector3f(0.0f, 0.0f, 1.0f));
+        yRotate += 10f * Launcher.instance.getDeltaTime();
+        if(yRotate >= 360.0f) yRotate = 0.0f;
     }
 
     @Override
     public void render() {
-        view.identity().rotate((float) Math.toRadians(10.0f), new Vector3f(1.0f, 0.0f, 0.0f))
-                        .rotate((float) Math.toRadians(yRotate), new Vector3f(0.0f, 1.0f, 0.0f))
-                        .rotate((float) Math.toRadians(0.0f), new Vector3f(0.0f, 0.0f, 1.0f));
-        yRotate += 0.08f;
-        if(yRotate >= 360.0f) yRotate = 0.0f;
-
         cubemap.render(view);
         renderer.drawSprite(350, 150, 900, 250, "logo");
         if(renderer.isButtonClicked(playGameButton)){

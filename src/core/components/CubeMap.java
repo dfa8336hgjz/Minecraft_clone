@@ -13,7 +13,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 
 import core.launcher.Launcher;

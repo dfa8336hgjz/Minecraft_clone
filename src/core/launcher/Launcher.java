@@ -4,12 +4,13 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
-import core.components.Player;
+import core.gameplay.Player;
 import core.renderer.OpenGlWindow;
 import core.renderer.font.Cfont;
 import core.scene.CraftScene;
 import core.scene.CreateWorldScene;
 import core.scene.StartScene;
+import core.system.Input;
 import core.system.texturePackage.TextureMapLoader;
 import core.utils.Consts;
 
@@ -18,6 +19,7 @@ public class Launcher {
     private OpenGlWindow window;
     private Scene currentScene;
     private Player player;
+    private Input input;
 
     public Cfont font;
 
@@ -44,6 +46,7 @@ public class Launcher {
         deltaTime = 0;
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
         window = new OpenGlWindow("pmc", Consts.WINDOW_WIDTH, Consts.WINDOW_HEIGHT, true);
+        input = new Input();
         TextureMapLoader mapLoader = new TextureMapLoader();
         player = new Player();
         font = new Cfont("Arial", 64);
@@ -51,7 +54,7 @@ public class Launcher {
     }
 
     public void run() {
-        this.isRunning = true;
+        isRunning = true;
         int frame = 0;
         long frameCounter = 0;
         long lastTime = System.nanoTime();
@@ -96,7 +99,7 @@ public class Launcher {
     }
 
     public void input() {
-        player.input.input();
+        player.input();
     }
 
     public void stop() {
@@ -105,6 +108,7 @@ public class Launcher {
 
     public void update() {
         window.update();
+        player.update();
         currentScene.update();
     }
 

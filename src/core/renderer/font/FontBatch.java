@@ -74,13 +74,19 @@ public class FontBatch {
         shader.bind();
         shader.set1i("uFontTexture", 0);
         shader.unbind();
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
     }
 
     public void flushBatch() {
         shader.bind();
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_STENCIL_TEST);
         glDisable(GL_CULL_FACE);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, Float.BYTES * VERTEX_SIZE * BATCH_SIZE, GL_DYNAMIC_DRAW);
         glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
@@ -89,13 +95,15 @@ public class FontBatch {
         glBindTexture(GL_TEXTURE_BUFFER, font.textureId);
         shader.setMat4f("uProjection", Consts.GUI_PROJECTION);
 
-        glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, size * 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         size = 0;
         glEnable(GL_CULL_FACE);
         glDisable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_STENCIL_TEST);
         shader.unbind();
     }
 

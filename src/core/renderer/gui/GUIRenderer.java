@@ -1,12 +1,14 @@
 package core.renderer.gui;
 
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
-import core.components.Player;
 import core.components.TextureData;
 import core.renderer._2DRendererBatch;
 import core.renderer.font.FontBatch;
+import core.system.Input;
 import core.system.texturePackage.TextureMapLoader;
 
 enum UIState{
@@ -49,12 +51,12 @@ public class GUIRenderer {
     }
 
     public UIState mouseInUIComponent(Vector2i position, Vector2i size){
-        Vector2f playerMousePos = new Vector2f((float)Player.instance.input.currentMousePos.x, (float)Player.instance.input.currentMousePos.y);
+        Vector2f playerMousePos = new Vector2f((float)Input.currentMousePos.x, (float)Input.currentMousePos.y);
        
         if(playerMousePos.x >= position.x && playerMousePos.x <= position.x + size.x
         && playerMousePos.y >= position.y && playerMousePos.y <= position.y + size.y)
         {
-            if(Player.instance.input.mouseClick){
+            if(Input.isMousePressed(GLFW_MOUSE_BUTTON_LEFT)){
                 return UIState.Click;
             }
             return UIState.Hover;

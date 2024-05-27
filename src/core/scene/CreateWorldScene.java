@@ -2,7 +2,6 @@ package core.scene;
 
 import org.joml.Vector2i;
 
-import core.components.Player;
 import core.launcher.Launcher;
 import core.launcher.Scene;
 import core.renderer.gui.Button;
@@ -54,7 +53,6 @@ public class CreateWorldScene extends Scene{
 
     @Override
     public void update() {
-        Player.instance.input.updateOnGUI();
     }
 
     @Override
