@@ -1,23 +1,39 @@
 package core.scene;
 
+import java.util.Random;
+
 import org.joml.Vector2i;
 
+import core.components.Camera;
+import core.components.CubeMap;
+import core.gameplay.Player;
 import core.launcher.Launcher;
 import core.launcher.Scene;
 import core.renderer.gui.Button;
 import core.renderer.gui.GUIRenderer;
+import core.system.ChunkUpdateManager;
 import core.system.texturePackage.TextureMapLoader;
+import core.utils.Consts;
+import core.utils.Paths;
+import core.utils.Utils;
 
 public class CreateWorldScene extends Scene{
-    private Button loadWorldButton;
-    private Button newWorldButton;
+    private CubeMap cubemap;
     private Button backButton;
+    private Launcher launcher;
     private GUIRenderer renderer;
+    private Button newWorldButton;
+    private Button loadWorldButton;
+    private float errorDisplayTime = 0.0f;
 
     @Override
     public void init() {
         try {
             renderer = new GUIRenderer();
+            launcher = Launcher.instance;
+
+            launcher.updater = new ChunkUpdateManager();
+            launcher.updater.start();
 
             loadWorldButton = new Button();
             loadWorldButton.clickSprite = TextureMapLoader.getGUITexture("buttonClick");
@@ -46,6 +62,13 @@ public class CreateWorldScene extends Scene{
             backButton.textScale = 0.45f;
             backButton.text = "Back";
 
+            cubemap = new CubeMap("src\\assets\\textures\\skybox\\menu\\Top.png",
+                                "src\\assets\\textures\\skybox\\menu\\Bottom.png",
+                                "src\\assets\\textures\\skybox\\menu\\Front.png",
+                                "src\\assets\\textures\\skybox\\menu\\Back.png",
+                                "src\\assets\\textures\\skybox\\menu\\Left.png",
+                                "src\\assets\\textures\\skybox\\menu\\Right.png");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -57,16 +80,36 @@ public class CreateWorldScene extends Scene{
 
     @Override
     public void render() {
+        cubemap.render(launcher.updatedView());
         if(renderer.isButtonClicked(loadWorldButton)){
-            Launcher.instance.stop();
+            if(launcher.readPlayerLastData()){
+                launcher.updater.beginUpdateNewChunk();
+                launcher.changeScene(3);
+            }
+            else{
+                errorDisplayTime = 5.0f;
+            }
         }
 
         if(renderer.isButtonClicked(newWorldButton)){
-            Launcher.instance.changeScene(2);
+            launcher.worldSeed = new Random().nextInt(100);
+            Utils.deleteFileInFolder(Paths.binaryFolder);
+
+            Camera playerView = new Camera(0.0f, Consts.CHUNK_HEIGHT + 20.0f, 0.0f);
+            Player.instance.setPlayerView(playerView);
+            launcher.updater.beginUpdateNewChunk();
+            launcher.changeScene(3);
         }
 
         if(renderer.isButtonClicked(backButton)){
-            Launcher.instance.changeScene(0);
+            launcher.updater.cleanup();
+            launcher.changeScene(0);
+        }
+
+        if(errorDisplayTime > 0){
+            renderer.drawTextHorizontalCenter("There is no saved data", 900, 0.5f, 0xA5F9F8);
+            errorDisplayTime -= launcher.getDeltaTime();
+            if(errorDisplayTime < 0) errorDisplayTime = 0;
         }
 
         renderer.flushBatch();
@@ -75,6 +118,7 @@ public class CreateWorldScene extends Scene{
     @Override
     public void cleanup() {
         renderer.cleanup();
+        cubemap.cleanup();
     }
     
 }

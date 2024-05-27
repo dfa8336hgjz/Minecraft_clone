@@ -23,7 +23,7 @@ public class Consts {
 
     // Chunk data
     public static final int CHUNK_WIDTH = 16;
-    public static final int CHUNK_HEIGHT = 100;
+    public static final int CHUNK_HEIGHT = 150;
     public static final int CHUNK_DEPTH = 16;
     public static final int CHUNK_RADIUS = 7;
 
@@ -48,7 +48,7 @@ public class Consts {
     public static final Vector3f VELOCITY_BOUND = new Vector3f(50.0f, 50.0f, 50.0f);
 
     // Player Input
-    public static final float MouseSentivity = 0.05f;
-    public static final float CREATIVE_Speed = 10f;
+    public static final float MouseSentivity = 0.03f;
+    public static final float CREATIVE_Speed = 5f;
     public static final float SPECTATOR_Speed = 15f;
 }

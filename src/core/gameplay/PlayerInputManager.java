@@ -96,7 +96,7 @@ public class PlayerInputManager {
             }
     
             else if (Input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT) && mouseClickTime <= 0) {
-                World.instance.addBlockAt(rayCastResult.hitPoint.add(rayCastResult.hitFaceNormal.mul(0.4f)));
+                World.instance.addBlockAt(rayCastResult.hitPoint.add(rayCastResult.hitFaceNormal.mul(0.4f)), Player.instance.getCurrentBlockTypeId());
                 mouseClickTime = mouseClickInterval;
             }
         }

@@ -13,6 +13,7 @@ import core.enums.GameMode;
 import core.enums.InteractMode;
 import core.launcher.Launcher;
 import core.renderer._3DRendererBatch;
+import core.utils.Consts;
 import core.utils.Utils;
 
 public class Player {
@@ -23,10 +24,13 @@ public class Player {
     public PlayerInputManager input;
     private BoxCollider boxCollider;
     public InteractMode interactMode;
+    public int[] blockInventory = new int[]{
+        1, 2, 3, 4, 5, 6, 8, 10, 11, 12, 13, 14
+    };
 
     private float jumpHeight = 2.0f;
-    private int maxRaycastDistance = 5;
-    public float fallingAcceleration = 1.0f;
+    private final int maxRaycastDistance = 5;
+    private float fallingAcceleration = Consts.GRAVITY;
     public int slotPicking = 0;
 
     public Player(){
@@ -34,12 +38,13 @@ public class Player {
         gameMode = GameMode.GUI;
         interactMode = InteractMode.Creative;
         input = new PlayerInputManager();
+        
+        boxCollider = new BoxCollider(new Vector3f(0.6f, 3.0f, 0.6f));
+        rigidBody = new RigidBody();
     }
 
     public void setPlayerView(Camera camera){
         this.camera = camera;
-        boxCollider = new BoxCollider(new Vector3f(0.6f, 3.0f, 0.6f));
-        rigidBody = new RigidBody();
     }
 
     public Vector2i getPositionInChunkCoord(){
@@ -71,6 +76,10 @@ public class Player {
             return;
         }
         jumpHeight = 2.0f;
+    }
+
+    public int getCurrentBlockTypeId(){
+        return blockInventory[slotPicking];
     }
 
     public void moveRotation(float x, float y, float z){

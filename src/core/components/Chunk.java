@@ -10,6 +10,7 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.*;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -259,8 +260,10 @@ public class Chunk {
                 out.writeByte(block.wrapData());
             }
 
-		} catch (IOException i) {
-			i.printStackTrace();
+		} catch (IOException e) {
+            File directory = new File(Paths.binaryFolder);
+            directory.mkdirs();
+			serialize();
 		}
     }
 

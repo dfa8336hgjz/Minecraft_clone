@@ -39,4 +39,12 @@ public class Utils {
             Math.max(-Consts.VELOCITY_BOUND.z, Math.min(Consts.VELOCITY_BOUND.z, vector.z))
         );
     }
+
+    public static void deleteFileInFolder(String folderpath){
+        File folder = new File(folderpath);
+        if(!folder.exists()) return;
+        for (File file : folder.listFiles()) {
+            file.delete();
+        }
+    }
 }

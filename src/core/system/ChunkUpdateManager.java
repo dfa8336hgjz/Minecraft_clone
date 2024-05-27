@@ -10,6 +10,7 @@ import org.joml.Vector2i;
 
 import core.components.Chunk;
 import core.gameplay.Player;
+import core.launcher.Launcher;
 import core.utils.Consts;
 import core.utils.Utils;
 
@@ -21,10 +22,9 @@ public class ChunkUpdateManager extends Thread{
     private boolean update;
     private boolean running;
 
-    public ChunkUpdateManager(int worldSeed){
+    public ChunkUpdateManager(){
         update = false;
         running = true;
-        this.worldSeed = worldSeed;
         readyToLoadChunks = new HashMap<Vector2i,Chunk>();
     }
 
@@ -43,7 +43,7 @@ public class ChunkUpdateManager extends Thread{
                     for (int j = lowboundZ; j <= upboundZ; j++) {
                         if(Utils.inRadius(i, j, playerPos, Consts.CHUNK_RADIUS + 1)){
                             Chunk chunk = new Chunk(i, j);
-                            ChunkUpdateThread cThread = new ChunkUpdateThread(chunk, worldSeed, playerPos);
+                            ChunkUpdateThread cThread = new ChunkUpdateThread(chunk, Launcher.instance.worldSeed, playerPos);
                             executor.execute(cThread);
                             readyToLoadChunks.put(new Vector2i(i, j), chunk);
                         }
@@ -82,6 +82,7 @@ public class ChunkUpdateManager extends Thread{
     public void cleanup(){
         running = false;
     }
+
 }
 
 

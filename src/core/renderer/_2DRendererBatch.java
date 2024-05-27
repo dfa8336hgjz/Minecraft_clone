@@ -15,7 +15,6 @@ import org.lwjgl.system.MemoryStack;
 
 import core.components.TextureData;
 import core.utils.Consts;
-import core.utils.Paths;
 
 public class _2DRendererBatch {
     private int[] indices = {
@@ -30,6 +29,7 @@ public class _2DRendererBatch {
 
     private int vao;
     private int vbo;
+    private int textureSlot;
     private int texture;
     private ShaderManager shader;
 
@@ -46,7 +46,8 @@ public class _2DRendererBatch {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementBuffer, GL_STATIC_DRAW);
     }
 
-    public void initBatch() throws Exception {
+    public void initBatch(String filePath, int textureSlot) throws Exception {
+        this.textureSlot = textureSlot;
         shader = new ShaderManager("src\\assets\\shader\\vs2D.glsl", "src\\assets\\shader\\fs2D.glsl");
         shader.init();
 
@@ -67,7 +68,6 @@ public class _2DRendererBatch {
         glEnableVertexAttribArray(1);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-        String filename = Paths.guiTexture;
         int width, height;
         ByteBuffer buffer;
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -75,16 +75,16 @@ public class _2DRendererBatch {
             IntBuffer h = stack.mallocInt(1);
             IntBuffer c = stack.mallocInt(1);
 
-            buffer = STBImage.stbi_load(filename, w, h, c, 4);
+            buffer = STBImage.stbi_load(filePath, w, h, c, 4);
             if (buffer == null) {
-                throw new Exception("Cannot load image file: " + filename);
+                throw new Exception("Cannot load image file: " + filePath);
             }
 
             width = w.get();
             height = h.get();
         }
 
-        glActiveTexture(GL_TEXTURE1);
+        glActiveTexture(GL_TEXTURE0 + textureSlot);
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_NONE);
@@ -98,24 +98,27 @@ public class _2DRendererBatch {
 
         
         shader.bind();
-        shader.set1i("uFontTexture", 1);
+        shader.set1i("uFontTexture", textureSlot);
         shader.unbind();
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
     }
 
     public void flushBatch() {
+        shader.bind();
         glDisable(GL_CULL_FACE);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, Float.BYTES * VERTEX_SIZE * BATCH_SIZE, GL_DYNAMIC_DRAW);
         glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
 
-        glActiveTexture(GL_TEXTURE1);
+        glActiveTexture(GL_TEXTURE0 + textureSlot);
         glBindTexture(GL_TEXTURE_BUFFER, texture);
-        shader.bind();
         shader.setMat4f("uProjection", Consts.GUI_PROJECTION);
 
-        glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, size * 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
@@ -157,6 +160,5 @@ public class _2DRendererBatch {
     public void cleanup(){
         shader.cleanup();
         glDeleteVertexArrays(vao);
-        glDeleteBuffers(vbo);
     }
 }

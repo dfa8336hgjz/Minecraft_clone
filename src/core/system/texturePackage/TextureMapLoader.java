@@ -124,8 +124,13 @@ public class TextureMapLoader {
         return textureMap.get(block.getTextureNameAtSide(face));
     }
 
-    public static String getTextureName(int id){
-        return blockTextureDataMap.get(id).getTextureName();
+    public static BlockData getBlockData(int id){
+        return blockDataMap.get(id);
+    }
+
+    public static TextureData getBlockTextureIcon(int id){
+        String textureName = blockDataMap.get(id).getTextureNameAtSide(2);
+        return blockTextureDataMap.get(textureMap.get(textureName));
     }
 
     public static Vector2f getGUIUV(String name, int id){

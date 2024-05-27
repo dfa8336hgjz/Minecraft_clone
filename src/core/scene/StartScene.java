@@ -1,8 +1,6 @@
 package core.scene;
 
-import org.joml.Matrix4f;
 import org.joml.Vector2i;
-import org.joml.Vector3f;
 
 import core.components.CubeMap;
 import core.launcher.Launcher;
@@ -16,9 +14,6 @@ public class StartScene extends Scene{
     private Button quitButton;
     private GUIRenderer renderer;
     private CubeMap cubemap;
-    private Matrix4f view;
-
-    private float yRotate = 0.0f;
 
     @Override
     public void init() {
@@ -49,7 +44,6 @@ public class StartScene extends Scene{
                                 "src\\assets\\textures\\skybox\\menu\\Left.png",
                                 "src\\assets\\textures\\skybox\\menu\\Right.png");
 
-            view = new Matrix4f();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -57,16 +51,12 @@ public class StartScene extends Scene{
 
     @Override
     public void update() {
-        view.identity().rotate((float) Math.toRadians(10.0f), new Vector3f(1.0f, 0.0f, 0.0f))
-                        .rotate((float) Math.toRadians(yRotate), new Vector3f(0.0f, 1.0f, 0.0f))
-                        .rotate((float) Math.toRadians(0.0f), new Vector3f(0.0f, 0.0f, 1.0f));
-        yRotate += 10f * Launcher.instance.getDeltaTime();
-        if(yRotate >= 360.0f) yRotate = 0.0f;
+        //
     }
 
     @Override
     public void render() {
-        cubemap.render(view);
+        cubemap.render(Launcher.instance.updatedView());
         renderer.drawSprite(350, 150, 900, 250, "logo");
         if(renderer.isButtonClicked(playGameButton)){
             Launcher.instance.changeScene(1);
@@ -82,6 +72,7 @@ public class StartScene extends Scene{
     @Override
     public void cleanup() {
         renderer.cleanup();
+        cubemap.cleanup();
     }
     
 }

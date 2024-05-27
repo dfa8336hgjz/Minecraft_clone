@@ -5,24 +5,29 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
+import core.components.BlockData;
 import core.components.TextureData;
 import core.gameplay.Player;
 import core.renderer._2DRendererBatch;
 import core.renderer.font.FontBatch;
 import core.system.Input;
 import core.system.texturePackage.TextureMapLoader;
+import core.utils.Paths;
 
 public class CraftGUIRenderer {
-    private _2DRendererBatch batch2d;
+    private _2DRendererBatch guiBatch;
+    private _2DRendererBatch blockBatch;
     private FontBatch batchFont;
-    
 
     public CraftGUIRenderer() throws Exception{
         batchFont = new FontBatch();
         batchFont.initBatch();
 
-        batch2d = new _2DRendererBatch();
-        batch2d.initBatch();
+        guiBatch = new _2DRendererBatch();
+        guiBatch.initBatch(Paths.guiTexture, 1);
+
+        blockBatch = new _2DRendererBatch();
+        blockBatch.initBatch(Paths.blockTexture, 2);
     }
 
     public boolean isButtonClicked(Button button){
@@ -40,7 +45,7 @@ public class CraftGUIRenderer {
             texture = button.defaultSprite;
         }
 
-        batch2d.drawSprite(button.position.x, button.position.y, button.size.x, button.size.y, texture);
+        guiBatch.drawSprite(button.position.x, button.position.y, button.size.x, button.size.y, texture);
         batchFont.drawTextOnButton(button, button.textScale, 0x636363);
 
         return result;
@@ -61,24 +66,31 @@ public class CraftGUIRenderer {
     }
 
     public void draw(){
-        batch2d.drawSprite(785, 465, 30, 30, TextureMapLoader.getGUITexture("picker"));
+        int currentBlockId = Player.instance.getCurrentBlockTypeId();
+        BlockData currentBlockData = TextureMapLoader.getBlockData(currentBlockId);
+        guiBatch.drawSprite(785, 465, 30, 30, TextureMapLoader.getGUITexture("picker"));
         for (int i = 0; i < 12; i++) {
-            if(i == (int)Player.instance.slotPicking)
-                batch2d.drawSprite(380 + i * 70, 890, 70, 70, TextureMapLoader.getGUITexture("inventoryPicking"));
+            int thisBlockId = Player.instance.blockInventory[i];
+            if(i == Player.instance.slotPicking)
+                guiBatch.drawSprite(380 + i * 70, 890, 70, 70, TextureMapLoader.getGUITexture("inventoryPicking"));
             else
-                batch2d.drawSprite(380 + i * 70, 890, 70, 70, TextureMapLoader.getGUITexture("inventoryDefault"));
-
+                guiBatch.drawSprite(380 + i * 70, 890, 70, 70, TextureMapLoader.getGUITexture("inventoryDefault"));
             
+            blockBatch.drawSprite(397 + i * 70, 907, 36, 36, TextureMapLoader.getBlockTextureIcon(thisBlockId));
         }
+        
+        batchFont.drawTextHorizontalCenter(currentBlockData.getBlockName(), 850, 0.35f, 0xFFFFFF);
     }
 
     public void flushBatch(){
-        batch2d.flushBatch();
+        blockBatch.flushBatch();
+        guiBatch.flushBatch();
         batchFont.flushBatch();
     }
 
     public void cleanup(){
-        batch2d.cleanup();
+        guiBatch.cleanup();
+        blockBatch.cleanup();
         batchFont.cleanup();
     }
 }

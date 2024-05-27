@@ -112,7 +112,7 @@
     {
         "id": 10,
         "transparent": true,
-        "name":"glass",
+        "name":"Glass",
         "top": "glass",
         "bottom": "glass",
         "front": "glass",
@@ -121,7 +121,7 @@
         "right": "glass"
     },
     {
-        "id":11,
+        "id": 11,
         "transparent": true,
         "name":"Leaves",
         "top": "azalea_leaves",
@@ -130,5 +130,39 @@
         "back": "azalea_leaves",
         "left": "azalea_leaves",
         "right": "azalea_leaves"
+    },
+    {
+        "id": 12,
+        "transparent": false,
+        "name":"Birch Log",
+        "top": "birch_log_top",
+        "bottom": "birch_log_top",
+        "front": "birch_log",
+        "back": "birch_log",
+        "left": "birch_log",
+        "right": "birch_log"
+    },
+    {
+        "id": 13,
+        "transparent": false,
+        "name":"Bookshelf",
+        "top": "oak_planks",
+        "bottom": "oak_planks",
+        "front": "bookshelf",
+        "back": "bookshelf",
+        "left": "bookshelf",
+        "right": "bookshelf"
+    },
+    {
+        "id": 14,
+        "transparent": false,
+        "name":"Emerald",
+        "top": "emerald_block",
+        "bottom": "emerald_block",
+        "front": "emerald_block",
+        "back": "emerald_block",
+        "left": "emerald_block",
+        "right": "emerald_block"
     }
+
 ]

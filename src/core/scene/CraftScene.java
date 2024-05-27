@@ -27,25 +27,25 @@ public class CraftScene extends Scene {
     private World world;
     private Camera playerView;
     private CubeMap cubeMap;
+    private Button quitButton;
+    private Launcher launcher;
     private ShaderManager shader;
     private _3DRendererBatch renderBatch;
+    private CraftGUIRenderer guiRenderer;
     private BlockTextureLoader blockTextureLoader;
     private Matrix4f model = new Matrix4f().identity();
 
-    private CraftGUIRenderer guiRenderer;
-    private Button quitButton;
 
     @Override
     public void init() {
+        launcher = Launcher.instance;
         try {
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_STENCIL_TEST);
-            playerView = new Camera(0.0f, Consts.CHUNK_HEIGHT + 20.0f, 0.0f);
-            Player.instance.setPlayerView(playerView);
+            glfwSetCursorPos(launcher.getWindow().getWindowHandle(), (double)Consts.WINDOW_WIDTH / 2, (double)Consts.WINDOW_HEIGHT / 2 - 1);
+            playerView = Player.instance.camera;
             Player.instance.gameMode = GameMode.Interact;
             Player.instance.interactMode = InteractMode.Creative;
-            glfwSetCursorPos(Launcher.instance.getWindow().getWindowHandle(), (double)Consts.WINDOW_WIDTH / 2, (double)Consts.WINDOW_HEIGHT / 2 - 1);
-            
             renderBatch = new _3DRendererBatch();
             guiRenderer = new CraftGUIRenderer();
 
@@ -112,7 +112,7 @@ public class CraftScene extends Scene {
     public void render(){
         Player.instance.update();
         Matrix4f view = new Matrix4f(playerView.getViewMatrix());
-        Matrix4f projection = new Matrix4f(Launcher.instance.getWindow().updateProjection(playerView.getViewMatrix()));
+        Matrix4f projection = new Matrix4f(launcher.getWindow().updateProjection(playerView.getViewMatrix()));
         cubeMap.render(playerView.getViewMatrixForCubemap());
         
         blockTextureLoader.bindTexture();
@@ -128,11 +128,12 @@ public class CraftScene extends Scene {
 
         if(Player.instance.gameMode == GameMode.GUI){
             if(guiRenderer.isButtonClicked(quitButton)){
-                Launcher.instance.changeScene(0);
+                launcher.updater.cleanup();
+                launcher.writePlayerData();
+                launcher.changeScene(4);
             }
         }
         guiRenderer.draw();
-
         guiRenderer.flushBatch();
     }
 
@@ -140,5 +141,6 @@ public class CraftScene extends Scene {
     public void cleanup() {
         world.cleanup();
         blockTextureLoader.cleanup();
+        cubeMap.cleanup();
     }
 }

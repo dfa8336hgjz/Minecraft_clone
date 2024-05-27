@@ -16,6 +16,8 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL31.GL_TEXTURE_BUFFER;
 
+import java.util.Arrays;
+
 public class FontBatch {
     private int[] indices = {
             0, 1, 3,
@@ -23,7 +25,7 @@ public class FontBatch {
     };
 
     // 25 quads
-    public static int BATCH_SIZE = 200;
+    public static int BATCH_SIZE = 600;
     public static int VERTEX_SIZE = 7;
     public float[] vertices = new float[BATCH_SIZE * VERTEX_SIZE];
     public int size = 0;
@@ -34,7 +36,7 @@ public class FontBatch {
     private Cfont font;
 
     public void generateEbo() {
-        int elementSize = BATCH_SIZE * 3;
+        int elementSize = BATCH_SIZE * 4;
         int[] elementBuffer = new int[elementSize];
 
         for (int i=0; i < elementSize; i++) {
@@ -97,14 +99,15 @@ public class FontBatch {
 
         glDrawElements(GL_TRIANGLES, size * 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         size = 0;
-        glEnable(GL_CULL_FACE);
         glDisable(GL_BLEND);
+        glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST);
         shader.unbind();
+
+        Arrays.fill(vertices, 0);
     }
 
     public void addCharacter(float x, float y, float scale, CharInfo charInfo, int rgb) {
@@ -196,8 +199,41 @@ public class FontBatch {
         }
     }
 
+    public void drawTextHorizontalCenter(String text, int y, float scale, int rgb) {
+        int textSizeX = 0;
+        for (int i=0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            CharInfo charInfo = font.getCharacter(c);
+            if (charInfo.width == 0) {
+                System.out.println("Unknown character " + c);
+                continue;
+            }
+            textSizeX += charInfo.width * scale;
+        }
+
+        Vector2i startPosition = new Vector2i(0);
+        startPosition.x = (Consts.WINDOW_WIDTH - textSizeX)/ 2;
+        startPosition.y = y;
+        
+        for (int i=0; i < text.length(); i++) {
+            char c = text.charAt(i);
+
+            CharInfo charInfo = font.getCharacter(c);
+            if (charInfo.width == 0) {
+                System.out.println("Unknown character " + c);
+                continue;
+            }
+
+            float xPos = startPosition.x;
+            float yPos = startPosition.y;
+            addCharacter(xPos, yPos, scale, charInfo, rgb);
+            startPosition.x += charInfo.width * scale;
+        }
+    }
+
     public void cleanup(){
         shader.cleanup();
         glDeleteVertexArrays(vao);
+        glDeleteBuffers(vbo);
     }
 }

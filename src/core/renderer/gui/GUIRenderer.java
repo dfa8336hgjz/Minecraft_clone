@@ -10,6 +10,7 @@ import core.renderer._2DRendererBatch;
 import core.renderer.font.FontBatch;
 import core.system.Input;
 import core.system.texturePackage.TextureMapLoader;
+import core.utils.Paths;
 
 enum UIState{
     Default,
@@ -26,7 +27,7 @@ public class GUIRenderer {
         batchFont.initBatch();
 
         batch2d = new _2DRendererBatch();
-        batch2d.initBatch();
+        batch2d.initBatch(Paths.guiTexture, 1);
     }
 
     public boolean isButtonClicked(Button button){
@@ -66,6 +67,10 @@ public class GUIRenderer {
 
     public void drawSprite(float x, float y, float sizeX, float sizeY, String spriteName){
         batch2d.drawSprite(x, y, sizeX, sizeY, TextureMapLoader.getGUITexture(spriteName));
+    }
+
+    public void drawTextHorizontalCenter(String text, int y, float scale, int rgb){
+        batchFont.drawTextHorizontalCenter(text, y, scale, rgb);
     }
 
     public void flushBatch(){
