@@ -128,8 +128,8 @@ public class CraftScene extends Scene {
 
         if(Player.instance.gameMode == GameMode.GUI){
             if(guiRenderer.isButtonClicked(quitButton)){
-                launcher.updater.cleanup();
                 launcher.writePlayerData();
+                launcher.updater.cleanup();
                 launcher.changeScene(4);
             }
         }

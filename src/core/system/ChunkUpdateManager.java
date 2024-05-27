@@ -17,7 +17,6 @@ import core.utils.Utils;
 public class ChunkUpdateManager extends Thread{
     private Map<Vector2i, Chunk> readyToLoadChunks;
     private ExecutorService executor;
-    private int worldSeed;
 
     private boolean update;
     private boolean running;

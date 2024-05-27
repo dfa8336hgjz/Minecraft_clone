@@ -7,6 +7,8 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL45.glCreateVertexArrays;
 
+import java.util.Arrays;
+
 import org.joml.Vector3f;
 
 import core.components.Mesh;
@@ -90,6 +92,7 @@ public class _3DRendererBatch {
         shader.unbind();
 		glEnable(GL_CULL_FACE);
 		glDisable(GL_BLEND);
+        Arrays.fill(vertices, 0);
     }
 
 

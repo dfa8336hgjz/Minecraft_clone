@@ -9,6 +9,7 @@ import static org.lwjgl.opengl.GL31.GL_TEXTURE_BUFFER;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
@@ -126,6 +127,7 @@ public class _2DRendererBatch {
         glEnable(GL_CULL_FACE);
         glDisable(GL_BLEND);
         shader.unbind();
+        Arrays.fill(vertices, 0);
     }
 
     public void drawSprite(float x, float y, float sizeX, float sizeY, TextureData texture){
