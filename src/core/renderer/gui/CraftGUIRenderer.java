@@ -2,17 +2,16 @@ package core.renderer.gui;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
+import core.utils.Paths;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
-
-import core.components.BlockData;
-import core.components.TextureData;
+import core.gameplay.Input;
 import core.gameplay.Player;
-import core.renderer._2DRendererBatch;
-import core.renderer.font.FontBatch;
-import core.system.Input;
-import core.system.texturePackage.TextureMapLoader;
-import core.utils.Paths;
+import core.renderer.batches.FontBatch;
+import core.renderer.batches._2DRendererBatch;
+import core.renderer.supporters.texturePackage.BlockData;
+import core.renderer.supporters.texturePackage.TextureData;
+import core.renderer.supporters.texturePackage.TextureMapLoader;
 
 public class CraftGUIRenderer {
     private _2DRendererBatch guiBatch;

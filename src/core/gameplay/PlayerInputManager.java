@@ -2,14 +2,13 @@ package core.gameplay;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-import core.components.RayCastResult;
-import core.components.World;
-import core.enums.GameMode;
-import core.enums.InteractMode;
-import core.launcher.Launcher;
-import core.renderer.OpenGlWindow;
-import core.system.Input;
+import core.Launcher;
 import core.utils.Consts;
+import core.states.GameMode;
+import core.states.InteractMode;
+import core.renderer.terrain.World;
+import core.components.RayCastResult;
+import core.renderer.supporters.OpenGlWindow;
 
 public class PlayerInputManager {
     private final OpenGlWindow window;

@@ -1,37 +1,36 @@
 package core.gameplay;
-
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-import core.components.Block;
-import core.components.BoxCollider;
-import core.components.Camera;
-import core.components.RayCastResult;
-import core.components.RigidBody;
-import core.components.World;
-import core.enums.GameMode;
-import core.enums.InteractMode;
-import core.launcher.Launcher;
-import core.renderer._3DRendererBatch;
-import core.utils.Consts;
+import core.Launcher;
 import core.utils.Utils;
+import core.utils.Consts;
+import core.states.GameMode;
+import core.components.Block;
+import core.components.Camera;
+import core.states.InteractMode;
+import core.renderer.terrain.World;
+import core.components.RayCastResult;
+import core.renderer.batches._3DRendererBatch;
 
 public class Player {
     public static Player instance;
+    
     public Camera camera;
     public GameMode gameMode;
-    private RigidBody rigidBody;
+    public int slotPicking = 0;
     public PlayerInputManager input;
-    private BoxCollider boxCollider;
     public InteractMode interactMode;
     public int[] blockInventory = new int[]{
-        1, 2, 3, 4, 5, 6, 8, 10, 11, 12, 13, 14
+        1, 12, 3, 4, 5, 6, 8, 10, 11, 2, 13, 14
     };
 
+    public boolean onGround;
+    public Vector3f boxSize;
+    public Vector3f velocity;
     private float jumpHeight = 2.0f;
     private final int maxRaycastDistance = 5;
     private float fallingAcceleration = Consts.GRAVITY;
-    public int slotPicking = 0;
 
     public Player(){
         instance = this;
@@ -39,8 +38,8 @@ public class Player {
         interactMode = InteractMode.Creative;
         input = new PlayerInputManager();
         
-        boxCollider = new BoxCollider(new Vector3f(0.6f, 3.0f, 0.6f));
-        rigidBody = new RigidBody();
+        boxSize = new Vector3f(0.6f, 2.5f, 0.6f);
+        velocity = new Vector3f();
     }
 
     public void setPlayerView(Camera camera){
@@ -62,7 +61,11 @@ public class Player {
         float dt = (float)Launcher.instance.getDeltaTime();
         if(gameMode != GameMode.GUI && interactMode == InteractMode.Creative){
             gravityOn(dt);
-            checkCollision(dt);
+            try {
+                checkCollision(dt);
+            } catch (CloneNotSupportedException e) {
+                return;
+            }
         }
     }
 
@@ -90,106 +93,171 @@ public class Player {
     }
 
     private void gravityOn(float dt){
-        camera.transform.position.add(rigidBody.velocity.x * dt, rigidBody.velocity.y * dt, rigidBody.velocity.z * dt);
-        rigidBody.velocity.sub(0.0f , fallingAcceleration * dt, 0.0f);
-        rigidBody.velocity = Utils.clampVelocity(rigidBody.velocity);
+        camera.transform.position.add(velocity.x * dt, velocity.y * dt, velocity.z * dt);
+        velocity.sub(0.0f , fallingAcceleration * dt, 0.0f);
+        velocity = Utils.clampVelocity(velocity);
     }
 
-    private void checkCollision(float dt){
-        int minX = (int)Math.ceil(camera.transform.position.x - boxCollider.size.x * 0.5f);
-        int maxX = (int)Math.ceil(camera.transform.position.x + boxCollider.size.x * 0.5f);
-        int minY = (int)Math.ceil(camera.transform.position.y - boxCollider.size.y * 0.5f);
-        int maxY = (int)Math.ceil(camera.transform.position.y + boxCollider.size.y * 0.5f);
-        int minZ = (int)Math.ceil(camera.transform.position.z - boxCollider.size.z * 0.5f);
-        int maxZ = (int)Math.ceil(camera.transform.position.z + boxCollider.size.z * 0.5f);
+    private void checkCollision(float dt) throws CloneNotSupportedException{
+        int minX = (int)Math.floor(camera.transform.position.x - boxSize.x * 0.5f);
+        int maxX = (int)Math.floor(camera.transform.position.x + boxSize.x * 0.5f);
+        int minY = (int)Math.floor(camera.transform.position.y - boxSize.y * 0.5f);
+        int maxY = (int)Math.floor(camera.transform.position.y + boxSize.y * 0.5f);
+        int minZ = (int)Math.floor(camera.transform.position.z - boxSize.z * 0.5f);
+        int maxZ = (int)Math.floor(camera.transform.position.z + boxSize.z * 0.5f);
 
+        boolean didCollide = false;
         for (int z = minZ; z <= maxZ; z++) {
             for (int y = minY; y <= maxY; y++) {
                 for (int x = minX; x <= maxX; x++) {
-                    Block currentBlock = World.instance.getBlockAt(x - 1, y - 1, z - 1);
-                    if(currentBlock!= null && !currentBlock.isNullBlock()) {
-                        Vector3f overlap = resolveCollision(x - 0.5f, y - 0.5f, z - 0.5f);
-                        camera.transform.position.sub(overlap);
-                        rigidBody.velocity.set(0.0f);
+                    Block currentBlock = World.instance.getBlockAt(x, y, z);
+                    if(currentBlock!= null && !currentBlock.isNullBlock() &&
+                    isColliding(boxSize, camera.transform.position, new Vector3f(1.0f), new Vector3f(x + 0.5f, y + 0.5f, z + 0.5f))) {
+                        CollisionTestResult result = resolveCollision(x + 0.5f, y + 0.5f, z + 0.5f);
+
+                        Vector3f normOverlap = ((Vector3f)result.overlap.clone()).normalize();
+                        Vector3f normVelocity = ((Vector3f)velocity.clone()).normalize();
+                        float dotProduct = normOverlap.dot(normVelocity);
+                        if(dotProduct < 0){
+                            continue;
+                        }
+                        
+                        camera.transform.position.sub(result.overlap);
+                        didCollide = true;
                     }
                 }
             }    
         }
+
+        if(!didCollide && onGround && velocity.y > 0){
+            onGround = false;
+        }
     }
 
-    private Vector3f resolveCollision(float blockX, float blockY, float blockZ){
+    public boolean isColliding(Vector3f box1, Vector3f pos1, Vector3f box2, Vector3f pos2){
+        for (int i = 0; i < 3; i++) {
+            float penetration = penetrationAmount(box1, pos1, box2, pos2, i);
+            if(penetration <= 0.001f){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public float penetrationAmount(Vector3f box1, Vector3f pos1, Vector3f box2, Vector3f pos2, int textAxes){
+        try {
+            Vector3f min1 = ((Vector3f)pos1.clone()).sub(new Vector3f(box1.x * 0.5f, box1.y * 0.5f, box1.z * 0.5f));
+            Vector3f max1 = ((Vector3f)pos1.clone()).add(new Vector3f(box1.x * 0.5f, box1.y * 0.5f, box1.z * 0.5f));
+            Vector3f min2 = ((Vector3f)pos2.clone()).sub(new Vector3f(box2.x * 0.5f, box2.y * 0.5f, box2.z * 0.5f));
+            Vector3f max2 = ((Vector3f)pos2.clone()).add(new Vector3f(box2.x * 0.5f, box2.y * 0.5f, box2.z * 0.5f));
+
+            // x
+            if(textAxes == 0){
+                if(min2.x <= max1.x && min1.x <= max2.x){
+                    return max1.x - min2.x;
+                }
+            }
+            // y
+            else if (textAxes == 1){
+                if(min2.y <= max1.y && min1.y <= max2.y){
+                    return max1.y - min2.y;
+                }
+            }
+            // z
+            else if (textAxes == 2){
+                if(min2.z <= max1.z && min1.z <= max2.z){
+                    return max1.z - min2.z;
+                }
+            }
+
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+        return 0.0f;
+    }
+
+    private CollisionTestResult resolveCollision(float blockX, float blockY, float blockZ){
+        CollisionTestResult res = new CollisionTestResult();
         Vector3f blockCollider = new Vector3f(1, 1, 1);
-        blockCollider.add(this.boxCollider.size);
+        blockCollider.add(this.boxSize);
+
+        // center to center
         float dx = camera.transform.position.x - blockX;
         float dy = camera.transform.position.y - blockY;
         float dz = camera.transform.position.z - blockZ;
         
         if (dx > 0 && dy > 0 && dz > 0)
         {
-            // top-right-front quadrant
-            return resolveQuadrant(blockX, blockY, blockZ, blockCollider, 1, 1, 1);
+            // top right front
+            resolveQuadrant(res, blockX, blockY, blockZ, blockCollider, 1, 1, 1);
         }
-        else if (dx > 0 && dy > 0 && dz < 0)
+        else if (dx > 0 && dy > 0 && dz <= 0)
         {
-            // top-right-back quadrant
-            return resolveQuadrant(blockX, blockY, blockZ, blockCollider, 1, 1, -1);
+            // top right back
+            resolveQuadrant(res, blockX, blockY, blockZ, blockCollider, 1, 1, -1);
         }
-        else if (dx > 0 && dy < 0 && dz > 0)
+        else if (dx > 0 && dy <= 0 && dz > 0)
         {
-            // bottom-right-front quadrant
-            return resolveQuadrant(blockX, blockY, blockZ, blockCollider, 1, -1, 1);
+            // bottom right front
+            resolveQuadrant(res, blockX, blockY, blockZ, blockCollider, 1, -1, 1);
         }
-        else if (dx > 0 && dy < 0 && dz < 0)
+        else if (dx > 0 && dy <= 0 && dz <= 0)
         {
-            // bottom-right-back quadrant
-            return resolveQuadrant(blockX, blockY, blockZ, blockCollider, 1, -1, -1);
+            // bottom right back
+            resolveQuadrant(res, blockX, blockY, blockZ, blockCollider, 1, -1, -1);
         }
-        else if (dx < 0 && dy > 0 && dz > 0)
+        else if (dx <= 0 && dy > 0 && dz > 0)
         {
-            // top-left-front quadrant
-            return resolveQuadrant(blockX, blockY, blockZ, blockCollider, -1, 1, 1);
+            // top left front
+            resolveQuadrant(res, blockX, blockY, blockZ, blockCollider, -1, 1, 1);
         }
-        else if (dx < 0 && dy > 0 && dz < 0)
+        else if (dx <= 0 && dy > 0 && dz <= 0)
         {
-            // top-left-back quadrant
-            return resolveQuadrant(blockX, blockY, blockZ, blockCollider, -1, 1, -1);
+            // top left back
+            resolveQuadrant(res, blockX, blockY, blockZ, blockCollider, -1, 1, -1);
         }
-        else if (dx < 0 && dy < 0 && dz > 0)
+        else if (dx <= 0 && dy <= 0 && dz > 0)
         {
-            // bottom-left-front quadrant
-            return resolveQuadrant(blockX, blockY, blockZ, blockCollider, -1, -1, 1);
+            // bottom left front
+            resolveQuadrant(res, blockX, blockY, blockZ, blockCollider, -1, -1, 1);
         }
-        else if (dx < 0 && dy < 0 && dz < 0)
+        else if (dx <= 0 && dy <= 0 && dz <= 0)
         {
-            // bottom-left-back quadrant
-            return resolveQuadrant(blockX, blockY, blockZ, blockCollider, -1, -1, -1);
+            // bottom left back
+            resolveQuadrant(res, blockX, blockY, blockZ, blockCollider, -1, -1, -1);
         }
 
-        return new Vector3f(0.0f, 0.0f, 0.0f);
+        return res;
     }
 
-    private Vector3f resolveQuadrant(float blockX, float blockY, float blockZ, 
-    Vector3f blockColliderExpanded, int xFactor, int yFactor, int zFactor){
-        Vector3f blockColliderSizeByDirection = new Vector3f(blockColliderExpanded.x * xFactor,
-                                                            blockColliderExpanded.y * yFactor,
-                                                            blockColliderExpanded.z *zFactor);
+    private void resolveQuadrant(CollisionTestResult result, float blockX, float blockY, float blockZ, 
+    Vector3f blockColliderExpanded, int xDirection, int yDirection, int zDirection){
+        Vector3f blockColliderSizeByDirection = new Vector3f(blockColliderExpanded.x * xDirection,
+                                                            blockColliderExpanded.y * yDirection,
+                                                            blockColliderExpanded.z *zDirection);
 
-        Vector3f quadrant = blockColliderSizeByDirection.mul(0.5f);
-        quadrant.add(new Vector3f(blockX, blockY, blockZ));
+        Vector3f quadrant = blockColliderSizeByDirection.mul(0.5f).add(new Vector3f(blockX, blockY, blockZ));
+        
         Vector3f delta = new Vector3f(camera.transform.position.x - quadrant.x, camera.transform.position.y - quadrant.y,
                                         camera.transform.position.z - quadrant.z);
 
         if (Math.abs(delta.x) < Math.abs(delta.y) && Math.abs(delta.x) < Math.abs(delta.z))
         {
-            return new Vector3f(delta.x, 0.0f, 0.0f);
+            velocity.x = 0.0f;
+            result.overlap = new Vector3f(delta.x, 0.0f, 0.0f);
         }
         else if (Math.abs(delta.y) < Math.abs(delta.x) && Math.abs(delta.y) < Math.abs(delta.z))
         {
-            return new Vector3f(0.0f, delta.y, 0.0f);
+            velocity.y = 0.0f;
+            result.overlap = new Vector3f(0.0f, delta.y, 0.0f);
+            onGround = onGround || yDirection == -1;
         }
         else
         {
-            return new Vector3f(0.0f, 0.0f, delta.z);
+            velocity.z = 0.0f;
+            result.overlap = new Vector3f(0.0f, 0.0f, delta.z);
         }
     }
 
@@ -266,4 +334,9 @@ public class Player {
         }
         return result;
     }
+}
+
+
+class CollisionTestResult{
+    Vector3f overlap;
 }

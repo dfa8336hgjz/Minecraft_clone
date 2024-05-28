@@ -13,7 +13,7 @@
     {
         "id": 1,
         "transparent": false,
-        "name": "Dirt",
+        "name": "Dirt with grass",
         "top": "green_concrete_powder",
         "bottom": "green_concrete",
         "front": "grass_block_side",
@@ -134,13 +134,13 @@
     {
         "id": 12,
         "transparent": false,
-        "name":"Birch Log",
-        "top": "birch_log_top",
-        "bottom": "birch_log_top",
-        "front": "birch_log",
-        "back": "birch_log",
-        "left": "birch_log",
-        "right": "birch_log"
+        "name":"Dirt",
+        "top": "dirt",
+        "bottom": "dirt",
+        "front": "dirt",
+        "back": "dirt",
+        "left": "dirt",
+        "right": "dirt"
     },
     {
         "id": 13,

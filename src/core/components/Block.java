@@ -2,6 +2,7 @@ package core.components;
 
 import java.util.ArrayList;
 
+import core.renderer.supporters.texturePackage.BlockData;
 import core.utils.Consts;
 
 public class Block {

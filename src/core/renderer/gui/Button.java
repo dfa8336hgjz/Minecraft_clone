@@ -2,7 +2,7 @@ package core.renderer.gui;
 
 import org.joml.Vector2i;
 
-import core.components.TextureData;
+import core.renderer.supporters.texturePackage.TextureData;
 
 public class Button {
     public Vector2i position;

@@ -44,7 +44,7 @@ public class Consts {
     public static final long BLOCKID_MASK = 0x3E;
 
     // Gravity
-    public static final float GRAVITY = 12.0f;
+    public static final float GRAVITY = 10.0f;
     public static final Vector3f VELOCITY_BOUND = new Vector3f(50.0f, 50.0f, 50.0f);
 
     // Player Input
