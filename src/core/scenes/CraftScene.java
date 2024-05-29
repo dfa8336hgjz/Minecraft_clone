@@ -135,7 +135,6 @@ public class CraftScene extends Scene {
 
     @Override
     public void cleanup() {
-        Launcher.instance.backgroundMusic.play();
         world.cleanup();
         blockTextureLoader.cleanup();
         cubeMap.cleanup();

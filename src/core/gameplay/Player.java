@@ -53,12 +53,12 @@ public class Player {
         modBlockSound = new Sound("src\\assets\\musics_and_sounds\\addBlock.ogg", false);
     }
 
-    public void setPlayerView(Camera camera){
-        try {
-            transform.position.set(((Vector3f)camera.transform.position.clone()).sub(offset));
-            this.camera = camera;
-        } catch (CloneNotSupportedException e) {
-        }
+    public void setPlayerPos(Transform transform){
+        this.transform.position.set(transform.position);
+        this.transform.rotation.set(transform.rotation);
+        this.transform.scale = transform.scale;
+        camera = new Camera(new Vector3f(transform.position.x + offset.x, transform.position.y + offset.y, transform.position.z + offset.z),
+                            new Vector3f(transform.rotation));
     }
 
     public Vector2i getPositionInChunkCoord(){

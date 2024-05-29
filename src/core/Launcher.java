@@ -21,6 +21,7 @@ import core.utils.Consts;
 import core.gameplay.Input;
 import core.gameplay.Player;
 import core.components.Camera;
+import core.components.Transform;
 import core.scenes.CraftScene;
 import core.scenes.StartScene;
 import core.renderer.font.Cfont;
@@ -229,8 +230,8 @@ public class Launcher {
                    num = (Number)data.get("RotX"); float rx = num.floatValue();
                    num = (Number)data.get("RotY"); float ry = num.floatValue();
                    num = (Number)data.get("RotZ"); float rz = num.floatValue();
-            Camera camera = new Camera(new Vector3f(px, py + 5, pz), new Vector3f(rx, ry, rz));
-            player.setPlayerView(camera);
+            Transform transform = new Transform(new Vector3f(px, py + 1, pz), new Vector3f(rx, ry, rz), 1.0f);
+            player.setPlayerPos(transform);
 
             num = (Number)data.get("WorldSeed");
             worldSeed = num.intValue();
@@ -247,13 +248,13 @@ public class Launcher {
         if(player.camera != null)
             try (FileWriter jsonFile = new FileWriter(Paths.playerData)) {
                 JSONObject data = new JSONObject();
-                data.put("PosX", player.camera.transform.position.x);
-                data.put("PosY", player.camera.transform.position.y);
-                data.put("PosZ", player.camera.transform.position.z);
+                data.put("PosX", player.transform.position.x);
+                data.put("PosY", player.transform.position.y);
+                data.put("PosZ", player.transform.position.z);
 
-                data.put("RotX", player.camera.transform.rotation.x);
-                data.put("RotY", player.camera.transform.rotation.y);
-                data.put("RotZ", player.camera.transform.rotation.z);
+                data.put("RotX", player.transform.rotation.x);
+                data.put("RotY", player.transform.rotation.y);
+                data.put("RotZ", player.transform.rotation.z);
 
                 data.put("WorldSeed", worldSeed);
 

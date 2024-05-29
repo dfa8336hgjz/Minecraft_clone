@@ -3,8 +3,10 @@ package core.scenes;
 import java.util.Random;
 
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 
 import core.components.Camera;
+import core.components.Transform;
 import core.gameplay.Player;
 import core.renderer.gui.Button;
 import core.renderer.gui.GUIRenderer;
@@ -91,8 +93,8 @@ public class CreateWorldScene extends Scene{
             launcher.worldSeed = new Random().nextInt(100);
             Utils.deleteFileInFolder(Paths.binaryFolder);
 
-            Camera playerView = new Camera(0.0f, Consts.CHUNK_HEIGHT + 10.0f, 0.0f);
-            Player.instance.setPlayerView(playerView);
+            Transform transform = new Transform(new Vector3f(0.0f, Consts.CHUNK_HEIGHT + 10.0f, 0.0f), new Vector3f(), 1.0f);
+            Player.instance.setPlayerPos(transform);
             launcher.updater.beginUpdateNewChunk();
             launcher.changeScene(3);
         }

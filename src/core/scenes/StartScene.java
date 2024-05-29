@@ -2,6 +2,7 @@ package core.scenes;
 
 import org.joml.Vector2i;
 
+import core.Launcher;
 import core.renderer.gui.Button;
 import core.renderer.gui.GUIRenderer;
 import core.renderer.supporters.CubeMap;
@@ -16,6 +17,7 @@ public class StartScene extends Scene{
     @Override
     public void init() {
         try {
+            Launcher.instance.backgroundMusic.play();
             renderer = new GUIRenderer();
             playGameButton = new Button();
             playGameButton.clickSprite = TextureMapLoader.getGUITexture("buttonClick");
