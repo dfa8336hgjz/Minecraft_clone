@@ -3,6 +3,7 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import core.Launcher;
+import core.audio.Sound;
 import core.utils.Utils;
 import core.utils.Consts;
 import core.states.GameMode;
@@ -11,6 +12,7 @@ import core.components.Camera;
 import core.states.InteractMode;
 import core.renderer.terrain.World;
 import core.components.RayCastResult;
+import core.components.Transform;
 import core.renderer.batches._3DRendererBatch;
 
 public class Player {
@@ -21,15 +23,18 @@ public class Player {
     public int slotPicking = 0;
     public PlayerInputManager input;
     public InteractMode interactMode;
+    public Sound walkSound;
+    public Sound modBlockSound;
     public int[] blockInventory = new int[]{
         1, 12, 3, 4, 5, 6, 8, 10, 11, 2, 13, 14
     };
 
     public boolean onGround;
+    public Vector3f offset;
     public Vector3f boxSize;
+    public Transform transform;
     public Vector3f velocity;
-    private float jumpHeight = 2.0f;
-    private final int maxRaycastDistance = 5;
+    private final int maxRaycastDistance = 6;
     private float fallingAcceleration = Consts.GRAVITY;
 
     public Player(){
@@ -38,18 +43,28 @@ public class Player {
         interactMode = InteractMode.Creative;
         input = new PlayerInputManager();
         
-        boxSize = new Vector3f(0.6f, 2.5f, 0.6f);
+        offset = new Vector3f(0, 0.8f, 0);
+        boxSize = new Vector3f(0.6f, 1.8f, 0.6f);
+        transform = new Transform();
         velocity = new Vector3f();
+        
+
+        walkSound = new Sound("src\\assets\\musics_and_sounds\\footsteps.ogg", true);
+        modBlockSound = new Sound("src\\assets\\musics_and_sounds\\addBlock.ogg", false);
     }
 
     public void setPlayerView(Camera camera){
-        this.camera = camera;
+        try {
+            transform.position.set(((Vector3f)camera.transform.position.clone()).sub(offset));
+            this.camera = camera;
+        } catch (CloneNotSupportedException e) {
+        }
     }
 
     public Vector2i getPositionInChunkCoord(){
         Vector2i currentPos = new Vector2i();
-        currentPos.x = (int)camera.transform.position.x;
-        currentPos.y = (int)camera.transform.position.z;
+        currentPos.x = (int)transform.position.x;
+        currentPos.y = (int)transform.position.z;
         return currentPos.div(16);
     }
 
@@ -61,6 +76,7 @@ public class Player {
         float dt = (float)Launcher.instance.getDeltaTime();
         if(gameMode != GameMode.GUI && interactMode == InteractMode.Creative){
             gravityOn(dt);
+            
             try {
                 checkCollision(dt);
             } catch (CloneNotSupportedException e) {
@@ -69,69 +85,49 @@ public class Player {
         }
     }
 
-    public void jump(float dt){
-        if(input.isJumping){
-            camera.transform.position.add(0 , 10 * dt, 0);
-            jumpHeight -= 10 * dt;
-            if(jumpHeight < 0.0f){
-                input.isJumping = false;
-            }
-            return;
-        }
-        jumpHeight = 2.0f;
-    }
-
     public int getCurrentBlockTypeId(){
         return blockInventory[slotPicking];
     }
 
     public void moveRotation(float x, float y, float z){
-        Vector3f rot = camera.transform.rotation;
+        Vector3f rot = transform.rotation;
         if(rot.x + x >= 90 || rot.x + x < -90) return;
         if(rot.z + z >= 90 || rot.z + z < -90) return;
+        transform.moveRotation(0, y, 0);
         camera.transform.moveRotation(x, y, z);
     }
 
     private void gravityOn(float dt){
-        camera.transform.position.add(velocity.x * dt, velocity.y * dt, velocity.z * dt);
         velocity.sub(0.0f , fallingAcceleration * dt, 0.0f);
         velocity = Utils.clampVelocity(velocity);
+        transform.movePosition(velocity.x * dt, velocity.y * dt, velocity.z * dt);
+        updateCamPosition();
+        if(Math.abs(velocity.x) > 0.0001f|| Math.abs(velocity.z) > 0.0001f) walkSound.play();
+        else walkSound.stop();
     }
 
     private void checkCollision(float dt) throws CloneNotSupportedException{
-        int minX = (int)Math.floor(camera.transform.position.x - boxSize.x * 0.5f);
-        int maxX = (int)Math.floor(camera.transform.position.x + boxSize.x * 0.5f);
-        int minY = (int)Math.floor(camera.transform.position.y - boxSize.y * 0.5f);
-        int maxY = (int)Math.floor(camera.transform.position.y + boxSize.y * 0.5f);
-        int minZ = (int)Math.floor(camera.transform.position.z - boxSize.z * 0.5f);
-        int maxZ = (int)Math.floor(camera.transform.position.z + boxSize.z * 0.5f);
+        int minX = (int)Math.floor(transform.position.x - boxSize.x * 0.5f);
+        int maxX = (int)Math.floor(transform.position.x + boxSize.x * 0.5f);
+        int minY = (int)Math.floor(transform.position.y - boxSize.y * 0.5f);
+        int maxY = (int)Math.floor(transform.position.y + boxSize.y * 0.5f);
+        int minZ = (int)Math.floor(transform.position.z - boxSize.z * 0.5f);
+        int maxZ = (int)Math.floor(transform.position.z + boxSize.z * 0.5f);
 
-        boolean didCollide = false;
         for (int z = minZ; z <= maxZ; z++) {
             for (int y = minY; y <= maxY; y++) {
                 for (int x = minX; x <= maxX; x++) {
                     Block currentBlock = World.instance.getBlockAt(x, y, z);
                     if(currentBlock!= null && !currentBlock.isNullBlock() &&
-                    isColliding(boxSize, camera.transform.position, new Vector3f(1.0f), new Vector3f(x + 0.5f, y + 0.5f, z + 0.5f))) {
+                    isColliding(boxSize, transform.position, new Vector3f(1.0f), new Vector3f(x + 0.5f, y + 0.5f, z + 0.5f))) {
                         CollisionTestResult result = resolveCollision(x + 0.5f, y + 0.5f, z + 0.5f);
-
-                        Vector3f normOverlap = ((Vector3f)result.overlap.clone()).normalize();
-                        Vector3f normVelocity = ((Vector3f)velocity.clone()).normalize();
-                        float dotProduct = normOverlap.dot(normVelocity);
-                        if(dotProduct < 0){
-                            continue;
-                        }
-                        
-                        camera.transform.position.sub(result.overlap);
-                        didCollide = true;
+                        transform.position.sub(result.overlap);
+                        updateCamPosition();
                     }
                 }
-            }    
+            }
         }
 
-        if(!didCollide && onGround && velocity.y > 0){
-            onGround = false;
-        }
     }
 
     public boolean isColliding(Vector3f box1, Vector3f pos1, Vector3f box2, Vector3f pos2){
@@ -184,9 +180,9 @@ public class Player {
         blockCollider.add(this.boxSize);
 
         // center to center
-        float dx = camera.transform.position.x - blockX;
-        float dy = camera.transform.position.y - blockY;
-        float dz = camera.transform.position.z - blockZ;
+        float dx = transform.position.x - blockX;
+        float dy = transform.position.y - blockY;
+        float dz = transform.position.z - blockZ;
         
         if (dx > 0 && dy > 0 && dz > 0)
         {
@@ -240,8 +236,8 @@ public class Player {
 
         Vector3f quadrant = blockColliderSizeByDirection.mul(0.5f).add(new Vector3f(blockX, blockY, blockZ));
         
-        Vector3f delta = new Vector3f(camera.transform.position.x - quadrant.x, camera.transform.position.y - quadrant.y,
-                                        camera.transform.position.z - quadrant.z);
+        Vector3f delta = new Vector3f(transform.position.x - quadrant.x, transform.position.y - quadrant.y,
+                                        transform.position.z - quadrant.z);
 
         if (Math.abs(delta.x) < Math.abs(delta.y) && Math.abs(delta.x) < Math.abs(delta.z))
         {
@@ -333,6 +329,10 @@ public class Player {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public void updateCamPosition(){
+        camera.transform.position.set(transform.position.x + offset.x, transform.position.y + offset.y, transform.position.z + offset.z);
     }
 }
 

@@ -4,7 +4,6 @@ import java.util.Random;
 
 import org.joml.Vector2i;
 
-import core.Launcher;
 import core.components.Camera;
 import core.gameplay.Player;
 import core.renderer.gui.Button;
@@ -19,7 +18,6 @@ import core.utils.Utils;
 public class CreateWorldScene extends Scene{
     private CubeMap cubemap;
     private Button backButton;
-    private Launcher launcher;
     private GUIRenderer renderer;
     private Button newWorldButton;
     private Button loadWorldButton;
@@ -29,7 +27,6 @@ public class CreateWorldScene extends Scene{
     public void init() {
         try {
             renderer = new GUIRenderer();
-            launcher = Launcher.instance;
 
             launcher.updater = new ChunkUpdateManager();
             launcher.updater.start();

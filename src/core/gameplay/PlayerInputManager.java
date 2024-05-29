@@ -12,6 +12,7 @@ import core.renderer.supporters.OpenGlWindow;
 
 public class PlayerInputManager {
     private final OpenGlWindow window;
+    private final Player player;
 
     public boolean[] mouseButtonPressed;
     public boolean[] keyPressed;
@@ -24,6 +25,7 @@ public class PlayerInputManager {
 
     public PlayerInputManager() {
         this.window = Launcher.instance.getWindow();
+        this.player = Player.instance;
 
         isJumping = false;
         speed = Consts.CREATIVE_Speed;
@@ -32,7 +34,7 @@ public class PlayerInputManager {
 
     public void input(){
         generalInput();
-        if(Player.instance.gameMode == GameMode.GUI){
+        if(player.gameMode == GameMode.GUI){
             glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             return;
         }
@@ -42,10 +44,10 @@ public class PlayerInputManager {
             float deltaX = (float) (Input.currentMousePos.x - window.getWidth() / 2) * mouseSentivity;
             float deltaY = (float) (Input.currentMousePos.y - window.getHeight() / 2) * mouseSentivity;
             
-            Player.instance.moveRotation(deltaY, deltaX, 0);
+            player.moveRotation(deltaY, deltaX, 0);
             glfwSetCursorPos(window.getWindowHandle(), window.getWidth() / 2, window.getHeight() / 2);
 
-            if(Player.instance.interactMode == InteractMode.Creative){
+            if(player.interactMode == InteractMode.Creative){
                 creativeModeInput();
                 return;
             }
@@ -63,8 +65,6 @@ public class PlayerInputManager {
         float dt = (float)Launcher.instance.getDeltaTime();
         speed = Consts.CREATIVE_Speed;
         mouseClickTime -= dt;
-
-        float velocity = speed * dt;
         int xMove = 0;
         int zMove = 0;
         if (Input.isKeyPressed(GLFW_KEY_W) || Input.isKeyPressed(GLFW_KEY_UP)) {
@@ -81,27 +81,29 @@ public class PlayerInputManager {
         }
 
         if (Input.isKeyPressedOnce(GLFW_KEY_SPACE)) {
-            isJumping = true;
+            player.velocity.y += 6;
         }
 
-        Player.instance.camera.transform.movePosition(xMove * velocity, 0, zMove * velocity);
-        Player.instance.jump(dt);
+        player.velocity.x = xMove * speed;
+        player.velocity.z = zMove * speed;
 
-        RayCastResult rayCastResult = Player.instance.checkRaycast();
+        RayCastResult rayCastResult = player.checkRaycast();
         if(rayCastResult.hit){
             if (Input.isMousePressed(GLFW_MOUSE_BUTTON_LEFT) && mouseClickTime <= 0) {
                 World.instance.removeBlockAt(rayCastResult.hitAtBlock);
+                player.modBlockSound.play();
                 mouseClickTime = mouseClickInterval;
             }
-    
+       
             else if (Input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT) && mouseClickTime <= 0) {
-                World.instance.addBlockAt(rayCastResult.hitPoint.add(rayCastResult.hitFaceNormal.mul(0.4f)), Player.instance.getCurrentBlockTypeId());
+                World.instance.addBlockAt(rayCastResult.hitPoint.add(rayCastResult.hitFaceNormal.mul(0.4f)), player);
+                player.modBlockSound.play();
                 mouseClickTime = mouseClickInterval;
             }
         }
-        Player.instance.slotPicking += Input.yScrollOffset;
-        if(Player.instance.slotPicking > 11) Player.instance.slotPicking = 11;
-        if(Player.instance.slotPicking < 0) Player.instance.slotPicking = 0;
+        player.slotPicking += Input.yScrollOffset;
+        if(player.slotPicking > 11) player.slotPicking = 11;
+        if(player.slotPicking < 0) player.slotPicking = 0;
         Input.yScrollOffset = 0;
     }
 
@@ -134,7 +136,8 @@ public class PlayerInputManager {
             yMove = -1;
         }
 
-        Player.instance.camera.transform.movePosition(xMove * velocity, yMove * velocity, zMove * velocity);
+        player.transform.movePosition(xMove * velocity, yMove * velocity, zMove * velocity);
+        player.updateCamPosition();
     }
 
 }

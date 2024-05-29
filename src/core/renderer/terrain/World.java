@@ -116,14 +116,31 @@ public class World {
         }
     }
 
-    public void addBlockAt(Vector3f worldPos, int blockTypeId){
+    public void addBlockAt(Vector3f worldPos, Player playerInfo){
+        try {
+            Vector3f max2 = ((Vector3f)worldPos.clone()).floor().add(1, 1, 1);
+            Vector3f max1 = ((Vector3f)playerInfo.camera.transform.position.clone())
+                    .add(playerInfo.boxSize.x * 0.5f, playerInfo.boxSize.y * 0.5f, playerInfo.boxSize.z * 0.5f);
+            Vector3f min2 = ((Vector3f)worldPos.clone()).floor();
+            Vector3f min1 = ((Vector3f)playerInfo.camera.transform.position.clone())
+                    .sub(playerInfo.boxSize.x * 0.5f, playerInfo.boxSize.y * 0.5f, playerInfo.boxSize.z * 0.5f);
+            
+            if((min2.x <= max1.x && min1.x <= max2.x) 
+            && (min2.y <= max1.y && min1.y <= max2.y) 
+            && (min2.z <= max1.z && min1.z <= max2.z)){
+                return;
+            }
+
+        } catch (CloneNotSupportedException e) {
+        }
+
         int chunkX = (int)Math.floor(worldPos.x / 16.0f);
         int chunkZ = (int)Math.floor(worldPos.z / 16.0f);
         Chunk currentChunk = renderingChunks.get(new Vector2i(chunkX, chunkZ));
         if(currentChunk != null)
         {
             currentChunk.addBlock((int)Math.floor(worldPos.x - chunkX * 16),
-             (int)worldPos.y, (int)Math.floor(worldPos.z - chunkZ * 16), blockTypeId);
+             (int)worldPos.y, (int)Math.floor(worldPos.z - chunkZ * 16), playerInfo.getCurrentBlockTypeId());
         }
     }
 

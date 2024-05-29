@@ -2,7 +2,6 @@ package core.scenes;
 
 import org.joml.Vector2f;
 
-import core.Launcher;
 import core.renderer.batches.FontBatch;
 import core.renderer.batches._2DRendererBatch;
 import core.renderer.supporters.texturePackage.TextureData;
@@ -38,13 +37,13 @@ public class LoadingScene extends Scene{
 
     @Override
     public void update() {
-        runTime -= Launcher.instance.getDeltaTime();
-        if(runTime < 0) Launcher.instance.changeScene(this.nextScene);
+        runTime -= launcher.getDeltaTime();
+        if(runTime < 0) launcher.changeScene(this.nextScene);
     }
 
     @Override
     public void render() {
-        dotNum += Launcher.instance.getDeltaTime();
+        dotNum += launcher.getDeltaTime();
         if(dotNum > 4) dotNum = 1;
         render2d.drawSprite(0, 0, Consts.WINDOW_WIDTH, Consts.WINDOW_HEIGHT, textureUV);
         renderFont.drawTextHorizontalCenter("Loading" + ".".repeat((int)dotNum), 460, 1.2f, 0xFFFFFF);
@@ -55,8 +54,8 @@ public class LoadingScene extends Scene{
 
     @Override
     public void cleanup() {
+        launcher.backgroundMusic.stop();
         render2d.cleanup();
         renderFont.cleanup();
     }
-    
 }

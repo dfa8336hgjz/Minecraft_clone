@@ -1,5 +1,4 @@
 package core.scenes;
-
 import core.Launcher;
 import core.components.Camera;
 import core.gameplay.Input;
@@ -27,7 +26,6 @@ public class CraftScene extends Scene {
     private Camera playerView;
     private CubeMap cubeMap;
     private Button quitButton;
-    private Launcher launcher;
     private ShaderManager shader;
     private _3DRendererBatch renderBatch;
     private CraftGUIRenderer guiRenderer;
@@ -37,7 +35,6 @@ public class CraftScene extends Scene {
 
     @Override
     public void init() {
-        launcher = Launcher.instance;
         try {
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_STENCIL_TEST);
@@ -138,6 +135,7 @@ public class CraftScene extends Scene {
 
     @Override
     public void cleanup() {
+        Launcher.instance.backgroundMusic.play();
         world.cleanup();
         blockTextureLoader.cleanup();
         cubeMap.cleanup();

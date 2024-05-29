@@ -34,7 +34,6 @@ import core.audio.Sound;
 import core.audio.OpenALInitializer;
 
 public class Launcher {
-    
     public static Launcher instance;
     private OpenGlWindow window;
     private Scene currentScene;
@@ -57,7 +56,7 @@ public class Launcher {
     private boolean isRunning;
     private GLFWErrorCallback errorCallback;
     
-    public Sound sound;
+    public Sound backgroundMusic;
     private OpenALInitializer audioPlayer;
 
     public void start() throws Exception {
@@ -80,8 +79,8 @@ public class Launcher {
         input = new Input();
         audioPlayer = new OpenALInitializer();
         audioPlayer.init();
-        sound = new Sound("src\\assets\\musics_and_sounds\\music.ogg", true);
-        sound.play();
+        backgroundMusic = new Sound("src\\assets\\musics_and_sounds\\music.ogg", true);
+        backgroundMusic.play();
         TextureMapLoader mapLoader = new TextureMapLoader();
 
         player = new Player();
@@ -154,14 +153,15 @@ public class Launcher {
         currentScene.render();
         window.swapBuffer();
     }
-
+ 
     public void cleanup() {
         if(updater != null){
             updater.cleanup();
             updater = null;
         }
-        sound.stop();
-        sound.cleanup();
+        
+        backgroundMusic.stop();
+        backgroundMusic.cleanup();
         audioPlayer.cleanup();
         window.cleanup();
         currentScene.cleanup();
@@ -229,7 +229,8 @@ public class Launcher {
                    num = (Number)data.get("RotX"); float rx = num.floatValue();
                    num = (Number)data.get("RotY"); float ry = num.floatValue();
                    num = (Number)data.get("RotZ"); float rz = num.floatValue();
-            player.camera = new Camera(new Vector3f(px, py + 1, pz), new Vector3f(rx, ry, rz));
+            Camera camera = new Camera(new Vector3f(px, py + 5, pz), new Vector3f(rx, ry, rz));
+            player.setPlayerView(camera);
 
             num = (Number)data.get("WorldSeed");
             worldSeed = num.intValue();
@@ -243,23 +244,24 @@ public class Launcher {
     }
 
     public void writePlayerData(){
-        try (FileWriter jsonFile = new FileWriter(Paths.playerData)) {
-            JSONObject data = new JSONObject();
-            data.put("PosX", player.camera.transform.position.x);
-            data.put("PosY", player.camera.transform.position.y);
-            data.put("PosZ", player.camera.transform.position.z);
+        if(player.camera != null)
+            try (FileWriter jsonFile = new FileWriter(Paths.playerData)) {
+                JSONObject data = new JSONObject();
+                data.put("PosX", player.camera.transform.position.x);
+                data.put("PosY", player.camera.transform.position.y);
+                data.put("PosZ", player.camera.transform.position.z);
 
-            data.put("RotX", player.camera.transform.rotation.x);
-            data.put("RotY", player.camera.transform.rotation.y);
-            data.put("RotZ", player.camera.transform.rotation.z);
+                data.put("RotX", player.camera.transform.rotation.x);
+                data.put("RotY", player.camera.transform.rotation.y);
+                data.put("RotZ", player.camera.transform.rotation.z);
 
-            data.put("WorldSeed", worldSeed);
+                data.put("WorldSeed", worldSeed);
 
-            jsonFile.write(data.toJSONString());
-            jsonFile.flush();
-            jsonFile.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                jsonFile.write(data.toJSONString());
+                jsonFile.flush();
+                jsonFile.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
     }
 }

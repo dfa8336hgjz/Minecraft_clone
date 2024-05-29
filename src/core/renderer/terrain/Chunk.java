@@ -105,28 +105,34 @@ public class Chunk {
                 float MountainHeight = convertRange(
                         (float) SimplexNoise.noise(((double) x + chunkX * Consts.CHUNK_WIDTH + seed) / Consts.increment,
                                 ((double) z + chunkZ * Consts.CHUNK_DEPTH + seed) / Consts.increment))
-                        * 80 + 20;
+                        * 60 + 30;
                 float GroundHeight = convertRange(
                         (float) SimplexNoise.noise(((double) x + chunkX * Consts.CHUNK_WIDTH + seed) / Consts.increment,
                                 ((double) z + chunkZ * Consts.CHUNK_DEPTH + seed) / Consts.increment))
-                        * 10 + 70;
+                        * 10 + 55;
+                
 
                 for (int y = 0; y < Consts.CHUNK_HEIGHT; y++) {
                     int blockId = getflattenedID(x, y, z);
                     this.blocks[blockId] = new Block();
-
+                    
                     if(y == 0){
-                        this.blocks[blockId].id = 9;
+                        this.blocks[blockId].id = 9; // bedrock -- cannot be destroy
                     }
-                    else if (y < GroundHeight) {
-                        this.blocks[blockId].id = 1;
-                    }
-                    else if (y == GroundHeight){
+                    else if(y < GroundHeight){
                         this.blocks[blockId].id = 12;
+                    }
+                    else if(y < GroundHeight + 1){
+                        this.blocks[blockId].id = 1;
                     }
                     else if(y < MountainHeight){
                         this.blocks[blockId].id = 4;
                     }
+                    else if(y < MountainHeight + 1){
+                        this.blocks[blockId].id = 1;
+                    }
+                    
+                    
                 }
             }
         }

@@ -2,7 +2,6 @@ package core.scenes;
 
 import org.joml.Vector2i;
 
-import core.Launcher;
 import core.renderer.gui.Button;
 import core.renderer.gui.GUIRenderer;
 import core.renderer.supporters.CubeMap;
@@ -54,14 +53,14 @@ public class StartScene extends Scene{
 
     @Override
     public void render() {
-        cubemap.render(Launcher.instance.updatedView());
+        cubemap.render(launcher.updatedView());
         renderer.drawSprite(350, 150, 900, 250, "logo");
         if(renderer.isButtonClicked(playGameButton)){
-            Launcher.instance.changeScene(1);
+            launcher.changeScene(1);
         }
 
         if(renderer.isButtonClicked(quitButton)){
-            Launcher.instance.stop();
+            launcher.stop();
         }
 
         renderer.flushBatch();

@@ -13,6 +13,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
+import core.Launcher;
 import core.utils.Consts;
 
 public class OpenGlWindow {
@@ -164,6 +165,7 @@ public class OpenGlWindow {
     }
 
     public void close() {
+        Launcher.instance.writePlayerData();
         glfwSetWindowShouldClose(window, true);
     }
 

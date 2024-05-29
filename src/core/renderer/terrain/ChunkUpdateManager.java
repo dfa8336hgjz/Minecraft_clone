@@ -29,7 +29,7 @@ public class ChunkUpdateManager extends Thread{
     public void run(){
         while(!Thread.interrupted()){
             if(update && running){
-                executor = Executors.newFixedThreadPool(5);
+                executor = Executors.newFixedThreadPool(10);
                 readyToLoadChunks.clear();
                 Vector2i playerPos = Player.instance.getPositionInChunkCoord();
                 int upboundX = playerPos.x + Consts.CHUNK_RADIUS;

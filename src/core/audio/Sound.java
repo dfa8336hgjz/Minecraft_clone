@@ -45,7 +45,7 @@ public class Sound {
         alSourcei(sourceId, AL_BUFFER, bufferId);
         alSourcei(sourceId, AL_LOOPING, loop? 1: 0);
         alSourcei(sourceId, AL_POSITION, 0);
-        alSourcef(sourceId, AL_GAIN, 1.4f);
+        alSourcef(sourceId, AL_GAIN, 3.0f);
     }
 
     public void cleanup(){
