@@ -20,7 +20,6 @@ import core.scenes.Scene;
 import core.utils.Consts;
 import core.gameplay.Input;
 import core.gameplay.Player;
-import core.components.Camera;
 import core.components.Transform;
 import core.scenes.CraftScene;
 import core.scenes.StartScene;
@@ -41,24 +40,24 @@ public class Launcher {
     private Player player;
     private Matrix4f view;
     private Input input;
-    
+
     public Cfont font;
     public int worldSeed;
     public ChunkUpdateManager updater;
-    
+
     public final float FRAMERATE = 1000;
     public final long NANOSECOND = 1000000000;
-    
+    private float frametime = 1.0f / FRAMERATE;
+
     private int fps;
     private float yRotate;
-    private static long deltaTime;
-    private float frametime = 1.0f / FRAMERATE;
-    
+    private long deltaTime;
+
     private boolean isRunning;
-    private GLFWErrorCallback errorCallback;
-    
+
     public Sound backgroundMusic;
     private OpenALInitializer audioPlayer;
+    private GLFWErrorCallback errorCallback;
 
     public void start() throws Exception {
         instance = this;
@@ -75,7 +74,7 @@ public class Launcher {
         view = new Matrix4f();
 
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
-        window = new OpenGlWindow("pmc", Consts.WINDOW_WIDTH, Consts.WINDOW_HEIGHT, true);
+        window = new OpenGlWindow("pmc", Consts.WINDOW_WIDTH, Consts.WINDOW_HEIGHT);
         updater = new ChunkUpdateManager();
         input = new Input();
         audioPlayer = new OpenALInitializer();
@@ -87,8 +86,6 @@ public class Launcher {
         player = new Player();
         font = new Cfont("Arial", 64);
         changeScene(0);
-
-
     }
 
     public void run() {
@@ -116,7 +113,7 @@ public class Launcher {
                 }
 
                 if (frameCounter >= NANOSECOND) {
-                    setFps(frame);
+                    fps = frame;
                     window.setTitle("pmc " + fps);
                     frame = 0;
                     frameCounter = 0;
@@ -150,17 +147,17 @@ public class Launcher {
         currentScene.update();
     }
 
-    public void render(){
+    public void render() {
         currentScene.render();
         window.swapBuffer();
     }
- 
+
     public void cleanup() {
-        if(updater != null){
+        if (updater != null) {
             updater.cleanup();
             updater = null;
         }
-        
+
         backgroundMusic.stop();
         backgroundMusic.cleanup();
         audioPlayer.cleanup();
@@ -170,12 +167,8 @@ public class Launcher {
         glfwTerminate();
     }
 
-    public void setFps(int fps) {
-        this.fps = fps;
-    }
-
-    public void changeScene(int sceneId){
-        if(currentScene != null) {
+    public void changeScene(int sceneId) {
+        if (currentScene != null) {
             currentScene.cleanup();
         }
         switch (sceneId) {
@@ -199,41 +192,47 @@ public class Launcher {
                 currentScene = new LoadingScene(0);
                 currentScene.init();
                 break;
-        
+
             default:
                 break;
         }
     }
 
-    public OpenGlWindow getWindow(){
+    public OpenGlWindow getWindow() {
         return window;
     }
 
-    public Matrix4f updatedView(){
+    public Matrix4f updatedView() {
         yRotate += 5f * getDeltaTime();
-        if(yRotate >= 360.0f) yRotate = 0.0f;
+        if (yRotate >= 360.0f)
+            yRotate = 0.0f;
         view.identity().rotate((float) Math.toRadians(10.0f), new Vector3f(1.0f, 0.0f, 0.0f))
-                        .rotate((float) Math.toRadians(yRotate), new Vector3f(0.0f, 1.0f, 0.0f))
-                        .rotate((float) Math.toRadians(0.0f), new Vector3f(0.0f, 0.0f, 1.0f));
+                .rotate((float) Math.toRadians(yRotate), new Vector3f(0.0f, 1.0f, 0.0f))
+                .rotate((float) Math.toRadians(0.0f), new Vector3f(0.0f, 0.0f, 1.0f));
         return view;
     }
 
-
     // cam pos, rot, worldseed
-    public boolean readPlayerLastData(){
+    public boolean readPlayerLastData() {
         try (Reader reader = new FileReader(Paths.playerData)) {
             JSONParser parser = new JSONParser();
             JSONObject data = (JSONObject) parser.parse(reader);
-            Number num = (Number)data.get("PosX"); float px = num.floatValue();
-                   num = (Number)data.get("PosY"); float py = num.floatValue();
-                   num = (Number)data.get("PosZ"); float pz = num.floatValue();
-                   num = (Number)data.get("RotX"); float rx = num.floatValue();
-                   num = (Number)data.get("RotY"); float ry = num.floatValue();
-                   num = (Number)data.get("RotZ"); float rz = num.floatValue();
+            Number num = (Number) data.get("PosX");
+            float px = num.floatValue();
+            num = (Number) data.get("PosY");
+            float py = num.floatValue();
+            num = (Number) data.get("PosZ");
+            float pz = num.floatValue();
+            num = (Number) data.get("RotX");
+            float rx = num.floatValue();
+            num = (Number) data.get("RotY");
+            float ry = num.floatValue();
+            num = (Number) data.get("RotZ");
+            float rz = num.floatValue();
             Transform transform = new Transform(new Vector3f(px, py + 1, pz), new Vector3f(rx, ry, rz), 1.0f);
             player.setPlayerPos(transform);
 
-            num = (Number)data.get("WorldSeed");
+            num = (Number) data.get("WorldSeed");
             worldSeed = num.intValue();
 
             reader.close();
@@ -244,8 +243,8 @@ public class Launcher {
         return true;
     }
 
-    public void writePlayerData(){
-        if(player.camera != null)
+    public void writePlayerData() {
+        if (player.camera != null)
             try (FileWriter jsonFile = new FileWriter(Paths.playerData)) {
                 JSONObject data = new JSONObject();
                 data.put("PosX", player.transform.position.x);

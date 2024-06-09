@@ -24,9 +24,7 @@ import java.util.ArrayList;
 
 import org.joml.Vector3i;
 
-
-
-enum FACE{
+enum FACE {
     TOP,
     BOTTOM,
     FRONT,
@@ -35,13 +33,12 @@ enum FACE{
     RIGHT
 };
 
-enum UV_INDEX{
+enum UV_INDEX {
     _00,
     _01,
     _10,
     _11
 }
-
 
 public class Chunk {
     private Mesh mesh;
@@ -65,8 +62,8 @@ public class Chunk {
         isChanged = false;
     }
 
-    public void prepareMesh(){
-        if(mesh == null){
+    public void prepareMesh() {
+        if (mesh == null) {
             int vao = glGenVertexArrays();
             glBindVertexArray(vao);
             int vbo = glGenBuffers();
@@ -79,14 +76,13 @@ public class Chunk {
         }
     }
 
-    public void uploadToGPU(){
+    public void uploadToGPU() {
         glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
         glBufferData(GL_ARRAY_BUFFER, data.vertdata, GL_DYNAMIC_DRAW);
     }
 
-
     public void render(ShaderManager shader) {
-        if(isChanged){
+        if (isChanged) {
             isChanged = !isChanged;
             serialize();
         }
@@ -110,34 +106,27 @@ public class Chunk {
                         (float) SimplexNoise.noise(((double) x + chunkX * Consts.CHUNK_WIDTH + seed) / Consts.increment,
                                 ((double) z + chunkZ * Consts.CHUNK_DEPTH + seed) / Consts.increment))
                         * 10 + 55;
-                
 
                 for (int y = 0; y < Consts.CHUNK_HEIGHT; y++) {
                     int blockId = getflattenedID(x, y, z);
                     this.blocks[blockId] = new Block();
-                    
-                    if(y == 0){
+
+                    if (y == 0) {
                         this.blocks[blockId].id = 9; // bedrock -- cannot be destroy
-                    }
-                    else if(y < GroundHeight){
+                    } else if (y < GroundHeight) {
                         this.blocks[blockId].id = 12;
-                    }
-                    else if(y < GroundHeight + 1){
+                    } else if (y < GroundHeight + 1) {
                         this.blocks[blockId].id = 1;
-                    }
-                    else if(y < MountainHeight){
+                    } else if (y < MountainHeight) {
                         this.blocks[blockId].id = 4;
-                    }
-                    else if(y < MountainHeight + 1){
+                    } else if (y < MountainHeight + 1) {
                         this.blocks[blockId].id = 1;
                     }
-                    
-                    
                 }
             }
         }
     }
-    
+
     public void generateNewChunkData() {
         int vertexCursor = 0;
         ArrayList<Integer> newVertData = new ArrayList<>();
@@ -151,7 +140,7 @@ public class Chunk {
 
                     Vector3i vert0 = new Vector3i(x + 1, y + 1, z + 1);
                     Vector3i vert1 = new Vector3i(x, y + 1, z + 1);
-                    Vector3i vert2 = new Vector3i(x , y + 1, z);
+                    Vector3i vert2 = new Vector3i(x, y + 1, z);
                     Vector3i vert3 = new Vector3i(x + 1, y + 1, z);
                     Vector3i vert4 = new Vector3i(x + 1, y, z + 1);
                     Vector3i vert5 = new Vector3i(x, y, z + 1);
@@ -203,7 +192,7 @@ public class Chunk {
             }
         }
 
-        data.vertdata = newVertData.stream().mapToInt(i-> i).toArray();
+        data.vertdata = newVertData.stream().mapToInt(i -> i).toArray();
         data.vertexCount = vertexCursor;
 
     }
@@ -213,19 +202,22 @@ public class Chunk {
     }
 
     private int getEncodedID(int x, int y, int z) {
-        return x + y * (Consts.CHUNK_WIDTH+1) + z * (Consts.CHUNK_WIDTH+1) * (Consts.CHUNK_HEIGHT+1);
+        return x + y * (Consts.CHUNK_WIDTH + 1) + z * (Consts.CHUNK_WIDTH + 1) * (Consts.CHUNK_HEIGHT + 1);
     }
 
     public Block getBlock(int x, int y, int z) {
         int id = getflattenedID(x, y, z);
         Block NULLBLOCK = new Block(0, blockMap);
-        return (x >= Consts.CHUNK_WIDTH || x < 0 || z >= Consts.CHUNK_DEPTH || z < 0 || y >= Consts.CHUNK_HEIGHT || y < 0) 
-        ? NULLBLOCK : blocks[id];
+        return (x >= Consts.CHUNK_WIDTH || x < 0 || z >= Consts.CHUNK_DEPTH || z < 0 || y >= Consts.CHUNK_HEIGHT
+                || y < 0)
+                        ? NULLBLOCK
+                        : blocks[id];
     }
 
     public void removeBlock(int x, int y, int z) {
         int id = getflattenedID(x, y, z);
-        if(blocks[id].id == 9) return; // bedrock
+        if (blocks[id].id == 9)
+            return; // bedrock
         Block NULLBLOCK = new Block(0, blockMap);
         blocks[id] = NULLBLOCK;
         isChanged = true;
@@ -236,26 +228,26 @@ public class Chunk {
 
     public void addBlock(int x, int y, int z, int typeId) {
         int id = getflattenedID(x, y, z);
-        if(blocks[id].isNullBlock()) {
+        if (blocks[id].isNullBlock()) {
             blocks[id] = new Block(typeId, blockMap);
             isChanged = true;
-    
+
             generateNewChunkData();
             uploadToGPU();
         }
     }
 
-    private void loadBlock(Vector3i vert0, Vector3i vert1, Vector3i vert2, Vector3i vert3, 
-        Block block, FACE face, ArrayList<Integer> newVertData) {
-            newVertData.add(loadFace(vert0, face, block, UV_INDEX._00));
-            newVertData.add(loadFace(vert1, face, block, UV_INDEX._10));
-            newVertData.add(loadFace(vert2, face, block, UV_INDEX._11));
-            newVertData.add(loadFace(vert2, face, block, UV_INDEX._11));
-            newVertData.add(loadFace(vert3, face, block, UV_INDEX._01));
-            newVertData.add(loadFace(vert0, face, block, UV_INDEX._00));
+    private void loadBlock(Vector3i vert0, Vector3i vert1, Vector3i vert2, Vector3i vert3,
+            Block block, FACE face, ArrayList<Integer> newVertData) {
+        newVertData.add(loadFace(vert0, face, block, UV_INDEX._00));
+        newVertData.add(loadFace(vert1, face, block, UV_INDEX._10));
+        newVertData.add(loadFace(vert2, face, block, UV_INDEX._11));
+        newVertData.add(loadFace(vert2, face, block, UV_INDEX._11));
+        newVertData.add(loadFace(vert3, face, block, UV_INDEX._01));
+        newVertData.add(loadFace(vert0, face, block, UV_INDEX._00));
     }
 
-    private int loadFace(Vector3i pos, FACE face, Block block, UV_INDEX uvId){
+    private int loadFace(Vector3i pos, FACE face, Block block, UV_INDEX uvId) {
         int newData = 0;
         int posId = getEncodedID(pos.x, pos.y, pos.z);
         int texId = TextureMapLoader.getFaceTextureId(block.id, face.ordinal());
@@ -263,33 +255,34 @@ public class Chunk {
         newData |= ((texId << 17) & Consts.TEXID_MASK);
         newData |= ((face.ordinal() << 27) & Consts.NORMAL_MASK);
         newData |= ((uvId.ordinal() << 30) & Consts.UV_MASK);
-        
+
         return newData;
     }
- 
-    public void serialize(){
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(Paths.binaryFolder+"/chunk"+chunkX+"_"+chunkZ+".bin"));){
+
+    public void serialize() {
+        try (ObjectOutputStream out = new ObjectOutputStream(
+                new FileOutputStream(Paths.binaryFolder + "/chunk" + chunkX + "_" + chunkZ + ".bin"));) {
             for (Block block : blocks) {
                 out.writeByte(block.wrapData());
             }
 
-		} catch (IOException e) {
+        } catch (IOException e) {
             File directory = new File(Paths.binaryFolder);
             directory.mkdirs();
-			serialize();
-		}
+            serialize();
+        }
     }
 
-    public void deserialize(){
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(Paths.binaryFolder+"/chunk"+chunkX+"_"+chunkZ+".bin"));)
-        {
+    public void deserialize() {
+        try (ObjectInputStream in = new ObjectInputStream(
+                new FileInputStream(Paths.binaryFolder + "/chunk" + chunkX + "_" + chunkZ + ".bin"));) {
             for (int j = 0; j < Consts.CHUNK_DEPTH * Consts.CHUNK_HEIGHT * Consts.CHUNK_WIDTH; j++) {
                 blocks[j] = new Block();
                 blocks[j].unwrapData(in.readByte());
             }
-            
-        } catch (Exception e) { 
-            e.printStackTrace(); 
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -297,38 +290,38 @@ public class Chunk {
         return (val + 1) / 2;
     }
 
-
-    public int getChunkX(){
+    public int getChunkX() {
         return chunkX;
     }
 
-    public int getChunkZ(){
+    public int getChunkZ() {
         return chunkZ;
     }
 
-    public void setReadyToIn(boolean ready){
+    public void setReadyToIn(boolean ready) {
         readyToIn = ready;
     }
 
-    public void setReadyToOut(boolean ready){
+    public void setReadyToOut(boolean ready) {
         readyToOut = ready;
     }
 
-    public boolean isReadyToIn(){
+    public boolean isReadyToIn() {
         return readyToIn;
     }
 
-    public boolean isReadyToOut(){
+    public boolean isReadyToOut() {
         return readyToOut;
     }
 
-    public void cleanup(){
-        if(mesh != null) mesh.cleanup();
+    public void cleanup() {
+        if (mesh != null)
+            mesh.cleanup();
         data = null;
         blocks = null;
     }
 
-    public Mesh getmesh(){
+    public Mesh getmesh() {
         return mesh;
     }
 }

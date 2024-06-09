@@ -5,7 +5,6 @@ import java.util.Random;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-import core.components.Camera;
 import core.components.Transform;
 import core.gameplay.Player;
 import core.renderer.gui.Button;
@@ -17,10 +16,10 @@ import core.utils.Consts;
 import core.utils.Paths;
 import core.utils.Utils;
 
-public class CreateWorldScene extends Scene{
+public class CreateWorldScene extends Scene {
     private CubeMap cubemap;
-    private Button backButton;
     private GUIRenderer renderer;
+    private Button backButton;
     private Button newWorldButton;
     private Button loadWorldButton;
     private float errorDisplayTime = 0.0f;
@@ -61,11 +60,11 @@ public class CreateWorldScene extends Scene{
             backButton.text = "Back";
 
             cubemap = new CubeMap("src\\assets\\textures\\skybox\\menu\\Top.png",
-                                "src\\assets\\textures\\skybox\\menu\\Bottom.png",
-                                "src\\assets\\textures\\skybox\\menu\\Front.png",
-                                "src\\assets\\textures\\skybox\\menu\\Back.png",
-                                "src\\assets\\textures\\skybox\\menu\\Left.png",
-                                "src\\assets\\textures\\skybox\\menu\\Right.png");
+                    "src\\assets\\textures\\skybox\\menu\\Bottom.png",
+                    "src\\assets\\textures\\skybox\\menu\\Front.png",
+                    "src\\assets\\textures\\skybox\\menu\\Back.png",
+                    "src\\assets\\textures\\skybox\\menu\\Left.png",
+                    "src\\assets\\textures\\skybox\\menu\\Right.png");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,35 +78,36 @@ public class CreateWorldScene extends Scene{
     @Override
     public void render() {
         cubemap.render(launcher.updatedView());
-        if(renderer.isButtonClicked(loadWorldButton)){
-            if(launcher.readPlayerLastData()){
+        if (renderer.isButtonClicked(loadWorldButton)) {
+            if (launcher.readPlayerLastData()) {
                 launcher.updater.beginUpdateNewChunk();
                 launcher.changeScene(3);
-            }
-            else{
+            } else {
                 errorDisplayTime = 5.0f;
             }
         }
 
-        if(renderer.isButtonClicked(newWorldButton)){
+        if (renderer.isButtonClicked(newWorldButton)) {
             launcher.worldSeed = new Random().nextInt(100);
             Utils.deleteFileInFolder(Paths.binaryFolder);
 
-            Transform transform = new Transform(new Vector3f(0.0f, Consts.CHUNK_HEIGHT + 10.0f, 0.0f), new Vector3f(), 1.0f);
+            Transform transform = new Transform(new Vector3f(0.0f, Consts.CHUNK_HEIGHT + 10.0f, 0.0f), new Vector3f(),
+                    1.0f);
             Player.instance.setPlayerPos(transform);
             launcher.updater.beginUpdateNewChunk();
             launcher.changeScene(3);
         }
 
-        if(renderer.isButtonClicked(backButton)){
+        if (renderer.isButtonClicked(backButton)) {
             launcher.updater.cleanup();
             launcher.changeScene(0);
         }
 
-        if(errorDisplayTime > 0){
+        if (errorDisplayTime > 0) {
             renderer.drawTextHorizontalCenter("There is no saved data", 900, 0.5f, 0xA5F9F8);
             errorDisplayTime -= launcher.getDeltaTime();
-            if(errorDisplayTime < 0) errorDisplayTime = 0;
+            if (errorDisplayTime < 0)
+                errorDisplayTime = 0;
         }
 
         renderer.flushBatch();
@@ -118,5 +118,5 @@ public class CreateWorldScene extends Scene{
         renderer.cleanup();
         cubemap.cleanup();
     }
-    
+
 }

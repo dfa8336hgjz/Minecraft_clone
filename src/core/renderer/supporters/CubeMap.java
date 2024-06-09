@@ -19,51 +19,50 @@ import core.Launcher;
 import core.components.Mesh;
 import core.utils.Utils;
 
-
 public class CubeMap {
     public String[] texturePaths;
-    private float[] vertices ={
-        -1.0f,  1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
+    private float[] vertices = {
+            -1.0f, 1.0f, -1.0f,
+            -1.0f, -1.0f, -1.0f,
+            1.0f, -1.0f, -1.0f,
+            1.0f, -1.0f, -1.0f,
+            1.0f, 1.0f, -1.0f,
+            -1.0f, 1.0f, -1.0f,
 
-		-1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
+            -1.0f, -1.0f, 1.0f,
+            -1.0f, -1.0f, -1.0f,
+            -1.0f, 1.0f, -1.0f,
+            -1.0f, 1.0f, -1.0f,
+            -1.0f, 1.0f, 1.0f,
+            -1.0f, -1.0f, 1.0f,
 
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
+            1.0f, -1.0f, -1.0f,
+            1.0f, -1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, -1.0f,
+            1.0f, -1.0f, -1.0f,
 
-		-1.0f, -1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
+            -1.0f, -1.0f, 1.0f,
+            -1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f,
+            1.0f, -1.0f, 1.0f,
+            -1.0f, -1.0f, 1.0f,
 
-		-1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f, -1.0f,
+            -1.0f, 1.0f, -1.0f,
+            1.0f, 1.0f, -1.0f,
+            1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f,
+            -1.0f, 1.0f, 1.0f,
+            -1.0f, 1.0f, -1.0f,
 
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f
+            -1.0f, -1.0f, -1.0f,
+            -1.0f, -1.0f, 1.0f,
+            1.0f, -1.0f, -1.0f,
+            1.0f, -1.0f, -1.0f,
+            -1.0f, -1.0f, 1.0f,
+            1.0f, -1.0f, 1.0f
     };
 
     private Mesh mesh;
@@ -71,9 +70,9 @@ public class CubeMap {
     private ShaderManager shader;
     public Matrix4f projection;
 
-    public CubeMap(String top, String bottom, String front, String back, String left, String right) throws Exception{
-        texturePaths = new String[]{
-            left, right, top, bottom, front, back
+    public CubeMap(String top, String bottom, String front, String back, String left, String right) throws Exception {
+        texturePaths = new String[] {
+                left, right, top, bottom, front, back
         };
 
         glActiveTexture(GL_TEXTURE4);
@@ -83,9 +82,9 @@ public class CubeMap {
         shader.set1i("skybox", 4);
 
         texture = glGenTextures();
-        
+
         glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
-        
+
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -97,22 +96,23 @@ public class CubeMap {
                 IntBuffer w = stack.mallocInt(1);
                 IntBuffer h = stack.mallocInt(1);
                 IntBuffer c = stack.mallocInt(1);
-    
+
                 stbi_set_flip_vertically_on_load(false);
                 ByteBuffer texbuffer = stbi_load(texturePaths[i], w, h, c, 4);
                 if (texbuffer == null) {
                     throw new Exception("Cannot load image file: " + texturePaths[i]);
                 }
                 texbuffer.flip();
-    
+
                 int width = w.get();
                 int height = h.get();
 
-                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texbuffer);
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA,
+                        GL_UNSIGNED_BYTE, texbuffer);
                 stbi_image_free(texbuffer);
             }
         }
-        
+
         int vao = glGenVertexArrays();
         glBindVertexArray(vao);
 
@@ -130,13 +130,13 @@ public class CubeMap {
         projection = new Matrix4f(Launcher.instance.getWindow().updateProjection(new Matrix4f().identity()));
     }
 
-    public void render(Matrix4f view){
+    public void render(Matrix4f view) {
         glDepthFunc(GL_LEQUAL);
         glDisable(GL_CULL_FACE);
 
         shader.bind();
         shader.setMat4f("view", view);
-        shader.setMat4f("projection",projection);
+        shader.setMat4f("projection", projection);
 
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
@@ -151,7 +151,7 @@ public class CubeMap {
         shader.unbind();
     }
 
-    public void cleanup(){
+    public void cleanup() {
         glDeleteTextures(texture);
         glDeleteBuffers(mesh.vbo);
         glDeleteVertexArrays(mesh.vao);

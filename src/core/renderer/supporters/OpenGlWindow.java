@@ -23,13 +23,11 @@ public class OpenGlWindow {
 
     private int width, height;
     private long window;
-    private boolean resize, vsync;
     private final Matrix4f projection;
 
-    public OpenGlWindow(String title, int width, int height, boolean vsync) {
+    public OpenGlWindow(String title, int width, int height) {
         this.width = width;
         this.height = height;
-        this.vsync = vsync;
         this.title = title;
         this.projection = new Matrix4f();
         init();
@@ -43,24 +41,16 @@ public class OpenGlWindow {
 
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-        
 
         window = glfwCreateWindow(width, height, title, NULL, NULL);
         if (window == NULL) {
             throw new RuntimeException("Cannot create window");
         }
-
-        glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
-            this.width = width;
-            this.height = height;
-            this.setResize(true);
-        });
 
         // Get the thread stack and push a new frame
         try (MemoryStack stack = stackPush()) {
@@ -81,10 +71,7 @@ public class OpenGlWindow {
         } // the stack frame is popped automatically
 
         glfwMakeContextCurrent(window);
-
-        if (vsync) {
-            glfwSwapInterval(1);
-        }
+        glfwSwapInterval(1);
 
         glfwShowWindow(window);
         GL.createCapabilities();
@@ -102,7 +89,7 @@ public class OpenGlWindow {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public void setMouseCenter(){
+    public void setMouseCenter() {
         glfwSetCursorPos(window, width / 2, height / 2);
     }
 
@@ -128,18 +115,6 @@ public class OpenGlWindow {
 
     public int getHeight() {
         return height;
-    }
-
-    public boolean isResized() {
-        return resize;
-    }
-
-    public boolean isVsync() {
-        return vsync;
-    }
-
-    public void setResize(boolean resize) {
-        this.resize = resize;
     }
 
     public void setFOV(float radian) {

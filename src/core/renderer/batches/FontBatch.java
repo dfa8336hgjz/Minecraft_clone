@@ -41,7 +41,7 @@ public class FontBatch {
         int elementSize = BATCH_SIZE * 4;
         int[] elementBuffer = new int[elementSize];
 
-        for (int i=0; i < elementSize; i++) {
+        for (int i = 0; i < elementSize; i++) {
             elementBuffer[i] = indices[(i % 6)] + ((i / 6) * 4);
         }
 
@@ -74,7 +74,7 @@ public class FontBatch {
         glEnableVertexAttribArray(2);
 
         font = Launcher.instance.font;
-        
+
         shader.bind();
         shader.set1i("uFontTexture", 0);
         shader.unbind();
@@ -117,44 +117,62 @@ public class FontBatch {
             flushBatch();
         }
 
-        float r = (float)((rgb >> 16) & 0xFF) / 255.0f;
-        float g = (float)((rgb >> 8) & 0xFF) / 255.0f;
-        float b = (float)((rgb >> 0) & 0xFF) / 255.0f;
+        float r = (float) ((rgb >> 16) & 0xFF) / 255.0f;
+        float g = (float) ((rgb >> 8) & 0xFF) / 255.0f;
+        float b = (float) ((rgb >> 0) & 0xFF) / 255.0f;
 
         float x0 = x;
         float y0 = y;
         float x1 = x + scale * charInfo.width;
         float y1 = y + scale * charInfo.height;
 
-        float ux0 = charInfo.textureCoordinates[0].x; float uy0 = charInfo.textureCoordinates[0].y;
-        float ux1 = charInfo.textureCoordinates[1].x; float uy1 = charInfo.textureCoordinates[1].y;
+        float ux0 = charInfo.textureCoordinates[0].x;
+        float uy0 = charInfo.textureCoordinates[0].y;
+        float ux1 = charInfo.textureCoordinates[1].x;
+        float uy1 = charInfo.textureCoordinates[1].y;
 
         int index = size * 7;
-        vertices[index] = x1;      vertices[index + 1] = y0;
-        vertices[index + 2] = r;   vertices[index + 3] = g;  vertices[index + 4] = b;
-        vertices[index + 5] = ux1; vertices[index + 6] = uy0;
+        vertices[index] = x1;
+        vertices[index + 1] = y0;
+        vertices[index + 2] = r;
+        vertices[index + 3] = g;
+        vertices[index + 4] = b;
+        vertices[index + 5] = ux1;
+        vertices[index + 6] = uy0;
 
         index += 7;
-        vertices[index] = x1;      vertices[index + 1] = y1;
-        vertices[index + 2] = r;   vertices[index + 3] = g;  vertices[index + 4] = b;
-        vertices[index + 5] = ux1; vertices[index + 6] = uy1;
+        vertices[index] = x1;
+        vertices[index + 1] = y1;
+        vertices[index + 2] = r;
+        vertices[index + 3] = g;
+        vertices[index + 4] = b;
+        vertices[index + 5] = ux1;
+        vertices[index + 6] = uy1;
 
         index += 7;
-        vertices[index] = x0;      vertices[index + 1] = y1;
-        vertices[index + 2] = r;   vertices[index + 3] = g;  vertices[index + 4] = b;
-        vertices[index + 5] = ux0; vertices[index + 6] = uy1;
+        vertices[index] = x0;
+        vertices[index + 1] = y1;
+        vertices[index + 2] = r;
+        vertices[index + 3] = g;
+        vertices[index + 4] = b;
+        vertices[index + 5] = ux0;
+        vertices[index + 6] = uy1;
 
         index += 7;
-        vertices[index] = x0;      vertices[index + 1] = y0;
-        vertices[index + 2] = r;   vertices[index + 3] = g;  vertices[index + 4] = b;
-        vertices[index + 5] = ux0; vertices[index + 6] = uy0;
+        vertices[index] = x0;
+        vertices[index + 1] = y0;
+        vertices[index + 2] = r;
+        vertices[index + 3] = g;
+        vertices[index + 4] = b;
+        vertices[index + 5] = ux0;
+        vertices[index + 6] = uy0;
 
         size += 4;
     }
 
-    public void drawTextOnButton(Button button, float scale, int rgb){
+    public void drawTextOnButton(Button button, float scale, int rgb) {
         int textSizeX = 0;
-        for (int i=0; i < button.text.length(); i++) {
+        for (int i = 0; i < button.text.length(); i++) {
             char c = button.text.charAt(i);
             CharInfo charInfo = font.getCharacter(c);
             if (charInfo.width == 0) {
@@ -163,12 +181,12 @@ public class FontBatch {
             }
             textSizeX += charInfo.width * scale;
         }
-        int textSizeY = (int)(font.getCharacter(button.text.charAt(0)).height * scale);
+        int textSizeY = (int) (font.getCharacter(button.text.charAt(0)).height * scale);
         Vector2i startPosition = new Vector2i(0);
-        startPosition.x = button.position.x + (button.size.x - textSizeX)/ 2;
-        startPosition.y = button.position.y + (button.size.y - textSizeY)/ 2;
-        
-        for (int i=0; i < button.text.length(); i++) {
+        startPosition.x = button.position.x + (button.size.x - textSizeX) / 2;
+        startPosition.y = button.position.y + (button.size.y - textSizeY) / 2;
+
+        for (int i = 0; i < button.text.length(); i++) {
             char c = button.text.charAt(i);
 
             CharInfo charInfo = font.getCharacter(c);
@@ -185,7 +203,7 @@ public class FontBatch {
     }
 
     public void drawText(String text, int x, int y, float scale, int rgb) {
-        for (int i=0; i < text.length(); i++) {
+        for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
 
             CharInfo charInfo = font.getCharacter(c);
@@ -203,7 +221,7 @@ public class FontBatch {
 
     public void drawTextHorizontalCenter(String text, int y, float scale, int rgb) {
         int textSizeX = 0;
-        for (int i=0; i < text.length(); i++) {
+        for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             CharInfo charInfo = font.getCharacter(c);
             if (charInfo.width == 0) {
@@ -214,10 +232,10 @@ public class FontBatch {
         }
 
         Vector2i startPosition = new Vector2i(0);
-        startPosition.x = (Consts.WINDOW_WIDTH - textSizeX)/ 2;
+        startPosition.x = (Consts.WINDOW_WIDTH - textSizeX) / 2;
         startPosition.y = y;
-        
-        for (int i=0; i < text.length(); i++) {
+
+        for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
 
             CharInfo charInfo = font.getCharacter(c);
@@ -233,7 +251,7 @@ public class FontBatch {
         }
     }
 
-    public void cleanup(){
+    public void cleanup() {
         shader.cleanup();
         glDeleteVertexArrays(vao);
         glDeleteBuffers(vbo);
