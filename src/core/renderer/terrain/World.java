@@ -17,7 +17,6 @@ public class World {
     private ChunkUpdateManager updater;
 
     private Vector2i playerLastPos;
-
     private boolean onUpdate;
 
     public World() {

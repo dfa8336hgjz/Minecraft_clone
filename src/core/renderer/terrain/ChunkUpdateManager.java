@@ -13,22 +13,22 @@ import core.gameplay.Player;
 import core.utils.Consts;
 import core.utils.Utils;
 
-public class ChunkUpdateManager extends Thread{
+public class ChunkUpdateManager extends Thread {
     private Map<Vector2i, Chunk> readyToLoadChunks;
     private ExecutorService executor;
 
     private boolean update;
     private boolean running;
 
-    public ChunkUpdateManager(){
+    public ChunkUpdateManager() {
         update = false;
         running = true;
-        readyToLoadChunks = new HashMap<Vector2i,Chunk>();
+        readyToLoadChunks = new HashMap<Vector2i, Chunk>();
     }
 
-    public void run(){
-        while(!Thread.interrupted()){
-            if(update && running){
+    public void run() {
+        while (!Thread.interrupted()) {
+            if (update && running) {
                 executor = Executors.newFixedThreadPool(10);
                 readyToLoadChunks.clear();
                 Vector2i playerPos = Player.instance.getPositionInChunkCoord();
@@ -39,9 +39,10 @@ public class ChunkUpdateManager extends Thread{
 
                 for (int i = lowboundX; i <= upboundX; i++) {
                     for (int j = lowboundZ; j <= upboundZ; j++) {
-                        if(Utils.inRadius(i, j, playerPos, Consts.CHUNK_RADIUS + 1)){
+                        if (Utils.inRadius(i, j, playerPos, Consts.CHUNK_RADIUS + 1)) {
                             Chunk chunk = new Chunk(i, j);
-                            ChunkUpdateThread cThread = new ChunkUpdateThread(chunk, Launcher.instance.worldSeed, playerPos);
+                            ChunkUpdateThread cThread = new ChunkUpdateThread(chunk, Launcher.instance.worldSeed,
+                                    playerPos);
                             executor.execute(cThread);
                             readyToLoadChunks.put(new Vector2i(i, j), chunk);
                         }
@@ -59,36 +60,36 @@ public class ChunkUpdateManager extends Thread{
                 update = false;
             }
 
-            if(!running) {
+            if (!running) {
                 Thread.currentThread().interrupt();
             }
         }
     }
 
-    public Map<Vector2i, Chunk> getNewChunk(){
+    public Map<Vector2i, Chunk> getNewChunk() {
         return readyToLoadChunks;
     }
 
-    public void beginUpdateNewChunk(){
+    public void beginUpdateNewChunk() {
         update = true;
     }
 
-    public boolean checkUpdateDone(){
+    public boolean checkUpdateDone() {
         return !update;
     }
-    
-    public void cleanup(){
+
+    public void cleanup() {
         running = false;
     }
 
 }
 
-
-class ChunkUpdateThread implements Runnable{
+class ChunkUpdateThread implements Runnable {
     private Chunk thisChunk;
     private int worldSeed;
     private Vector2i playerPos;
-    public ChunkUpdateThread(Chunk chunk, int worldSeed, Vector2i pos){
+
+    public ChunkUpdateThread(Chunk chunk, int worldSeed, Vector2i pos) {
         thisChunk = chunk;
         this.worldSeed = worldSeed;
         this.playerPos = pos;
@@ -96,19 +97,17 @@ class ChunkUpdateThread implements Runnable{
 
     @Override
     public void run() {
-        if(Utils.inRadius(thisChunk.getChunkX(), thisChunk.getChunkZ(), playerPos, Consts.CHUNK_RADIUS)){
+        if (Utils.inRadius(thisChunk.getChunkX(), thisChunk.getChunkZ(), playerPos, Consts.CHUNK_RADIUS)) {
             thisChunk.setReadyToIn(true);
-        }
-        else{
+        } else {
             thisChunk.setReadyToOut(true);
         }
 
-        if(!Utils.hasBeenSerialized(thisChunk.getChunkX(), thisChunk.getChunkZ())){
+        if (!Utils.hasBeenSerialized(thisChunk.getChunkX(), thisChunk.getChunkZ())) {
             thisChunk.generateBlockType(this.worldSeed);
             thisChunk.serialize();
             thisChunk.generateNewChunkData();
-        }
-        else{
+        } else {
             thisChunk.deserialize();
             thisChunk.generateNewChunkData();
         }

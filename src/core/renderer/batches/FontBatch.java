@@ -29,8 +29,8 @@ public class FontBatch {
     // 25 quads
     public static int BATCH_SIZE = 600;
     public static int VERTEX_SIZE = 7;
-    public float[] vertices = new float[BATCH_SIZE * VERTEX_SIZE];
-    public int size = 0;
+    private float[] vertices = new float[BATCH_SIZE * VERTEX_SIZE];
+    private int size = 0;
 
     private int vao;
     private int vbo;

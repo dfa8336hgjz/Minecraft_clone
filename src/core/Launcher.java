@@ -20,11 +20,11 @@ import core.scenes.Scene;
 import core.utils.Consts;
 import core.gameplay.Input;
 import core.gameplay.Player;
-import core.components.Transform;
 import core.scenes.CraftScene;
 import core.scenes.StartScene;
 import core.renderer.font.Cfont;
 import core.scenes.LoadingScene;
+import core.components.Transform;
 import core.scenes.CreateWorldScene;
 import core.renderer.supporters.OpenGlWindow;
 import core.renderer.terrain.ChunkUpdateManager;
@@ -74,8 +74,7 @@ public class Launcher {
         view = new Matrix4f();
 
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
-        window = new OpenGlWindow("pmc", Consts.WINDOW_WIDTH, Consts.WINDOW_HEIGHT);
-        updater = new ChunkUpdateManager();
+        window = new OpenGlWindow("G3Craft", Consts.WINDOW_WIDTH, Consts.WINDOW_HEIGHT);
         input = new Input();
         audioPlayer = new OpenALInitializer();
         audioPlayer.init();
@@ -114,7 +113,7 @@ public class Launcher {
 
                 if (frameCounter >= NANOSECOND) {
                     fps = frame;
-                    window.setTitle("pmc " + fps);
+                    window.setTitle("G3Craft " + fps);
                     frame = 0;
                     frameCounter = 0;
                 }

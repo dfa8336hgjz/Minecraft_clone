@@ -26,8 +26,8 @@ public class _2DRendererBatch {
     // 25 quads
     public static int BATCH_SIZE = 100;
     public static int VERTEX_SIZE = 4;
-    public float[] vertices = new float[BATCH_SIZE * VERTEX_SIZE];
-    public int size = 0;
+    private float[] vertices = new float[BATCH_SIZE * VERTEX_SIZE];
+    private int size = 0;
 
     private int vao;
     private int vbo;
@@ -39,7 +39,7 @@ public class _2DRendererBatch {
         int elementSize = BATCH_SIZE * 3;
         int[] elementBuffer = new int[elementSize];
 
-        for (int i=0; i < elementSize; i++) {
+        for (int i = 0; i < elementSize; i++) {
             elementBuffer[i] = indices[(i % 6)] + ((i / 6) * 4);
         }
 
@@ -98,7 +98,6 @@ public class _2DRendererBatch {
         glGenerateMipmap(GL_TEXTURE_2D);
         STBImage.stbi_image_free(buffer);
 
-        
         shader.bind();
         shader.set1i("uFontTexture", textureSlot);
         shader.unbind();
@@ -131,7 +130,7 @@ public class _2DRendererBatch {
         Arrays.fill(vertices, 0);
     }
 
-    public void drawSprite(float x, float y, float sizeX, float sizeY, TextureData texture){
+    public void drawSprite(float x, float y, float sizeX, float sizeY, TextureData texture) {
         if (size >= BATCH_SIZE - 4) {
             flushBatch();
         }
@@ -142,25 +141,33 @@ public class _2DRendererBatch {
         float y1 = y + sizeY;
 
         int index = size * 4;
-        vertices[index] = x0;      vertices[index + 1] = y0;
-        vertices[index + 2] = texture.getCoordsAt(0).x; vertices[index + 3] = texture.getCoordsAt(0).y;
+        vertices[index] = x0;
+        vertices[index + 1] = y0;
+        vertices[index + 2] = texture.getCoordsAt(0).x;
+        vertices[index + 3] = texture.getCoordsAt(0).y;
 
         index += 4;
-        vertices[index] = x1;      vertices[index + 1] = y0;
-        vertices[index + 2] = texture.getCoordsAt(2).x; vertices[index + 3] = texture.getCoordsAt(2).y;
+        vertices[index] = x1;
+        vertices[index + 1] = y0;
+        vertices[index + 2] = texture.getCoordsAt(2).x;
+        vertices[index + 3] = texture.getCoordsAt(2).y;
 
         index += 4;
-        vertices[index] = x1;      vertices[index + 1] = y1;
-        vertices[index + 2] = texture.getCoordsAt(3).x; vertices[index + 3] = texture.getCoordsAt(3).y;
+        vertices[index] = x1;
+        vertices[index + 1] = y1;
+        vertices[index + 2] = texture.getCoordsAt(3).x;
+        vertices[index + 3] = texture.getCoordsAt(3).y;
 
         index += 4;
-        vertices[index] = x0;      vertices[index + 1] = y1;
-        vertices[index + 2] = texture.getCoordsAt(1).x; vertices[index + 3] = texture.getCoordsAt(1).y;
+        vertices[index] = x0;
+        vertices[index + 1] = y1;
+        vertices[index + 2] = texture.getCoordsAt(1).x;
+        vertices[index + 3] = texture.getCoordsAt(1).y;
 
         size += 4;
     }
 
-    public void cleanup(){
+    public void cleanup() {
         shader.cleanup();
         glDeleteVertexArrays(vao);
     }
